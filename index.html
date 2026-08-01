@@ -777,7 +777,7 @@ function toggleSubtaskDone(tid, si) {
         t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
     }
     saveData();
-    const wasExpanded = document.querySelector(`[data-task-block="${tid}"]`)?.classList.contains('expanded');
+    const _el = document.querySelector(`[data-task-block="${tid}"]`); const wasExpanded = _el ? _el.classList.contains('expanded') : false;
     renderAll();
     if (wasExpanded) { const el = document.querySelector(`[data-task-block="${tid}"]`); if (el) el.classList.add('expanded'); }
 }
@@ -802,7 +802,7 @@ function moveTaskForward(tid, si) {
     });
     t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
     saveData();
-    const wasExpanded = document.querySelector(`[data-task-block="${tid}"]`)?.classList.contains('expanded');
+    const _el = document.querySelector(`[data-task-block="${tid}"]`); const wasExpanded = _el ? _el.classList.contains('expanded') : false;
     renderAll();
     if (wasExpanded) { const el = document.querySelector(`[data-task-block="${tid}"]`); if (el) el.classList.add('expanded'); }
 }
@@ -819,7 +819,7 @@ function moveTaskBackward(tid, si) {
     });
     t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
     saveData();
-    const wasExpanded = document.querySelector(`[data-task-block="${tid}"]`)?.classList.contains('expanded');
+    const _el = document.querySelector(`[data-task-block="${tid}"]`); const wasExpanded = _el ? _el.classList.contains('expanded') : false;
     renderAll();
     if (wasExpanded) { const el = document.querySelector(`[data-task-block="${tid}"]`); if (el) el.classList.add('expanded'); }
 }
@@ -1070,7 +1070,7 @@ function saveSubEdit(tid, idx) {
     }
     t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
     subEditMode = null;
-    const wasExpanded = document.querySelector(`[data-task-block="${tid}"]`)?.classList.contains('expanded');
+    const _el = document.querySelector(`[data-task-block="${tid}"]`); const wasExpanded = _el ? _el.classList.contains('expanded') : false;
     saveData(); renderAll();
     if (wasExpanded) { const el = document.querySelector(`[data-task-block="${tid}"]`); if (el) el.classList.add('expanded'); }
 }
@@ -1086,7 +1086,7 @@ function deleteSubtask(tid, idx) {
         t.subtaskCount = t.subtasks.length;
     }
     subEditMode = null;
-    const wasExpanded = document.querySelector(`[data-task-block="${tid}"]`)?.classList.contains('expanded');
+    const _el = document.querySelector(`[data-task-block="${tid}"]`); const wasExpanded = _el ? _el.classList.contains('expanded') : false;
     saveData(); renderAll();
     if (wasExpanded) { const el = document.querySelector(`[data-task-block="${tid}"]`); if (el) el.classList.add('expanded'); }
 }
