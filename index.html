@@ -383,6 +383,14 @@
                 </div>
             </div>
             <div class="form-row">
+                <div class="form-group"><label>任务类型</label>
+                    <select id="fTaskKind" onchange="onTaskKindChange('fTaskKind','fTotal')">
+                        <option value="quantified">量化（记录题量/对错）</option>
+                        <option value="nonQuantified">非量化（仅打卡）</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row" id="fQuantRow">
                 <div class="form-group"><label>排期模式</label>
                     <select id="fScheduleMode" onchange="onScheduleModeChange()">
                         <option value="continuous">连续日期（跳过周日）</option>
@@ -435,6 +443,14 @@
                 </div>
             </div>
             <div class="form-row">
+                <div class="form-group"><label>任务类型</label>
+                    <select id="fSingleTaskKind" onchange="onTaskKindChange('fSingleTaskKind','fSingleTotal')">
+                        <option value="quantified">量化（记录题量/对错）</option>
+                        <option value="nonQuantified">非量化（仅打卡）</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row" id="fSingleQuantRow">
                 <div class="form-group"><label>任务日期</label><input type="date" id="fSingleDate"></div>
                 <div class="form-group"><label>总题数</label><input type="number" id="fSingleTotal" min="0" value="20"></div>
             </div>
@@ -450,6 +466,12 @@
                 <button id="btnStatsAll" class="active" onclick="setStatsPeriod('all')">全部</button>
                 <button id="btnStatsMonth" onclick="setStatsPeriod('month')">本月</button>
                 <button id="btnStatsWeek" onclick="setStatsPeriod('week')">本周</button>
+                <button id="btnStatsCustom" onclick="setStatsPeriod('custom')">自定义</button>
+            </div>
+            <div class="stats-custom-range hidden" id="statsCustomRange" style="display:flex; gap:6px; align-items:center; margin-top:8px; flex-wrap:wrap;">
+                <input type="date" id="statsDateStart" style="padding:4px 6px; border:1px solid #f0d6da; border-radius:8px; font-size:12px;" onchange="applyCustomRange()">
+                <span style="color:#bda0a6;">至</span>
+                <input type="date" id="statsDateEnd" style="padding:4px 6px; border:1px solid #f0d6da; border-radius:8px; font-size:12px;" onchange="applyCustomRange()">
             </div>
         </div>
         <div id="statsChart"></div>
@@ -535,14 +557,15 @@ function normalizeModule(m) { return MODULE_ALIAS[m] || m; }
 const DEFAULT_EXAMS = [{name:'2027国考',date:'2026-12-01'},{name:'2027福建省考',date:'2027-03-13'},{name:'2027福建事业编',date:'2027-04-24'}];
 
 function loadData() {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    let raw = null;
+    try { raw = localStorage.getItem(STORAGE_KEY); } catch(e) { raw = null; }
     if (raw) {
         try {
             const p = JSON.parse(raw);
             appData.exams = p.exams || [];
             appData.studyTasks = (p.studyTasks || []).map(t => {
                 if (!t.subtasks) t.subtasks = [];
-                t.subtasks.forEach(s => { if (s.done===undefined) s.done=false; if (s.total===undefined) s.total=0; if (s.correct===undefined) s.correct=0; if (s.time===undefined) s.time=0; if (s.subType===undefined) s.subType=''; });
+                t.subtasks.forEach(s => { if (s.done===undefined) s.done=false; if (s.total===undefined) s.total=0; if (s.correct===undefined) s.correct=0; if (s.time===undefined) s.time=0; if (s.subType===undefined) s.subType=''; if (s.kind===undefined) s.kind='quantified'; });
                 return t;
             });
             appData.examRecords = p.examRecords || [];
@@ -556,7 +579,7 @@ function loadData() {
 }
 
 function saveData() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); } catch(e) {}
 }
 
 function getToday() { const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -647,6 +670,12 @@ function onModuleChange(moduleSelId, subTypeSelId, rowId) {
         sel.innerHTML = '';
     }
 }
+function onTaskKindChange(kindSelId, totalInputId) {
+    const kind = document.getElementById(kindSelId).value;
+    const totalInput = document.getElementById(totalInputId);
+    const totalGroup = totalInput ? totalInput.closest('.form-group') : null;
+    if (totalGroup) totalGroup.style.display = (kind === 'nonQuantified') ? 'none' : '';
+}
 const SELECTED_WEEKDAYS = new Set();
 function toggleWeekday(wd) {
     const el = document.querySelector(`#weekdaySelector .wd-chip[data-wd="${wd}"]`);
@@ -668,8 +697,10 @@ function generateDatesByWeekday(startDate, weekdays, count) {
 }
 
 function addStudyTask() {
-    const m=document.getElementById('fModule').value, n=document.getElementById('fName').value.trim(), t=parseInt(document.getElementById('fTotal').value)||0, s=document.getElementById('fStart').value;
+    const m=document.getElementById('fModule').value, n=document.getElementById('fName').value.trim(), s=document.getElementById('fStart').value;
     const mode = document.getElementById('fScheduleMode').value;
+    const kind = document.getElementById('fTaskKind').value;
+    const t = (kind === 'nonQuantified') ? 0 : (parseInt(document.getElementById('fTotal').value)||0);
     let st = '';
     if (MODULE_SUBTYPES[m]) { st = document.getElementById('fSubType').value; if (!st) { alert('请选择细分题型'); return; } }
     if(!n){alert('请输入任务名称');return;} if(!s){alert('请选择起始日期');return;}
@@ -686,25 +717,29 @@ function addStudyTask() {
         dates = generateDatesSkipSunday(s, subCount);
     }
     const startIdx = parseInt(document.getElementById('fStartIdx').value) || 1;
-    const subs = dates.map((d, i) => ({idx:startIdx+i, date:d, done:false, total:t, correct:0, time:0, subType:st}));
-    appData.studyTasks.push({id:Date.now(),module:m,name:n,type:'periodic',subtaskCount:subs.length,startDate:s,defaultTotal:t,subtasks:subs,scheduleMode:mode,startIdx:startIdx,subType:st});
+    const subs = dates.map((d, i) => ({idx:startIdx+i, date:d, done:false, total:t, correct:0, time:0, subType:st, kind:kind}));
+    appData.studyTasks.push({id:Date.now(),module:m,name:n,type:'periodic',subtaskCount:subs.length,startDate:s,defaultTotal:t,subtasks:subs,scheduleMode:mode,startIdx:startIdx,subType:st,kind:kind});
     saveData(); renderAll();
     document.getElementById('fName').value=''; document.getElementById('fCount').value='30'; document.getElementById('fTotal').value='20'; document.getElementById('fStart').value=getToday(); document.getElementById('fStartIdx').value='1';
     SELECTED_WEEKDAYS.clear();
     document.querySelectorAll('#weekdaySelector .wd-chip').forEach(el => el.classList.remove('active'));
     document.getElementById('fWeekCount').value = '10';
     onModuleChange('fModule','fSubType','fSubTypeRow');
+    document.getElementById('fTaskKind').value='quantified'; onTaskKindChange('fTaskKind','fTotal');
 }
 function addSingleTask() {
-    const m=document.getElementById('fSingleModule').value, n=document.getElementById('fSingleName').value.trim(), d=document.getElementById('fSingleDate').value, t=parseInt(document.getElementById('fSingleTotal').value)||0;
+    const m=document.getElementById('fSingleModule').value, n=document.getElementById('fSingleName').value.trim(), d=document.getElementById('fSingleDate').value;
+    const kind = document.getElementById('fSingleTaskKind').value;
+    const t = (kind === 'nonQuantified') ? 0 : (parseInt(document.getElementById('fSingleTotal').value)||0);
     let st = '';
     if (MODULE_SUBTYPES[m]) { st = document.getElementById('fSingleSubType').value; if (!st) { alert('请选择细分题型'); return; } }
     if(!n){alert('请输入任务名称');return;} if(!d){alert('请选择日期');return;}
     let dd = d; const pd = parseDate(d); if (pd.getDay() === 0) { pd.setDate(pd.getDate()+1); dd = formatDate(pd); alert('周日为固定休息日，已自动顺延至周一'); }
-    appData.studyTasks.push({id:Date.now(),module:m,name:n,type:'single',subtaskCount:1,startDate:dd,defaultTotal:t,subtasks:[{idx:1,date:dd,done:false,total:t,correct:0,time:0,subType:st}],subType:st});
+    appData.studyTasks.push({id:Date.now(),module:m,name:n,type:'single',subtaskCount:1,startDate:dd,defaultTotal:t,subtasks:[{idx:1,date:dd,done:false,total:t,correct:0,time:0,subType:st,kind:kind}],subType:st,kind:kind});
     saveData(); renderAll();
     document.getElementById('fSingleName').value=''; document.getElementById('fSingleTotal').value='20'; document.getElementById('fSingleDate').value=getToday();
     onModuleChange('fSingleModule','fSingleSubType','fSingleSubTypeRow');
+    document.getElementById('fSingleTaskKind').value='quantified'; onTaskKindChange('fSingleTaskKind','fSingleTotal');
 }
 
 function openEditModal(id) {
@@ -723,7 +758,7 @@ function saveEditTask() {
     if (t.type === 'periodic') {
         const ns = document.getElementById('editStart').value, nc = parseInt(document.getElementById('editCount').value);
         const startIdx = t.startIdx || 1;
-        if (ns) { const old = t.subtasks, nw = [], tl = t.defaultTotal||0; const mode = t.scheduleMode || 'continuous'; const gen = mode === 'weekly' ? (sd,c) => generateDatesByWeekday(sd, t.weekdays||[1], c) : (sd,c) => generateDatesSkipSunday(sd, c); const dates = gen(ns, nc); for (let i=0;i<nc;i++) { const ds = dates[i]; const o = old.find(s=>s.date===ds); nw.push(o?{...o,idx:startIdx+i}:{idx:startIdx+i,date:ds,done:false,total:tl,correct:0,time:0,subType:t.subType||''}); } t.subtasks = nw; t.subtaskCount = nc; t.startDate = ns; }
+        if (ns) { const old = t.subtasks, nw = [], tl = t.defaultTotal||0; const mode = t.scheduleMode || 'continuous'; const gen = mode === 'weekly' ? (sd,c) => generateDatesByWeekday(sd, t.weekdays||[1], c) : (sd,c) => generateDatesSkipSunday(sd, c); const dates = gen(ns, nc); for (let i=0;i<nc;i++) { const ds = dates[i]; const o = old.find(s=>s.date===ds); nw.push(o?{...o,idx:startIdx+i}:{idx:startIdx+i,date:ds,done:false,total:tl,correct:0,time:0,subType:t.subType||'',kind:t.kind||'quantified'}); } t.subtasks = nw; t.subtaskCount = nc; t.startDate = ns; }
     } else { const nd = document.getElementById('editStart').value; if (nd) { let dd = nd; const pd = parseDate(nd); if (pd.getDay() === 0) { pd.setDate(pd.getDate()+1); dd = formatDate(pd); } t.startDate = dd; t.subtasks[0].date = dd; } }
     saveData(); renderAll(); closeEditModal();
 }
@@ -741,19 +776,22 @@ function toggleSubtaskDone(tid, si) {
     const t = appData.studyTasks.find(x => x.id === tid); if (!t) return;
     const s = t.subtasks[si];
     const gen = getTaskDatesGenerator(t);
+    const isNonQuantified = (t.kind === 'nonQuantified') || (s.kind === 'nonQuantified');
     if (!s.done) {
         s.done = true;
-        appData.completedTasks.push({
-            module: t.module,
-            subType: s.subType || '',
-            name: t.name,
-            total: s.total || 0,
-            correct: s.correct || 0,
-            time: s.time || 0,
-            date: s.date,
-            taskId: t.id,
-            idx: s.idx
-        });
+        if (!isNonQuantified) {
+            appData.completedTasks.push({
+                module: t.module,
+                subType: s.subType || '',
+                name: t.name,
+                total: s.total || 0,
+                correct: s.correct || 0,
+                time: s.time || 0,
+                date: s.date,
+                taskId: t.id,
+                idx: s.idx
+            });
+        }
         const undone = t.subtasks.filter(ss => !ss.done);
         if (undone.length > 0) {
             const newDates = gen(addDays(s.date, 1), undone.length);
@@ -1050,18 +1088,22 @@ function saveSubEdit(tid, idx) {
     const t = appData.studyTasks.find(x => x.id === tid); if (!t) return;
     const s = t.subtasks[idx];
     const newDate = document.getElementById(`se-date-${tid}-${idx}`).value;
-    const newTotal = parseInt(document.getElementById(`se-total-${tid}-${idx}`).value) || 0;
-    const newCorrect = parseInt(document.getElementById(`se-correct-${tid}-${idx}`).value) || 0;
-    const newTime = parseFloat(document.getElementById(`se-time-${tid}-${idx}`).value) || 0;
+    const isNonQ = (t.kind === 'nonQuantified') || (s.kind === 'nonQuantified');
+    const totalEl = document.getElementById(`se-total-${tid}-${idx}`);
+    const correctEl = document.getElementById(`se-correct-${tid}-${idx}`);
+    const timeEl = document.getElementById(`se-time-${tid}-${idx}`);
+    const newTotal = totalEl ? (parseInt(totalEl.value) || 0) : 0;
+    const newCorrect = correctEl ? (parseInt(correctEl.value) || 0) : 0;
+    const newTime = timeEl ? (parseFloat(timeEl.value) || 0) : 0;
     let newSubType = s.subType || '';
     const stSel = document.getElementById(`se-subtype-${tid}-${idx}`);
     if (stSel) newSubType = stSel.value;
     if (!newDate) { alert('请选择日期'); return; }
-    if (newTotal > 0 && newCorrect > newTotal) { alert('正确数不能大于总题数'); return; }
+    if (!isNonQ && newTotal > 0 && newCorrect > newTotal) { alert('正确数不能大于总题数'); return; }
     const wasDone = s.done;
     s.date = newDate; s.total = newTotal; s.correct = newCorrect; s.time = newTime; s.subType = newSubType;
     appData.completedTasks = appData.completedTasks.filter(c => !(c.taskId === tid && c.idx === s.idx));
-    if (wasDone) {
+    if (wasDone && !isNonQ) {
         appData.completedTasks.push({
             module: t.module, subType: newSubType, name: t.name,
             total: newTotal, correct: newCorrect, time: newTime,
@@ -1106,17 +1148,20 @@ function renderTaskBlocks() {
             const completed = isTaskCompleted(t);
             const tagType = t.type === 'single' ? '<span class="tag-type">单次</span>' : '<span class="tag-type">周期</span>';
             const tagDone = completed ? '<span class="tag-done">✅ 已完成</span>' : '';
+            const isNonQuantified = t.kind === 'nonQuantified';
+            const tagKind = isNonQuantified ? '<span class="tag-type" style="background:#e8e0f0;color:#9b59b6;">非量化</span>' : '<span class="tag-type">量化</span>';
             const nameDisplay = completed ? `${t.name}✅` : t.name;
             const endDate = t.subtasks.length > 0 ? t.subtasks[t.subtasks.length - 1].date : t.startDate;
             const dateRange = t.type === 'single' ? t.startDate : `${t.startDate} ~ ${endDate}`;
+            const metaStats = isNonQuantified ? '' : `<span>📊 ${pct}%</span>`;
             html += `<div class="task-block ${completed?'completed':''}" data-task-block="${t.id}">
                 <div class="task-block-header" onclick="toggleExpand(${t.id})">
                     <span class="module-dot" style="background:${color};"></span>
-                    <span class="tag-mod">${t.module}</span>${tagType}${tagDone}
+                    <span class="tag-mod">${t.module}</span>${tagType}${tagKind}${tagDone}
                     <strong>${nameDisplay}</strong>
                     <span class="toggle-icon">▶</span>
                 </div>
-                <div class="task-block-meta"><span>📅 ${dateRange}</span><span>📋 ${total}项</span><span>✅ ${doneCount}完成</span><span>📊 ${pct}%</span></div>
+                <div class="task-block-meta"><span>📅 ${dateRange}</span><span>📋 ${total}项</span><span>✅ ${doneCount}完成</span>${metaStats}</div>
                 <div class="task-block-progress"><div class="bar" style="width:${pct}%;"></div></div>
                 <div class="task-block-actions">
                     <button class="btn-edit" onclick="event.stopPropagation();openEditModal(${t.id})">✏️ 编辑</button>
@@ -1125,17 +1170,17 @@ function renderTaskBlocks() {
                 <div class="subtask-expand">`;
             t.subtasks.forEach((s, idx) => {
                 const isEditing = subEditMode && subEditMode.tid === t.id && subEditMode.idx === idx;
+                const sNonQ = (t.kind === 'nonQuantified') || (s.kind === 'nonQuantified');
                 if (isEditing) {
                     const subTypeOptions = MODULE_SUBTYPES[t.module] || [];
                     const stHtml = subTypeOptions.length ? `<select id="se-subtype-${t.id}-${idx}" class="se-input se-subtype"><option value="">无</option>${subTypeOptions.map(o=>`<option value="${o}" ${s.subType===o?'selected':''}>${o}</option>`).join('')}</select>` : '';
+                    const quantInputs = sNonQ ? '' : `<input type="number" id="se-total-${t.id}-${idx}" class="se-input se-small" placeholder="总题" value="${s.total}" min="0"><input type="number" id="se-correct-${t.id}-${idx}" class="se-input se-small" placeholder="正确" value="${s.correct}" min="0"><input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="耗时" value="${s.time}" min="0">`;
                     html += `<div class="sub-row editing">
                         <div class="sr-num">${s.idx}</div>
                         <div class="sr-edit-form">
                             <input type="date" id="se-date-${t.id}-${idx}" class="se-input" value="${s.date}">
                             ${stHtml}
-                            <input type="number" id="se-total-${t.id}-${idx}" class="se-input se-small" placeholder="总题" value="${s.total}" min="0">
-                            <input type="number" id="se-correct-${t.id}-${idx}" class="se-input se-small" placeholder="正确" value="${s.correct}" min="0">
-                            <input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="耗时" value="${s.time}" min="0">
+                            ${quantInputs}
                         </div>
                         <div class="sr-actions">
                             <button onclick="event.stopPropagation();saveSubEdit(${t.id},${idx})" title="保存" class="se-save">💾</button>
@@ -1143,12 +1188,18 @@ function renderTaskBlocks() {
                         </div>
                     </div>`;
                 } else {
-                    const dc = s.done ? 'done' : '', rate = s.total > 0 ? Math.round(s.correct/s.total*100) : 0;
-                    const ts = s.time > 0 ? `${s.time}分` : '未填';
+                    const dc = s.done ? 'done' : '';
                     const statusText = s.done ? '已完成' : (s.date < getToday() ? '已逾期' : '待完成');
                     const sc2 = s.done ? '#a8d5a2' : (s.date < getToday() ? '#e87878' : '#bda0a6');
                     const stTag = s.subType ? `<span class="stat-item" style="color:#6ab7d6;">${s.subType}</span>` : '';
-                    const statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}<span class="stat-item">总题${s.total}</span><span class="stat-item">正确${s.correct}</span><span class="stat-item">用时${ts}</span><span class="rate">${rate}%</span></div>`;
+                    let statsHtml;
+                    if (sNonQ) {
+                        statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}<span class="stat-item" style="color:#9b59b6;">打卡</span></div>`;
+                    } else {
+                        const rate = s.total > 0 ? Math.round(s.correct/s.total*100) : 0;
+                        const ts = s.time > 0 ? `${s.time}分` : '未填';
+                        statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}<span class="stat-item">总题${s.total}</span><span class="stat-item">正确${s.correct}</span><span class="stat-item">用时${ts}</span><span class="rate">${rate}%</span></div>`;
+                    }
                     html += `<div class="sub-row ${dc}"><div class="sr-num">${s.idx}</div><div class="sr-info"><span class="sr-date">📅 ${s.date}</span>${statsHtml}</div><div class="sr-actions"><button onclick="event.stopPropagation();toggleSubtaskDone(${t.id},${idx})" title="完成/取消">${s.done?'✅':'✔️'}</button><button onclick="event.stopPropagation();enterSubEditMode(${t.id},${idx})" title="编辑">✏️</button><button onclick="event.stopPropagation();deleteSubtask(${t.id},${idx})" title="删除">🗑️</button><button onclick="event.stopPropagation();moveTaskForward(${t.id},${idx})" title="整体提前">⬅️</button><button onclick="event.stopPropagation();moveTaskBackward(${t.id},${idx})" title="整体延后">➡️</button></div></div>`;
                 }
             });
@@ -1199,8 +1250,11 @@ function setStatsPeriod(p) {
     document.getElementById('btnStatsAll').classList.toggle('active', p==='all');
     document.getElementById('btnStatsMonth').classList.toggle('active', p==='month');
     document.getElementById('btnStatsWeek').classList.toggle('active', p==='week');
+    document.getElementById('btnStatsCustom').classList.toggle('active', p==='custom');
+    document.getElementById('statsCustomRange').classList.toggle('hidden', p !== 'custom');
     renderStats();
 }
+function applyCustomRange() { renderStats(); }
 function getStatsDateRange() {
     const today = new Date(); today.setHours(0,0,0,0);
     if (statsPeriod === 'week') {
@@ -1211,6 +1265,10 @@ function getStatsDateRange() {
     } else if (statsPeriod === 'month') {
         const y = today.getFullYear(), m = today.getMonth();
         return [formatDate(new Date(y,m,1)), formatDate(new Date(y,m+1,0))];
+    } else if (statsPeriod === 'custom') {
+        const s = document.getElementById('statsDateStart').value;
+        const e = document.getElementById('statsDateEnd').value;
+        return [s || '', e || ''];
     }
     return ['', ''];
 }
@@ -1245,11 +1303,21 @@ function toggleStatsModule(m) {
 }
 function renderStats() {
     const { stats, subStats } = collectStats();
-    const periodLabel = statsPeriod==='week'?'本周':statsPeriod==='month'?'本月':'全部时段';
+    const periodLabel = statsPeriod==='week'?'本周':statsPeriod==='month'?'本月':statsPeriod==='custom'?'自定义时段':'全部时段';
     const el = document.getElementById('statsPeriod'); if (el) el.textContent = periodLabel;
+    // 总体正确率摘要
+    let grandTotal = 0, grandCorrect = 0;
+    MODULES.forEach(m => { grandTotal += stats[m].total; grandCorrect += stats[m].correct; });
+    const grandRate = grandTotal > 0 ? Math.round(grandCorrect/grandTotal*100) : 0;
+    const grandRateColor = grandRate>=80?'#28a745':grandRate>=60?'#f0a868':'#e74c3c';
     const chartEl = document.getElementById('statsChart');
     const maxTotal = Math.max(1, ...MODULES.map(m => stats[m].total));
-    let chartHtml = '<div class="stats-bar-chart">';
+    let chartHtml = `<div class="stats-summary" style="display:flex; gap:12px; margin-bottom:12px; padding:10px 14px; background:#fcf8f5; border-radius:12px; flex-wrap:wrap; align-items:center;">
+        <span style="font-size:13px; font-weight:600; color:#7a4b55;">总题量 <strong style="color:#3d2c2c;">${grandTotal}</strong></span>
+        <span style="font-size:13px; font-weight:600; color:#7a4b55;">总正确 <strong style="color:#28a745;">${grandCorrect}</strong></span>
+        <span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:10px; color:${grandRateColor}; background:${grandRateColor}22;">总正确率 ${grandRate}%</span>
+    </div>`;
+    chartHtml += '<div class="stats-bar-chart">';
     MODULES.forEach(m => {
         const s = stats[m]; const h = Math.round(s.total/maxTotal*100);
         const color = MODULE_COLORS[m];
@@ -1612,7 +1680,7 @@ function importBackup(event) {
             appData.exams = data.exams || [];
             appData.studyTasks = (data.studyTasks || []).map(t => {
                 if (!t.subtasks) t.subtasks = [];
-                t.subtasks.forEach(s => { if (s.done===undefined) s.done=false; if (s.total===undefined) s.total=0; if (s.correct===undefined) s.correct=0; if (s.time===undefined) s.time=0; if (s.subType===undefined) s.subType=''; });
+                t.subtasks.forEach(s => { if (s.done===undefined) s.done=false; if (s.total===undefined) s.total=0; if (s.correct===undefined) s.correct=0; if (s.time===undefined) s.time=0; if (s.subType===undefined) s.subType=''; if (s.kind===undefined) s.kind='quantified'; });
                 return t;
             });
             appData.examRecords = data.examRecords || [];
