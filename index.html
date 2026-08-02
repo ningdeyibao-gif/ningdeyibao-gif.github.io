@@ -19,14 +19,23 @@
     <title>2027上岸计划</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',sans-serif; }
-        body { background:#fcf8f5; color:#3d2c2c; display:flex; min-height:100vh; font-size:15px; touch-action:pan-y; }
+        body { background:#fcf8f5; color:#3d2c2c; display:flex; min-height:100vh; font-size:15px; touch-action:pan-y; overflow-x:hidden; max-width:100vw; }
         ::-webkit-scrollbar { width:0; height:0; }
 
         .sidebar {
             width:180px; flex-shrink:0; background:#fcf8f5; border-right:1px solid #f0dbdb;
             padding:20px 12px; position:sticky; top:0; height:100vh; overflow-y:auto;
             display:flex; flex-direction:column; gap:6px;
+            transition:width 0.2s, padding 0.2s;
         }
+        .sidebar.collapsed { width:52px; padding:10px 6px 20px; }
+        .sidebar.collapsed .sb-today,
+        .sidebar.collapsed .sb-countdown,
+        .sidebar.collapsed .sidebar-footer,
+        .sidebar.collapsed .sidebar-item .label { display:none; }
+        .sidebar.collapsed .sidebar-item { justify-content:center; padding:12px 0; }
+        .sidebar.collapsed .sidebar-toggle { width:100%; position:relative; top:auto; right:auto; left:auto; border-radius:10px; margin-bottom:8px; }
+        .sidebar-toggle { position:absolute; top:12px; right:-14px; width:28px; height:28px; border-radius:50%; background:#fff; border:1px solid #f0dbdb; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; color:#b47a84; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.08); flex-shrink:0; }
         .sidebar .sb-countdown { margin-bottom:16px; }
         .sidebar .sb-countdown-item { background:#fff; border-radius:12px; padding:8px 10px; margin-bottom:8px; border:1px solid #f0e0e0; position:relative; }
         .sidebar .sb-countdown-item .exam-name { font-size:12px; font-weight:600; color:#7a4b55; margin-bottom:2px; }
@@ -49,7 +58,7 @@
         .main { flex:1; padding:16px 20px 90px; max-width:1100px; margin:0 auto; width:100%; }
         .page-title { font-size:32px; font-weight:700; color:#b47a84; text-align:center; margin-bottom:20px; letter-spacing:2px; }
 
-        .card { background:#fff; border-radius:28px; padding:20px; margin-bottom:18px; box-shadow:0 4px 16px rgba(0,0,0,0.03); border:1.5px solid transparent; position:relative; }
+        .card { background:#fff; border-radius:28px; padding:20px; margin-bottom:18px; box-shadow:0 4px 16px rgba(0,0,0,0.03); border:1.5px solid transparent; position:relative; min-width:0; max-width:100%; }
         .card-title { font-size:17px; font-weight:700; color:#b47a84; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
         .card-title .sub { font-weight:400; font-size:14px; color:#bda0a6; margin-left:auto; }
         .card-board { border-color:#f7e0e0; }
@@ -93,17 +102,17 @@
         .filter-chip.active { background:#b47a84; color:#fff; border-color:#b47a84; }
         .filter-divider { width:1px; height:20px; background:#f0dbdb; margin:0 4px; }
 
-        .calendar-weekdays { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-bottom:4px; }
+        .calendar-weekdays { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:3px; margin-bottom:4px; }
         .calendar-weekdays div { text-align:center; font-size:11px; color:#bda0a6; font-weight:600; padding:4px 0; }
-        .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
-        .cal-cell { min-height:72px; background:#fcf8f5; border-radius:8px; padding:4px 3px; cursor:pointer; border:1.5px solid transparent; display:flex; flex-direction:column; gap:2px; overflow:visible; }
+        .calendar-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:3px; min-width:0; }
+        .cal-cell { min-height:72px; background:#fcf8f5; border-radius:8px; padding:4px 3px; cursor:pointer; border:1.5px solid transparent; display:flex; flex-direction:column; gap:2px; overflow:hidden; min-width:0; }
         .cal-cell.other-month { opacity:0.3; }
         .cal-cell.selected { background:#e8f5e9; border-color:#81c784; }
         .cal-cell .cc-day { font-size:14px; font-weight:600; color:#3d2c2c; text-align:right; padding:0 3px; }
-        .cal-cell .cc-task { font-size:11px; line-height:1.4; padding:1px 3px; border-radius:3px; overflow:hidden; display:flex; align-items:flex-start; gap:3px; }
-        .cal-cell .cc-task .cc-mod-name { flex:0 0 auto; white-space:nowrap; font-weight:600; }
-        .cal-cell .cc-task .cc-mod-tasks { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
-        .cal-cell .cc-task .cc-task-line { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .cal-cell .cc-task { font-size:11px; line-height:1.4; padding:1px 3px; border-radius:3px; overflow:hidden; display:flex; align-items:flex-start; gap:3px; min-width:0; }
+        .cal-cell .cc-task .cc-mod-name { flex:0 0 auto; white-space:nowrap; font-weight:600; max-width:60%; overflow:hidden; text-overflow:ellipsis; }
+        .cal-cell .cc-task .cc-mod-tasks { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; overflow:hidden; }
+        .cal-cell .cc-task .cc-task-line { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
         .cal-cell .cc-task-line.done { color:#bbb; text-decoration:line-through; }
 
         .module-legend { display:flex; flex-wrap:wrap; gap:6px 12px; margin-top:10px; font-size:11px; color:#b47a84; }
@@ -203,9 +212,16 @@
         .score-input-row input { width:50px; padding:4px 6px; border:1px solid #f0d6da; border-radius:8px; font-size:13px; text-align:center; }
         .score-input-row .si-total { font-size:12px; color:#bda0a6; }
 
-        @media (max-width: 768px) {
-            body { flex-direction:column; }
+        @media (max-width: 1024px) {
+            body { flex-direction:column; overflow-x:hidden; }
             .sidebar { width:100%; height:auto; position:relative; flex-direction:row; flex-wrap:wrap; padding:10px 12px; gap:4px; border-right:none; border-bottom:1px solid #f0dbdb; }
+            .sidebar.collapsed { width:100%; padding:6px 12px; }
+            .sidebar.collapsed .sb-today,
+            .sidebar.collapsed .sb-countdown,
+            .sidebar.collapsed .sidebar-footer,
+            .sidebar.collapsed .sidebar-item .label { display:none; }
+            .sidebar.collapsed .sidebar-item { justify-content:center; padding:10px 8px; }
+            .sidebar-toggle { top:6px; right:6px; position:absolute; }
             .sidebar .sb-today { width:100%; margin-bottom:8px; font-size:14px; }
             .sidebar .sb-countdown { display:flex; flex-wrap:wrap; gap:6px; width:100%; margin-bottom:8px; }
             .sidebar .sb-countdown-item { flex:1 1 calc(33%-6px); min-width:90px; margin-bottom:4px; padding:6px 8px; }
@@ -214,7 +230,7 @@
             .sidebar .sb-countdown-item .exam-actions { position:static; margin-top:4px; }
             .sidebar-item { flex:1 1 auto; padding:8px 10px; font-size:12px; }
             .sidebar-footer { display:none; }
-            .main { padding:12px 10px 80px; max-width:100%; }
+            .main { padding:12px 10px 80px; max-width:100%; width:100%; box-sizing:border-box; overflow-x:hidden; }
             .page-title { font-size:24px; margin-bottom:14px; }
             .card { padding:14px; border-radius:20px; margin-bottom:14px; }
             .card-title { font-size:15px; margin-bottom:10px; }
@@ -304,14 +320,15 @@
 
 <!-- ===== 固定左侧目录 ===== -->
 <div class="sidebar" id="appSidebar">
+    <div class="sidebar-toggle" onclick="toggleSidebar()" title="收起/展开">◀</div>
     <div class="sb-today" id="sbToday">📅 加载中</div>
     <div class="sb-countdown" id="sbCountdown"></div>
-    <div class="sidebar-item" onclick="scrollToCard('card-board')"><span class="icon">📋</span>学习计划</div>
-    <div class="sidebar-item" onclick="scrollToCard('card-tasklist')"><span class="icon">📑</span>任务列表</div>
-    <div class="sidebar-item" onclick="scrollToCard('card-addtask')"><span class="icon">➕</span>添加计划</div>
-    <div class="sidebar-item" onclick="scrollToCard('card-stats')"><span class="icon">📊</span>刷题统计</div>
-    <div class="sidebar-item" onclick="scrollToCard('card-exam')"><span class="icon">📝</span>模考记录</div>
-    <div class="sidebar-item" onclick="scrollToCard('card-backup')"><span class="icon">💾</span>数据备份</div>
+    <div class="sidebar-item" onclick="scrollToCard('card-board')"><span class="icon">📋</span><span class="label">学习计划</span></div>
+    <div class="sidebar-item" onclick="scrollToCard('card-tasklist')"><span class="icon">📑</span><span class="label">任务列表</span></div>
+    <div class="sidebar-item" onclick="scrollToCard('card-addtask')"><span class="icon">➕</span><span class="label">添加计划</span></div>
+    <div class="sidebar-item" onclick="scrollToCard('card-stats')"><span class="icon">📊</span><span class="label">刷题统计</span></div>
+    <div class="sidebar-item" onclick="scrollToCard('card-exam')"><span class="icon">📝</span><span class="label">模考记录</span></div>
+    <div class="sidebar-item" onclick="scrollToCard('card-backup')"><span class="icon">💾</span><span class="label">数据备份</span></div>
     <div class="sidebar-footer" id="sidebarFooter"></div>
 </div>
 
@@ -336,7 +353,7 @@
             <button onclick="goToday()" style="margin-left:4px;">今</button>
         </div>
         <div id="dayView"></div>
-        <div id="calendarWrap" class="hidden">
+        <div id="calendarWrap" class="hidden" style="overflow:hidden; min-width:0;">
             <div class="calendar-weekdays" id="calWeekdays"></div>
             <div class="calendar-grid" id="calGrid"></div>
         </div>
@@ -385,8 +402,8 @@
             <div class="form-row">
                 <div class="form-group"><label>任务类型</label>
                     <select id="fTaskKind" onchange="onTaskKindChange('fTaskKind','fTotal')">
-                        <option value="quantified">量化（记录题量/对错）</option>
-                        <option value="nonQuantified">非量化（仅打卡）</option>
+                        <option value="quantified">量化</option>
+                        <option value="nonQuantified">非量化</option>
                     </select>
                 </div>
             </div>
@@ -445,8 +462,8 @@
             <div class="form-row">
                 <div class="form-group"><label>任务类型</label>
                     <select id="fSingleTaskKind" onchange="onTaskKindChange('fSingleTaskKind','fSingleTotal')">
-                        <option value="quantified">量化（记录题量/对错）</option>
-                        <option value="nonQuantified">非量化（仅打卡）</option>
+                        <option value="quantified">量化</option>
+                        <option value="nonQuantified">非量化</option>
                     </select>
                 </div>
             </div>
@@ -602,6 +619,7 @@ function generateDatesSkipSunday(startDate, count) {
 
 let currentView='day', currentDate=new Date(), selectedDate=getToday(), editingTaskId=null;
 let filterStatus = '', filterModule = '', filterType = '';
+let subFilterStatus = '';
 
 function isTaskCompleted(task) { return task.subtasks.length > 0 && task.subtasks.every(s => s.done); }
 function getSortedTasks() {
@@ -611,7 +629,17 @@ function getSortedTasks() {
         return b.id - a.id;
     });
 }
-function scrollToCard(id) { document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'}); }
+function scrollToCard(id) {
+    document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+    if (window.innerWidth <= 1024) { toggleSidebar(true); }
+}
+function toggleSidebar(forceCollapse) {
+    const sb = document.getElementById('appSidebar');
+    const toggle = sb.querySelector('.sidebar-toggle');
+    if (forceCollapse === true) { sb.classList.add('collapsed'); toggle.textContent = '▶'; return; }
+    sb.classList.toggle('collapsed');
+    toggle.textContent = sb.classList.contains('collapsed') ? '▶' : '◀';
+}
 
 function renderSidebarCountdowns() {
     const c = document.getElementById('sbCountdown');
@@ -758,7 +786,23 @@ function saveEditTask() {
     if (t.type === 'periodic') {
         const ns = document.getElementById('editStart').value, nc = parseInt(document.getElementById('editCount').value);
         const startIdx = t.startIdx || 1;
-        if (ns) { const old = t.subtasks, nw = [], tl = t.defaultTotal||0; const mode = t.scheduleMode || 'continuous'; const gen = mode === 'weekly' ? (sd,c) => generateDatesByWeekday(sd, t.weekdays||[1], c) : (sd,c) => generateDatesSkipSunday(sd, c); const dates = gen(ns, nc); for (let i=0;i<nc;i++) { const ds = dates[i]; const o = old.find(s=>s.date===ds); nw.push(o?{...o,idx:startIdx+i}:{idx:startIdx+i,date:ds,done:false,total:tl,correct:0,time:0,subType:t.subType||'',kind:t.kind||'quantified'}); } t.subtasks = nw; t.subtaskCount = nc; t.startDate = ns; }
+        if (ns) {
+            const old = t.subtasks, tl = t.defaultTotal||0;
+            const mode = t.scheduleMode || 'continuous';
+            const gen = mode === 'weekly' ? (sd,c) => generateDatesByWeekday(sd, t.weekdays||[1], c) : (sd,c) => generateDatesSkipSunday(sd, c);
+            const dates = gen(ns, nc);
+            const oldSorted = [...old].sort((a,b) => a.idx - b.idx);
+            const nw = [];
+            for (let i = 0; i < nc; i++) {
+                const o = oldSorted[i];
+                if (o) {
+                    nw.push({ ...o, idx: startIdx + i, date: o.done ? o.date : dates[i] });
+                } else {
+                    nw.push({ idx: startIdx + i, date: dates[i], done: false, total: tl, correct: 0, time: 0, subType: t.subType || '', kind: t.kind || 'quantified' });
+                }
+            }
+            t.subtasks = nw; t.subtaskCount = nc; t.startDate = ns;
+        }
     } else { const nd = document.getElementById('editStart').value; if (nd) { let dd = nd; const pd = parseDate(nd); if (pd.getDay() === 0) { pd.setDate(pd.getDate()+1); dd = formatDate(pd); } t.startDate = dd; t.subtasks[0].date = dd; } }
     saveData(); renderAll(); closeEditModal();
 }
@@ -890,6 +934,10 @@ function setFilter(dim, val) {
     else if (dim === 'type') filterType = (filterType === val) ? '' : val;
     renderBoard();
 }
+function setSubFilter(val) {
+    subFilterStatus = (subFilterStatus === val) ? '' : val;
+    renderTaskBlocks();
+}
 function passFilter(t) {
     if (filterStatus === 'done' && !isTaskCompleted(t)) return false;
     if (filterStatus === 'undone' && isTaskCompleted(t)) return false;
@@ -913,6 +961,13 @@ function renderFilterBar(containerId) {
     html += `<span class="filter-chip ${filterType==='periodic'?'active':''}" onclick="setFilter('type','periodic')">周期</span>`;
     html += `<span class="filter-chip ${filterType==='single'?'active':''}" onclick="setFilter('type','single')">单次</span>`;
     html += '</div>';
+    if (containerId === 'taskListFilterBar') {
+        html += '<div class="filter-divider"></div>';
+        html += '<div class="filter-group"><span class="filter-label">子任务</span>';
+        html += `<span class="filter-chip ${subFilterStatus==='undone'?'active':''}" onclick="setSubFilter('undone')">未完成</span>`;
+        html += `<span class="filter-chip ${subFilterStatus==='done'?'active':''}" onclick="setSubFilter('done')">已完成</span>`;
+        html += '</div>';
+    }
     c.innerHTML = html;
 }
 function getSubtasksOnDate(ds) {
@@ -1168,7 +1223,15 @@ function renderTaskBlocks() {
                     <button class="btn-del" onclick="event.stopPropagation();deleteStudyTask(${t.id})">删除</button>
                 </div>
                 <div class="subtask-expand">`;
-            t.subtasks.forEach((s, idx) => {
+            const sortedSubs = [...t.subtasks].map((s, originalIdx) => ({ s, originalIdx }));
+            sortedSubs.sort((a, b) => {
+                if (a.s.done !== b.s.done) return a.s.done ? 1 : -1;
+                return (a.s.date || '').localeCompare(b.s.date || '') || a.s.idx - b.s.idx;
+            });
+            if (subFilterStatus === 'done') { /* 仅看已完成子任务 */ }
+            sortedSubs.forEach(({ s, originalIdx: idx }) => {
+                if (subFilterStatus === 'done' && !s.done) return;
+                if (subFilterStatus === 'undone' && s.done) return;
                 const isEditing = subEditMode && subEditMode.tid === t.id && subEditMode.idx === idx;
                 const sNonQ = (t.kind === 'nonQuantified') || (s.kind === 'nonQuantified');
                 if (isEditing) {
