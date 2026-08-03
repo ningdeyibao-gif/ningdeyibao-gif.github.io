@@ -459,6 +459,7 @@
         .cloud-sync-panel small { color:var(--text-3); font-size:10px; line-height:1.5; }
         .cloud-email-row,.cloud-actions,.cloud-account-row { display:flex; align-items:center; gap:9px; }
         .cloud-email-row input { flex:1; min-width:0; padding:10px 12px; border-radius:13px; }
+        .cloud-login-input { width:100%; padding:10px 12px; border-radius:13px; margin-bottom:9px; }
         .cloud-email-row button { width:auto; min-width:126px; margin:0; }
         .cloud-account-row { justify-content:space-between; margin-bottom:12px; }.cloud-account-row > div { display:flex; flex-direction:column; gap:2px; }.cloud-account-row strong { color:var(--text); font-size:13px; }
         .cloud-account-row button { width:auto; margin:0; padding:7px 13px; }
@@ -466,6 +467,7 @@
         .cloud-status-line { display:flex; align-items:center; gap:7px; margin-top:10px; }
         .cloud-status-line i { width:8px; height:8px; border-radius:50%; background:var(--text-3); box-shadow:0 0 0 3px color-mix(in srgb,var(--text-3) 14%,transparent); }
         .cloud-status-line i.online { background:var(--success); }.cloud-status-line i.syncing { background:var(--accent); animation:cloudPulse 1.5s ease-in-out infinite; }.cloud-status-line i.error { background:var(--danger); }
+        .cloud-otp-tools { display:flex; justify-content:flex-end; gap:12px; margin-top:7px; }.cloud-otp-tools button { border:0!important; background:transparent!important; box-shadow:none!important; color:var(--accent)!important; font-size:11px; padding:3px 0; }
         @keyframes cloudPulse { 50% { opacity:.4; transform:scale(.82); } }
         .bottom-nav { display:none; }
         .time-period-toggle { flex-wrap:wrap; justify-content:center; }
@@ -823,9 +825,9 @@
             <div class="settings-copy"><strong>云端同步</strong><span>使用同一邮箱登录，即可在电脑、iPad 和手机之间同步日程、任务、统计、模考与主题。</span><div class="cloud-status-line"><i id="cloudStatusDot"></i><span id="cloudStatusText">正在初始化云同步…</span></div></div>
             <div class="cloud-sync-panel">
                 <div id="cloudSignedOut">
-                    <label for="cloudEmail">登录邮箱</label>
-                    <div class="cloud-email-row"><input type="email" id="cloudEmail" placeholder="name@example.com" autocomplete="email"><button class="btn-primary" id="cloudLoginBtn" onclick="sendCloudLoginLink()">发送登录链接</button></div>
-                    <small>登录链接会发送到邮箱，点击后自动返回当前网站。</small>
+                    <label for="cloudEmail">登录邮箱</label><input type="email" id="cloudEmail" class="cloud-login-input" placeholder="name@example.com" autocomplete="username">
+                    <label for="cloudPassword">登录密码</label><div class="cloud-email-row"><input type="password" id="cloudPassword" placeholder="请输入密码" autocomplete="current-password" onkeydown="if(event.key==='Enter')signInCloudWithPassword()"><button class="btn-primary" id="cloudLoginBtn" onclick="signInCloudWithPassword()">登录并同步</button></div>
+                    <small>使用同一个 Supabase 账号，即可在所有设备同步；无需跳转邮箱确认。</small>
                 </div>
                 <div id="cloudSignedIn" class="hidden">
                     <div class="cloud-account-row"><div><small>当前账号</small><strong id="cloudUserEmail">—</strong></div><button class="btn-secondary" onclick="signOutCloud()">退出登录</button></div>
@@ -884,6 +886,8 @@ let appData = { exams: [], studyTasks: [], examRecords: [], completedTasks: [] }
 const SUPABASE_URL = 'https://dcictnmmhhrjsomfeues.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_3Qk37-jA-cMhLa8DrprA-w_yBjTNOOp';
 let cloudClient=null, cloudUser=null, cloudReady=false, cloudApplying=false, cloudSaveTimer=null, cloudRevision=0, cloudChannel=null, cloudHandling=false;
+let cloudLocalDirty=false, cloudLastMutationAt=0, cloudPushInFlight=false;
+try { cloudLocalDirty=localStorage.getItem('ning_cloud_dirty')==='1'; } catch(e) {}
 
 function setCloudStatus(text,state='') {
     const label=document.getElementById('cloudStatusText'), dot=document.getElementById('cloudStatusDot');
@@ -895,6 +899,8 @@ function updateCloudAuthUI() {
     if(out)out.classList.toggle('hidden',!!cloudUser); if(inside)inside.classList.toggle('hidden',!cloudUser); if(email)email.textContent=cloudUser?.email||'—';
 }
 function getCloudPayload() { return { appData, theme:document.documentElement.dataset.theme||'white', schemaVersion:1 }; }
+function markCloudDirty() { if(cloudApplying)return;cloudLocalDirty=true;cloudLastMutationAt=Date.now();try{localStorage.setItem('ning_cloud_dirty','1');}catch(e){} }
+function clearCloudDirty() { cloudLocalDirty=false;try{localStorage.removeItem('ning_cloud_dirty');}catch(e){} }
 function applyCloudPayload(payload) {
     if(!payload?.appData)return;
     cloudApplying=true;
@@ -903,26 +909,36 @@ function applyCloudPayload(payload) {
     appData.studyTasks.forEach(t=>{t.subtasks=t.subtasks||[];t.subtasks.forEach(s=>{if(s.done===undefined)s.done=false;if(s.total===undefined)s.total=0;if(s.correct===undefined)s.correct=0;if(s.time===undefined)s.time=0;if(s.subType===undefined)s.subType='';if(s.kind===undefined)s.kind='quantified';});});
     try{localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));}catch(e){}
     if(payload.theme)setTheme(payload.theme);
-    renderAll(); cloudApplying=false;
+    renderAll(); clearCloudDirty(); cloudApplying=false;
 }
 function scheduleCloudSave() {
     if(!cloudReady||!cloudUser||cloudApplying)return;
-    clearTimeout(cloudSaveTimer); cloudSaveTimer=setTimeout(()=>pushCloudData(false),700);
+    clearTimeout(cloudSaveTimer); cloudSaveTimer=setTimeout(()=>{cloudSaveTimer=null;pushCloudData(false);},700);
 }
 async function pushCloudData(manual=false) {
     if(!cloudClient||!cloudUser||cloudApplying)return;
+    if(cloudPushInFlight){scheduleCloudSave();return;}
+    cloudPushInFlight=true;
     setCloudStatus('正在同步…','syncing');
+    const pushStartedAt=Date.now();
     const revision=Date.now();
-    const {error}=await cloudClient.from('user_app_data').upsert({user_id:cloudUser.id,payload:getCloudPayload(),revision,updated_at:new Date().toISOString()},{onConflict:'user_id'});
-    if(error){setCloudStatus('同步失败：'+error.message,'error');return;}
-    cloudRevision=revision; cloudReady=true; setCloudStatus('已同步','online');
+    const payloadSnapshot=JSON.parse(JSON.stringify(getCloudPayload()));
+    const {error}=await cloudClient.from('user_app_data').upsert({user_id:cloudUser.id,payload:payloadSnapshot,revision,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+    if(error){cloudPushInFlight=false;setCloudStatus('同步失败：'+error.message,'error');return;}
+    cloudRevision=revision; cloudReady=true;
+    if(cloudLastMutationAt>pushStartedAt){cloudPushInFlight=false;setCloudStatus('检测到新的本机修改，继续同步…','syncing');scheduleCloudSave();return;}
+    cloudPushInFlight=false;clearCloudDirty(); setCloudStatus('已同步','online');
     const last=document.getElementById('cloudLastSync');if(last)last.textContent='最近同步：'+new Date().toLocaleString('zh-CN',{hour12:false});
 }
 async function pullCloudData(manual=false) {
     if(!cloudClient||!cloudUser)return;
+    if(manual&&cloudLocalDirty&&!confirm('本机有尚未上传的修改。从云端拉取会覆盖这些修改，确定继续吗？'))return;
+    if(!manual&&cloudLocalDirty){setCloudStatus('本机修改等待上传…','syncing');scheduleCloudSave();return;}
+    const pullStartedAt=Date.now();
     setCloudStatus('正在读取云端数据…','syncing');
     const {data,error}=await cloudClient.from('user_app_data').select('payload,revision,updated_at').eq('user_id',cloudUser.id).maybeSingle();
     if(error){setCloudStatus('读取失败：'+error.message,'error');return;}
+    if(cloudLocalDirty&&cloudLastMutationAt>=pullStartedAt){setCloudStatus('已保留本机新修改，等待上传…','syncing');scheduleCloudSave();return;}
     if(data?.payload){cloudRevision=Number(data.revision)||0;applyCloudPayload(data.payload);cloudReady=true;setCloudStatus('已同步','online');const last=document.getElementById('cloudLastSync');if(last)last.textContent='云端更新：'+new Date(data.updated_at).toLocaleString('zh-CN',{hour12:false});}
     else {cloudReady=true;await pushCloudData(false);}
 }
@@ -930,12 +946,12 @@ function subscribeCloudChanges() {
     if(!cloudClient||!cloudUser)return;
     if(cloudChannel)cloudClient.removeChannel(cloudChannel);
     cloudChannel=cloudClient.channel('user-data-'+cloudUser.id).on('postgres_changes',{event:'*',schema:'public',table:'user_app_data',filter:'user_id=eq.'+cloudUser.id},payload=>{
-        const row=payload.new;if(row?.payload&&Number(row.revision)>cloudRevision){cloudRevision=Number(row.revision)||0;applyCloudPayload(row.payload);setCloudStatus('已接收其他设备更新','online');}
+        const row=payload.new;if(row?.payload&&Number(row.revision)>cloudRevision){if(cloudLocalDirty){setCloudStatus('本机修改优先，等待上传…','syncing');scheduleCloudSave();return;}cloudRevision=Number(row.revision)||0;applyCloudPayload(row.payload);setCloudStatus('已接收其他设备更新','online');}
     }).subscribe();
 }
 async function handleCloudSession(user) {
     if(cloudHandling)return; cloudHandling=true; cloudUser=user||null; cloudReady=false; updateCloudAuthUI();
-    if(cloudUser){await pullCloudData(false);subscribeCloudChanges();}else{setCloudStatus('未登录，仅保存在本机','');if(cloudChannel&&cloudClient)cloudClient.removeChannel(cloudChannel);cloudChannel=null;}
+    if(cloudUser){if(cloudLocalDirty){cloudReady=true;await pushCloudData(false);}else await pullCloudData(false);subscribeCloudChanges();}else{setCloudStatus(cloudLocalDirty?'本机有待同步数据，登录后将优先上传':'未登录，仅保存在本机','');if(cloudChannel&&cloudClient)cloudClient.removeChannel(cloudChannel);cloudChannel=null;}
     cloudHandling=false;
 }
 async function initCloudSync() {
@@ -944,15 +960,19 @@ async function initCloudSync() {
     const {data}=await cloudClient.auth.getSession(); await handleCloudSession(data.session?.user||null);
     cloudClient.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_IN'||event==='SIGNED_OUT'||event==='USER_UPDATED')setTimeout(()=>handleCloudSession(session?.user||null),0);});
 }
-async function sendCloudLoginLink() {
+async function signInCloudWithPassword() {
     if(!cloudClient){setCloudStatus('云同步尚未初始化','error');return;}
-    const input=document.getElementById('cloudEmail'),email=(input?.value||'').trim();if(!/^\S+@\S+\.\S+$/.test(email)){alert('请输入有效邮箱');return;}
-    const btn=document.getElementById('cloudLoginBtn');if(btn)btn.disabled=true;setCloudStatus('正在发送登录链接…','syncing');
-    const redirectTo=location.origin+location.pathname;
-    const {error}=await cloudClient.auth.signInWithOtp({email,options:{emailRedirectTo:redirectTo}});
-    if(btn)btn.disabled=false;if(error)setCloudStatus('发送失败：'+error.message,'error');else setCloudStatus('登录链接已发送，请检查邮箱','online');
+    const email=(document.getElementById('cloudEmail')?.value||'').trim();
+    const password=document.getElementById('cloudPassword')?.value||'';
+    if(!/^\S+@\S+\.\S+$/.test(email)){alert('请输入有效邮箱');return;}
+    if(password.length<6){alert('密码至少需要 6 位');return;}
+    const btn=document.getElementById('cloudLoginBtn');if(btn)btn.disabled=true;setCloudStatus('正在登录…','syncing');
+    const {error}=await cloudClient.auth.signInWithPassword({email,password});
+    if(btn)btn.disabled=false;
+    if(error){setCloudStatus(error.message==='Invalid login credentials'?'邮箱或密码不正确':'登录失败：'+error.message,'error');return;}
+    const pwd=document.getElementById('cloudPassword');if(pwd)pwd.value='';setCloudStatus('登录成功，正在同步…','syncing');
 }
-async function signOutCloud(){if(!cloudClient)return;await cloudClient.auth.signOut();cloudUser=null;cloudReady=false;updateCloudAuthUI();setCloudStatus('已退出，数据继续保存在本机','');}
+async function signOutCloud(){if(!cloudClient)return;await cloudClient.auth.signOut();cloudUser=null;cloudReady=false;updateCloudAuthUI();const pwd=document.getElementById('cloudPassword');if(pwd)pwd.value='';setCloudStatus('已退出，数据继续保存在本机','');}
 
 const MODULE_COLORS = { '资料分析':'#6f9fc9','数量关系':'#9a82b4','言语理解与表达':'#d9a067','判断推理':'#78aa83','政治理论':'#c97979','常识':'#c3a34e','公共基础知识':'#bd8792','申论':'#c883a5' };
 const MODULES = Object.keys(MODULE_COLORS);
@@ -966,10 +986,11 @@ const MODULE_SUBTYPES = {
 function normalizeModule(m) { return MODULE_ALIAS[m] || m; }
 function setTheme(theme) {
     const next = ['white','yellow','pink','dark'].includes(theme) ? theme : 'white';
+    const changed=document.documentElement.dataset.theme!==next;
     document.documentElement.dataset.theme = next;
     try { localStorage.setItem('ning_ui_theme_v2', next); } catch(e) {}
     ['White','Yellow','Pink','Dark'].forEach(name => { const btn=document.getElementById('theme'+name); if(btn) btn.classList.toggle('active',next===name.toLowerCase()); });
-    scheduleCloudSave();
+    if(changed){markCloudDirty();scheduleCloudSave();}
 }
 
 const DEFAULT_EXAMS = [{name:'2027国考',date:'2026-12-01'},{name:'2027福建省考',date:'2027-03-13'},{name:'2027福建事业编',date:'2027-04-24'}];
@@ -998,6 +1019,7 @@ function loadData() {
 
 function saveData() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); } catch(e) {}
+    markCloudDirty();
     scheduleCloudSave();
 }
 
