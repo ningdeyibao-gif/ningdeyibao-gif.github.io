@@ -453,6 +453,20 @@
         .settings-backup { align-items:center; }
         .settings-backup-actions { display:grid; grid-template-columns:repeat(3,minmax(120px,1fr)); gap:10px; flex:2; min-width:420px; }
         .settings-backup-actions .btn-primary,.settings-backup-actions .btn-secondary { margin:0; min-width:0; }
+        .cloud-sync-section { align-items:center; }
+        .cloud-sync-panel { flex:2; min-width:420px; padding:16px; border-radius:18px; background:var(--surface-strong); border:1px solid var(--line); box-shadow:inset 0 1px 0 var(--glass-highlight); }
+        .cloud-sync-panel label { display:block; color:var(--text-2); font-size:12px; font-weight:650; margin-bottom:6px; }
+        .cloud-sync-panel small { color:var(--text-3); font-size:10px; line-height:1.5; }
+        .cloud-email-row,.cloud-actions,.cloud-account-row { display:flex; align-items:center; gap:9px; }
+        .cloud-email-row input { flex:1; min-width:0; padding:10px 12px; border-radius:13px; }
+        .cloud-email-row button { width:auto; min-width:126px; margin:0; }
+        .cloud-account-row { justify-content:space-between; margin-bottom:12px; }.cloud-account-row > div { display:flex; flex-direction:column; gap:2px; }.cloud-account-row strong { color:var(--text); font-size:13px; }
+        .cloud-account-row button { width:auto; margin:0; padding:7px 13px; }
+        .cloud-actions button { flex:1; margin:0; }
+        .cloud-status-line { display:flex; align-items:center; gap:7px; margin-top:10px; }
+        .cloud-status-line i { width:8px; height:8px; border-radius:50%; background:var(--text-3); box-shadow:0 0 0 3px color-mix(in srgb,var(--text-3) 14%,transparent); }
+        .cloud-status-line i.online { background:var(--success); }.cloud-status-line i.syncing { background:var(--accent); animation:cloudPulse 1.5s ease-in-out infinite; }.cloud-status-line i.error { background:var(--danger); }
+        @keyframes cloudPulse { 50% { opacity:.4; transform:scale(.82); } }
         .bottom-nav { display:none; }
         .time-period-toggle { flex-wrap:wrap; justify-content:center; }
         :root[data-theme="yellow"] .btn-primary { background:var(--accent); }
@@ -462,7 +476,7 @@
             .study-hero { padding:20px; min-height:135px; border-radius:22px; }
             .hero-copy strong { font-size:18px; }.hero-copy small { max-width:220px; }.hero-art { width:150px; max-width:40%; }
             .theme-options { min-width:100%; grid-template-columns:1fr; }
-            .settings-backup-actions { min-width:100%; grid-template-columns:1fr; }
+            .settings-backup-actions { min-width:100%; grid-template-columns:1fr; }.cloud-sync-panel { min-width:100%; }.cloud-email-row { flex-direction:column; align-items:stretch; }.cloud-email-row button{width:100%;}
             .bottom-nav { position:fixed; display:grid; grid-template-columns:repeat(5,1fr); align-items:end; left:10px; right:10px; bottom:10px; height:70px; padding:8px 8px 6px; background:var(--card-bg); border:1px solid var(--line); border-radius:24px; box-shadow:0 12px 38px rgba(50,50,45,.15); backdrop-filter:blur(24px); z-index:1500; }
             .bottom-nav button { border:0; background:transparent; color:var(--text-3); display:flex; flex-direction:column; align-items:center; gap:2px; font-size:19px; cursor:pointer; }
             .bottom-nav button small { font-size:10px; }.bottom-nav .bottom-main { color:var(--accent); transform:translateY(-12px); }
@@ -805,6 +819,22 @@
             </div>
         </div>
         <div class="settings-divider"></div>
+        <div class="settings-section cloud-sync-section">
+            <div class="settings-copy"><strong>云端同步</strong><span>使用同一邮箱登录，即可在电脑、iPad 和手机之间同步日程、任务、统计、模考与主题。</span><div class="cloud-status-line"><i id="cloudStatusDot"></i><span id="cloudStatusText">正在初始化云同步…</span></div></div>
+            <div class="cloud-sync-panel">
+                <div id="cloudSignedOut">
+                    <label for="cloudEmail">登录邮箱</label>
+                    <div class="cloud-email-row"><input type="email" id="cloudEmail" placeholder="name@example.com" autocomplete="email"><button class="btn-primary" id="cloudLoginBtn" onclick="sendCloudLoginLink()">发送登录链接</button></div>
+                    <small>登录链接会发送到邮箱，点击后自动返回当前网站。</small>
+                </div>
+                <div id="cloudSignedIn" class="hidden">
+                    <div class="cloud-account-row"><div><small>当前账号</small><strong id="cloudUserEmail">—</strong></div><button class="btn-secondary" onclick="signOutCloud()">退出登录</button></div>
+                    <div class="cloud-actions"><button class="btn-secondary" onclick="pullCloudData(true)">从云端拉取</button><button class="btn-primary" onclick="pushCloudData(true)">立即同步</button></div>
+                    <small id="cloudLastSync">尚未同步</small>
+                </div>
+            </div>
+        </div>
+        <div class="settings-divider"></div>
         <div class="settings-section settings-backup">
             <div class="settings-copy"><strong>数据备份</strong><span>导出学习数据用于跨设备迁移，也可随时导入已有备份。</span></div>
             <div class="settings-backup-actions">
@@ -847,9 +877,82 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const STORAGE_KEY = 'ning_workbench_v10';
 let appData = { exams: [], studyTasks: [], examRecords: [], completedTasks: [] };
+const SUPABASE_URL = 'https://dcictnmmhhrjsomfeues.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_3Qk37-jA-cMhLa8DrprA-w_yBjTNOOp';
+let cloudClient=null, cloudUser=null, cloudReady=false, cloudApplying=false, cloudSaveTimer=null, cloudRevision=0, cloudChannel=null, cloudHandling=false;
+
+function setCloudStatus(text,state='') {
+    const label=document.getElementById('cloudStatusText'), dot=document.getElementById('cloudStatusDot');
+    if(label)label.textContent=text;
+    if(dot)dot.className=state;
+}
+function updateCloudAuthUI() {
+    const out=document.getElementById('cloudSignedOut'), inside=document.getElementById('cloudSignedIn'), email=document.getElementById('cloudUserEmail');
+    if(out)out.classList.toggle('hidden',!!cloudUser); if(inside)inside.classList.toggle('hidden',!cloudUser); if(email)email.textContent=cloudUser?.email||'—';
+}
+function getCloudPayload() { return { appData, theme:document.documentElement.dataset.theme||'white', schemaVersion:1 }; }
+function applyCloudPayload(payload) {
+    if(!payload?.appData)return;
+    cloudApplying=true;
+    const incoming=payload.appData;
+    appData.exams=incoming.exams||[]; appData.studyTasks=incoming.studyTasks||[]; appData.examRecords=incoming.examRecords||[]; appData.completedTasks=incoming.completedTasks||[];
+    appData.studyTasks.forEach(t=>{t.subtasks=t.subtasks||[];t.subtasks.forEach(s=>{if(s.done===undefined)s.done=false;if(s.total===undefined)s.total=0;if(s.correct===undefined)s.correct=0;if(s.time===undefined)s.time=0;if(s.subType===undefined)s.subType='';if(s.kind===undefined)s.kind='quantified';});});
+    try{localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));}catch(e){}
+    if(payload.theme)setTheme(payload.theme);
+    renderAll(); cloudApplying=false;
+}
+function scheduleCloudSave() {
+    if(!cloudReady||!cloudUser||cloudApplying)return;
+    clearTimeout(cloudSaveTimer); cloudSaveTimer=setTimeout(()=>pushCloudData(false),700);
+}
+async function pushCloudData(manual=false) {
+    if(!cloudClient||!cloudUser||cloudApplying)return;
+    setCloudStatus('正在同步…','syncing');
+    const revision=Date.now();
+    const {error}=await cloudClient.from('user_app_data').upsert({user_id:cloudUser.id,payload:getCloudPayload(),revision,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+    if(error){setCloudStatus('同步失败：'+error.message,'error');return;}
+    cloudRevision=revision; cloudReady=true; setCloudStatus('已同步','online');
+    const last=document.getElementById('cloudLastSync');if(last)last.textContent='最近同步：'+new Date().toLocaleString('zh-CN',{hour12:false});
+}
+async function pullCloudData(manual=false) {
+    if(!cloudClient||!cloudUser)return;
+    setCloudStatus('正在读取云端数据…','syncing');
+    const {data,error}=await cloudClient.from('user_app_data').select('payload,revision,updated_at').eq('user_id',cloudUser.id).maybeSingle();
+    if(error){setCloudStatus('读取失败：'+error.message,'error');return;}
+    if(data?.payload){cloudRevision=Number(data.revision)||0;applyCloudPayload(data.payload);cloudReady=true;setCloudStatus('已同步','online');const last=document.getElementById('cloudLastSync');if(last)last.textContent='云端更新：'+new Date(data.updated_at).toLocaleString('zh-CN',{hour12:false});}
+    else {cloudReady=true;await pushCloudData(false);}
+}
+function subscribeCloudChanges() {
+    if(!cloudClient||!cloudUser)return;
+    if(cloudChannel)cloudClient.removeChannel(cloudChannel);
+    cloudChannel=cloudClient.channel('user-data-'+cloudUser.id).on('postgres_changes',{event:'*',schema:'public',table:'user_app_data',filter:'user_id=eq.'+cloudUser.id},payload=>{
+        const row=payload.new;if(row?.payload&&Number(row.revision)>cloudRevision){cloudRevision=Number(row.revision)||0;applyCloudPayload(row.payload);setCloudStatus('已接收其他设备更新','online');}
+    }).subscribe();
+}
+async function handleCloudSession(user) {
+    if(cloudHandling)return; cloudHandling=true; cloudUser=user||null; cloudReady=false; updateCloudAuthUI();
+    if(cloudUser){await pullCloudData(false);subscribeCloudChanges();}else{setCloudStatus('未登录，仅保存在本机','');if(cloudChannel&&cloudClient)cloudClient.removeChannel(cloudChannel);cloudChannel=null;}
+    cloudHandling=false;
+}
+async function initCloudSync() {
+    if(!window.supabase?.createClient){setCloudStatus('云同步组件加载失败','error');return;}
+    cloudClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    const {data}=await cloudClient.auth.getSession(); await handleCloudSession(data.session?.user||null);
+    cloudClient.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_IN'||event==='SIGNED_OUT'||event==='USER_UPDATED')setTimeout(()=>handleCloudSession(session?.user||null),0);});
+}
+async function sendCloudLoginLink() {
+    if(!cloudClient){setCloudStatus('云同步尚未初始化','error');return;}
+    const input=document.getElementById('cloudEmail'),email=(input?.value||'').trim();if(!/^\S+@\S+\.\S+$/.test(email)){alert('请输入有效邮箱');return;}
+    const btn=document.getElementById('cloudLoginBtn');if(btn)btn.disabled=true;setCloudStatus('正在发送登录链接…','syncing');
+    const redirectTo=location.origin+location.pathname;
+    const {error}=await cloudClient.auth.signInWithOtp({email,options:{emailRedirectTo:redirectTo}});
+    if(btn)btn.disabled=false;if(error)setCloudStatus('发送失败：'+error.message,'error');else setCloudStatus('登录链接已发送，请检查邮箱','online');
+}
+async function signOutCloud(){if(!cloudClient)return;await cloudClient.auth.signOut();cloudUser=null;cloudReady=false;updateCloudAuthUI();setCloudStatus('已退出，数据继续保存在本机','');}
 
 const MODULE_COLORS = { '资料分析':'#6f9fc9','数量关系':'#9a82b4','言语理解与表达':'#d9a067','判断推理':'#78aa83','政治理论':'#c97979','常识':'#c3a34e','公共基础知识':'#bd8792','申论':'#c883a5' };
 const MODULES = Object.keys(MODULE_COLORS);
@@ -866,6 +969,7 @@ function setTheme(theme) {
     document.documentElement.dataset.theme = next;
     try { localStorage.setItem('ning_ui_theme_v2', next); } catch(e) {}
     ['White','Yellow','Pink','Dark'].forEach(name => { const btn=document.getElementById('theme'+name); if(btn) btn.classList.toggle('active',next===name.toLowerCase()); });
+    scheduleCloudSave();
 }
 
 const DEFAULT_EXAMS = [{name:'2027国考',date:'2026-12-01'},{name:'2027福建省考',date:'2027-03-13'},{name:'2027福建事业编',date:'2027-04-24'}];
@@ -894,6 +998,7 @@ function loadData() {
 
 function saveData() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); } catch(e) {}
+    scheduleCloudSave();
 }
 
 function getToday() { const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -2185,6 +2290,9 @@ document.getElementById('fSingleDate').value = getToday();
 document.getElementById('examDateInput').value = getToday();
 renderAll();
 initBottomNavigation();
+initCloudSync();
+window.addEventListener('online',()=>{if(cloudUser)pullCloudData(false);});
+window.addEventListener('focus',()=>{if(cloudUser&&cloudReady)pullCloudData(false);});
 setInterval(() => { renderDate(); }, 60000);
 </script>
 </body>
