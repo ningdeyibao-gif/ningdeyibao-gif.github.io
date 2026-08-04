@@ -157,6 +157,37 @@
         .today-section { margin-top:16px; border-top:1px dashed #f0dbdb; padding-top:12px; }
         .today-section-header { font-weight:600; color:#b47a84; font-size:15px; margin-bottom:10px; }
 
+        /* 手机端今日任务：模块、名称、录入项按单列自然换行，避免窄屏多列挤压 */
+        @media (max-width:600px) {
+            .today-section .day-group-content { display:block; }
+            .today-section .day-group-label {
+                width:max-content; min-width:0; margin:0 0 7px; padding:4px 9px;
+                justify-content:flex-start;
+            }
+            .today-section .day-group-tasks { width:100%; padding-left:0; }
+            .today-section .day-view-item {
+                display:grid; grid-template-columns:24px minmax(0,1fr); gap:8px 10px;
+                align-items:start; padding:11px 10px;
+            }
+            .today-section .day-view-item .dv-check { grid-column:1; grid-row:1; }
+            .today-section .day-view-item .dv-info {
+                grid-column:2; grid-row:1; width:100%; min-width:0;
+            }
+            .today-section .day-view-item .dv-name {
+                white-space:normal; overflow-wrap:anywhere; word-break:break-word; line-height:1.45;
+            }
+            .today-section .day-view-item .dv-meta {
+                white-space:normal; overflow-wrap:anywhere; line-height:1.4;
+            }
+            .today-section .day-view-item .dv-stats,
+            .today-section .day-view-item > div:last-child {
+                grid-column:1 / -1; width:100%; min-width:0;
+            }
+            .today-section .day-view-item .dv-stats {
+                display:flex; flex-wrap:wrap; justify-content:flex-start; gap:6px;
+            }
+        }
+
         .task-block { background:#fcf8f5; border-radius:14px; padding:12px; margin-bottom:10px; border:1px solid #f0e0e0; }
         .task-block.completed { opacity:0.5; }
         .task-block-header { display:flex; align-items:center; gap:6px; flex-wrap:wrap; cursor:pointer; }
@@ -1270,7 +1301,17 @@ function saveEditTask() {
     } else { const nd = document.getElementById('editStart').value; if (nd) { let dd = nd; const pd = parseDate(nd); if (pd.getDay() === 0) { pd.setDate(pd.getDate()+1); dd = formatDate(pd); } t.startDate = dd; t.subtasks[0].date = dd; } }
     saveData(); renderAll(); closeEditModal();
 }
-function deleteStudyTask(id) { if(!confirm('确定删除？'))return; appData.studyTasks = appData.studyTasks.filter(t => t.id !== id); saveData(); renderAll(); }
+function deleteStudyTask(id) {
+    if(!confirm('确定删除？')) return;
+    /* 删除任务时同步剔除该任务生成的完成记录，保证题量和用时统计立即准确。 */
+    appData.studyTasks = appData.studyTasks.filter(t => t.id !== id);
+    appData.completedTasks = (appData.completedTasks || []).filter(c => c.taskId !== id);
+    expandedStatsTasks.forEach(key => {
+        if (key.endsWith(`|${id}`)) expandedStatsTasks.delete(key);
+    });
+    saveData();
+    renderAll();
+}
 
 function getTaskDatesGenerator(t) {
     const mode = t.scheduleMode || 'continuous';
