@@ -77,6 +77,9 @@
         .card-backup { border-color:#e8dce0; }
 
         .form-row { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
+        .add-form-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+        .add-form-row.two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        .add-form-row .form-group { min-width:0; }
         .form-group { flex:1 1 150px; display:flex; flex-direction:column; gap:4px; }
         .form-group label { font-size:13px; font-weight:500; color:#b47a84; }
         .form-group input, .form-group select { padding:8px 12px; border:1px solid #f0d6da; border-radius:12px; background:#fcf8f5; font-size:14px; color:#3d2c2c; -webkit-appearance:none; appearance:none; }
@@ -103,7 +106,7 @@
         .wd-chip { padding:6px 12px; border-radius:14px; font-size:13px; font-weight:500; cursor:pointer; border:1px solid #f0d6da; background:#fcf8f5; color:#b47a84; user-select:none; -webkit-user-select:none; transition:0.15s; }
         .wd-chip:active { transform:scale(0.96); }
         .wd-chip.active { background:#b47a84; color:#fff; border-color:#b47a84; }
-        .filter-bar { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:10px; }
+        .filter-bar { display:flex; flex-wrap:nowrap; gap:6px; align-items:center; margin-bottom:10px; overflow-x:auto; padding-bottom:2px; }
         .filter-group { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
         .filter-label { font-size:12px; font-weight:600; color:#bda0a6; white-space:nowrap; }
         .filter-chip { padding:4px 10px; border-radius:16px; font-size:12px; font-weight:500; cursor:pointer; border:1px solid #f0d6da; background:#fcf8f5; color:#b47a84; transition:0.15s; white-space:nowrap; }
@@ -115,6 +118,9 @@
         .triangle-filter::after { content:''; position:absolute; right:11px; width:0; height:0; border-left:4px solid transparent; border-right:4px solid transparent; border-top:5px solid var(--text-3); pointer-events:none; }
         .triangle-filter select { width:100%; appearance:none; -webkit-appearance:none; border:1px solid var(--line); background:var(--surface-strong); color:var(--text-2); border-radius:13px; padding:7px 28px 7px 10px; font-size:12px; font-weight:600; cursor:pointer; outline:none; }
         .triangle-filter select:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+        .title-icon { width:20px; height:20px; flex:0 0 auto; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+        .section-heading { display:inline-flex; align-items:center; gap:7px; }
+        .section-heading .title-icon { width:17px; height:17px; }
 
         .calendar-weekdays { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:3px; margin-bottom:4px; }
         .calendar-weekdays div { text-align:center; font-size:11px; color:#bda0a6; font-weight:600; padding:4px 0; }
@@ -137,7 +143,7 @@
         .day-group-content { display:flex; align-items:stretch; gap:0; }
         .day-group-label { flex:0 0 auto; min-width:60px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; padding:4px 8px; border-radius:8px; }
         .day-group-tasks { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; padding-left:8px; }
-        .day-view-item { background:#fcf8f5; border-radius:12px; padding:10px 12px; border-left:4px solid #b47a84; display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:0; }
+        .day-view-item { background:#fcf8f5; border-radius:12px; padding:10px 12px; border-left:4px solid #b47a84; display:flex; align-items:center; gap:8px; flex-wrap:nowrap; margin-bottom:0; overflow-x:auto; }
         .day-view-item.done { border-left-color:#a8d5a2; background:#f4fcf4; opacity:0.7; }
         .day-view-item.done .dv-name { color:#bbb; text-decoration:line-through; }
         .day-view-item.done .dv-meta { color:#bbb; }
@@ -147,7 +153,7 @@
         .day-view-item .dv-name { font-size:14px; font-weight:500; color:#3d2c2c; }
         .day-view-item .dv-meta { font-size:11px; color:#bda0a6; margin-top:2px; }
         .day-view-item .dv-stats { display:flex; align-items:center; gap:4px; font-size:11px; flex-wrap:wrap; }
-        .day-view-item .dv-stats input { width:36px; padding:2px 3px; border:1px solid #f0d6da; border-radius:6px; font-size:11px; background:#fff; text-align:center; }
+        .day-view-item .dv-stats input,.day-view-item .dv-title-row input { width:36px; padding:2px 3px; border:1px solid #f0d6da; border-radius:6px; font-size:11px; background:#fff; text-align:center; }
         .day-view-item .dv-stats .stat-text { font-size:12px; font-weight:600; color:#3d2c2c; }
         .day-view-item.done .dv-stats .stat-text { color:#bbb; }
         .day-view-item .dv-rate { font-size:11px; font-weight:700; color:#c84a4a; background:#fdecec; padding:2px 8px; border-radius:10px; }
@@ -179,8 +185,7 @@
             .today-section .day-view-item .dv-meta {
                 white-space:normal; overflow-wrap:anywhere; line-height:1.4;
             }
-            .today-section .day-view-item .dv-stats,
-            .today-section .day-view-item > div:last-child {
+            .today-section .day-view-item .dv-stats {
                 grid-column:1 / -1; width:100%; min-width:0;
             }
             .today-section .day-view-item .dv-stats {
@@ -196,6 +201,10 @@
         .task-block-header .tag-type { background:#e6f3fa; padding:2px 8px; border-radius:20px; font-size:11px; color:#6ab7d6; font-weight:600; white-space:nowrap; }
         .task-block-header .tag-done { background:#d4edda; padding:2px 8px; border-radius:20px; font-size:11px; color:#28a745; font-weight:600; white-space:nowrap; }
         .task-block-header strong { font-size:15px; color:#3d2c2c; }
+        .task-block-header { flex-wrap:nowrap; }
+        .task-block-header strong { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .task-header-summary { margin-left:auto; display:flex; align-items:center; justify-content:flex-end; gap:8px; color:var(--text-3); font-size:11px; white-space:nowrap; }
+        .task-block-header .task-header-summary + .toggle-icon { margin-left:2px; }
         .task-block.completed .task-block-header strong { color:#bbb; text-decoration:line-through; }
         .task-block-header .toggle-icon { margin-left:auto; font-size:14px; color:#b47a84; transition:transform 0.2s; }
         .task-block.expanded .toggle-icon { transform:rotate(90deg); }
@@ -210,6 +219,8 @@
         .task-block.expanded .subtask-expand { display:block; }
         .sub-row { display:flex; align-items:center; padding:8px 0; border-bottom:1px solid #f7ecec; gap:10px; flex-wrap:wrap; }
         .sub-row .sr-num { width:24px; height:24px; border-radius:50%; background:#f5d0d8; color:#7a4b55; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .sub-row .dv-check { width:22px; height:22px; border-radius:50%; border:2px solid var(--line-strong,#e8c8c8); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:0 0 auto; background:var(--surface-strong,#fff); }
+        .sub-row .dv-check.done { background:#a8d5a2; border-color:#a8d5a2; }
         .sub-row.done .sr-num { background:#a8d5a2; color:#fff; }
         .sub-row .sr-info { flex:1; min-width:0; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
         .sub-row .sr-date { font-size:13px; color:#3d2c2c; font-weight:500; }
@@ -217,6 +228,14 @@
         .sub-row .sr-stats { display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:12px; }
         .sub-row .sr-stats .stat-item { white-space:nowrap; }
         .sub-row .sr-stats .rate { font-size:12px; font-weight:700; color:#c84a4a; background:#fdecec; padding:2px 8px; border-radius:10px; }
+        .sub-row .sr-stats .dv-time { font-size:11px; color:#6ab7d6; background:#e6f3fa; padding:2px 8px; border-radius:10px; font-weight:600; }
+        .task-expanded-actions { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+        .task-expanded-actions button { padding:5px 11px; border-radius:12px; font-size:12px; font-weight:650; }
+        .sub-row.editing { display:flex; flex-wrap:nowrap; align-items:center; overflow-x:auto; gap:7px; }
+        .sub-row.editing .sr-edit-form { flex:1 0 auto; min-width:max-content; flex-wrap:nowrap; }
+        .sub-row.editing .sr-actions { width:auto; flex:0 0 auto; justify-content:flex-end; align-items:center; flex-wrap:nowrap; }
+        .sub-row.editing .sr-actions button { flex:0 0 auto; width:32px; height:30px; padding:0!important; display:inline-flex; align-items:center; justify-content:center; border-radius:9px!important; }
+        .sub-row.editing .sr-actions svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
         .sub-row .sr-actions { display:flex; gap:4px; }
         .sub-row .sr-actions button { background:none; border:none; font-size:16px; cursor:pointer; color:#b47a84; }
         .sub-row.editing { background:#fff; border-radius:10px; padding:8px; }
@@ -224,7 +243,7 @@
         .se-input { padding:4px 6px; border:1px solid #f0d6da; border-radius:8px; font-size:12px; }
         .se-input.se-small { width:55px; text-align:center; }
         .se-input.se-subtype { min-width:90px; }
-        .se-save { color:#28a745 !important; }
+        .se-save { color:var(--success,#28a745)!important; }
         .stats-sub-row { padding:6px 10px 6px 28px; font-size:12px; color:#7a4b55; display:flex; gap:12px; flex-wrap:wrap; border-bottom:1px solid #f7ecec; }
         .stats-sub-row .ss-name { font-weight:600; color:#b47a84; min-width:70px; }
         .stats-module-row.expandable { cursor:pointer; }
@@ -467,6 +486,8 @@
         .settings-section { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; flex-wrap:wrap; }
         .settings-copy { display:flex; flex-direction:column; gap:5px; min-width:200px; flex:1; }
         .settings-copy strong { color:var(--text); font-size:15px; }
+        .settings-copy > strong { display:flex; align-items:center; gap:7px; }
+        .settings-copy > strong .title-icon { width:17px; height:17px; }
         .settings-copy span { color:var(--text-3); font-size:12px; line-height:1.6; }
         .theme-options { display:grid; grid-template-columns:repeat(2,minmax(150px,1fr)); gap:10px; flex:2; min-width:320px; }
         .theme-option { position:relative; border:1px solid var(--line); background:var(--surface-strong); border-radius:18px; padding:10px; cursor:pointer; display:grid; grid-template-columns:52px 1fr; grid-template-rows:auto auto; text-align:left; column-gap:10px; align-items:center; color:var(--text); }
@@ -505,6 +526,8 @@
         :root[data-theme="yellow"] .btn-primary { background:var(--accent); }
         @media (max-width:1024px) { .theme-switcher { width:100%; max-width:260px; margin:0 auto 8px; } }
         @media (max-width:720px) {
+            .add-form-row { grid-template-columns:repeat(3,minmax(132px,1fr)); overflow-x:auto; padding-bottom:2px; }
+            .add-form-row.two { grid-template-columns:repeat(2,minmax(160px,1fr)); }
             .main { padding-bottom:105px; }
             .study-hero { padding:20px; min-height:135px; border-radius:22px; }
             .hero-copy strong { font-size:18px; }.hero-copy small { max-width:220px; }.hero-art { width:150px; max-width:40%; }
@@ -631,11 +654,12 @@
         @media (max-width:520px) { .study-hero { grid-template-columns:1fr; gap:20px; padding:22px; }.hero-brand h1{font-size:28px}.countdown-panel .sb-countdown-item{grid-template-columns:1fr auto}.countdown-panel .exam-date{display:none}.countdown-manager-row{grid-template-columns:1fr 130px 32px} }
         @media (max-width:480px) { .countdown-manager-row { grid-template-columns:1fr 32px; }.countdown-manager-row input[type="date"]{grid-column:1/2}.countdown-manager-row button{grid-column:2;grid-row:1/3} }
         /* 双列任务布局与编辑模式 */
-        #dayView,.today-module-grid,#taskBlockList { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; align-items:start; }
+        #dayView,.today-module-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; align-items:start; }
+        #taskBlockList { display:grid; grid-template-columns:minmax(0,1fr); gap:12px; align-items:start; }
         #dayView .day-view-empty,#taskBlockList .day-view-empty { grid-column:1/-1; }
         .day-group { min-width:0; margin-bottom:0; }
         .task-block { min-width:0; margin-bottom:0; }
-        #taskBlockList.module-group-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        #taskBlockList.module-group-grid { grid-template-columns:minmax(0,1fr); }
         .task-module-group { display:grid; grid-template-columns:68px minmax(0,1fr); min-width:0; gap:9px; padding:10px; border:1px solid var(--line); border-radius:18px; background:var(--surface); }
         .task-module-label { display:flex; align-items:center; justify-content:center; min-height:82px; padding:6px; border-radius:12px; font-size:12px; font-weight:700; text-align:center; }
         .task-module-content { display:flex; flex-direction:column; min-width:0; gap:8px; }
@@ -646,6 +670,27 @@
         .edit-mode-toggle.active { color:var(--accent)!important; background:var(--accent-soft)!important; }
         .schedule-move-actions { display:flex; gap:5px; align-items:center; flex-wrap:wrap; }
         .schedule-move-actions button { width:34px!important; height:30px!important; padding:0!important; display:inline-flex; align-items:center; justify-content:center; font-size:13px!important; border-radius:9px!important; }
+        .schedule-move-actions button.item-edit { width:auto!important; padding:0 10px!important; font-size:12px!important; }
+        .dv-title-row { display:flex; align-items:center; justify-content:flex-end; gap:6px; min-width:0; white-space:nowrap; }
+        .dv-title-row .dv-name { flex:1; min-width:0; }
+        .dv-title-row .stat-text { font-size:12px; font-weight:600; color:var(--text); }
+        .dv-title-row .schedule-move-actions { flex-wrap:nowrap; }
+        .schedule-item-edit { flex:0 0 auto; min-height:28px; padding:4px 10px!important; border-radius:10px!important; font-size:12px!important; }
+        .icon-edit-done { width:32px!important; height:30px!important; min-height:30px!important; padding:0!important; display:inline-flex!important; align-items:center; justify-content:center; border-radius:9px!important; color:var(--success,#28a745)!important; }
+        .icon-edit-done svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
+        .sub-row.editing .se-save svg { width:16px; height:16px; stroke-width:1.9; }
+        .schedule-move-actions svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
+        .day-view-item .dv-stats .schedule-move-actions { margin-left:auto; flex-wrap:nowrap; }
+        #dayView,.today-module-grid { display:flex; gap:12px; align-items:flex-start; }
+        .schedule-column { flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:12px; }
+        #dayView .day-group,.today-module-grid .day-group { display:block; width:100%; margin:0; padding:10px; border:1px solid var(--line); border-radius:18px; background:var(--surface); }
+        #dayView .day-group-content,.today-module-grid .day-group-content { display:grid; grid-template-columns:64px minmax(0,1fr); align-items:stretch; gap:9px; }
+        #dayView .day-group-label,.today-module-grid .day-group-label { min-width:0; padding:6px; display:flex; align-items:center; justify-content:center; border-radius:12px; text-align:center; }
+        #dayView .day-group-tasks,.today-module-grid .day-group-tasks { padding-left:0; min-width:0; }
+        #dayView .day-view-item,.today-module-grid .day-view-item { border:1px solid var(--line)!important; border-radius:14px; background:var(--surface-strong)!important; box-shadow:inset 0 1px 0 var(--glass-highlight); }
+        #dayView .day-view-item.done,.today-module-grid .day-view-item.done { background:var(--surface-strong)!important; opacity:.5; }
+        .day-view-item .dv-check.done::after,.sub-row .dv-check.done::after { content:''; width:9px; height:5px; border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg) translateY(-1px); }
+        @media (max-width:720px) { #dayView,.today-module-grid { flex-direction:column; } .schedule-column { display:contents; } #dayView .day-group,.today-module-grid .day-group { order:var(--schedule-order); } #dayView .day-group-content,.today-module-grid .day-group-content { grid-template-columns:54px minmax(0,1fr); } }
         .day-view-item .dv-name { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .day-view-item .dv-stats { flex-basis:100%; }
         @media (max-width:720px) {
@@ -668,7 +713,7 @@
 
     <!-- ① 计划看板 -->
     <div class="card card-board" id="card-board">
-        <div class="card-title">日程 <span class="sub" id="boardDate"></span> <button id="scheduleEditToggle" class="edit-mode-toggle" onclick="toggleScheduleEditMode()" title="切换日任务编辑模式">编辑</button></div>
+        <div class="card-title"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M8 3.5v4M16 3.5v4M3.5 10h17"/></svg>日程 <span class="sub" id="boardDate"></span></div>
         <div class="board-toolbar">
             <div class="view-toggle">
                 <button id="btnDayView" class="active" onclick="switchView('day')">日视图</button>
@@ -697,31 +742,21 @@
 
     <!-- ② 任务列表 -->
     <div class="card card-tasklist" id="card-tasklist">
-        <div class="card-title">任务 <span class="sub">点击展开详细任务</span></div>
+        <div class="card-title"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg>任务 <span class="sub">点击展开详细任务</span></div>
         <div class="filter-bar" id="taskListFilterBar"></div>
-        <div class="task-list-toolbar">
-            <label style="font-size:12px;color:#7a4b55;">排序方式
-                <select id="taskSortMode" onchange="setTaskSortMode(this.value)">
-                    <option value="added">按添加时间</option>
-                    <option value="module">按固定模块顺序</option>
-                </select>
-            </label>
-            <button class="edit-mode-toggle" id="taskEditToggle" onclick="toggleTaskEditMode()">编辑</button>
-            <button class="task-list-toggle" id="taskListToggle" onclick="toggleTaskListExpanded()">展开全部</button>
-        </div>
         <div id="taskBlockList"></div>
     </div>
 
     <!-- ③ 添加计划 -->
     <div class="card card-addtask" id="card-addtask">
-        <div class="card-title">添加</div>
+        <div class="card-title"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>添加</div>
         <div class="tab-bar">
             <button id="tabPeriodic" class="active" onclick="switchTaskTab('periodic')">周期任务</button>
             <button id="tabSingle" onclick="switchTaskTab('single')">单次任务</button>
             <button id="tabExam" onclick="switchTaskTab('exam')">模考记录</button>
         </div>
         <div class="tab-panel active" id="panelPeriodic">
-            <div class="form-row">
+            <div class="form-row add-form-row">
                 <div class="form-group"><label>所属模块</label>
                     <select id="fModule" onchange="onModuleChange('fModule','fSubType','fSubTypeRow')">
                         <option value="资料分析">资料分析</option>
@@ -735,13 +770,6 @@
                     </select>
                 </div>
                 <div class="form-group"><label>任务名称</label><input type="text" id="fName" placeholder="如 600题精讲"></div>
-            </div>
-            <div class="form-row hidden" id="fSubTypeRow">
-                <div class="form-group"><label>细分题型</label>
-                    <select id="fSubType"></select>
-                </div>
-            </div>
-            <div class="form-row">
                 <div class="form-group"><label>任务类型</label>
                     <select id="fTaskKind" onchange="onTaskKindChange('fTaskKind','fTotal')">
                         <option value="quantified">量化</option>
@@ -749,20 +777,21 @@
                     </select>
                 </div>
             </div>
-            <div class="form-row" id="fQuantRow">
+            <div class="form-row hidden" id="fSubTypeRow"><div class="form-group"><label>细分题型</label><select id="fSubType"></select></div></div>
+            <div class="form-row add-form-row two" id="fQuantRow">
                 <div class="form-group"><label>排期模式</label>
                     <select id="fScheduleMode" onchange="onScheduleModeChange()">
                         <option value="continuous">连续日期（跳过周日）</option>
                         <option value="weekly">按周星期自定义</option>
                     </select>
                 </div>
-                <div class="form-group"><label id="fTotalLabel">每项总题数</label><input type="number" id="fTotal" min="0" value="20"></div>
                 <div class="form-group"><label>起始日期</label><input type="date" id="fStart"></div>
             </div>
-            <div class="form-row" id="fCountRow">
-                <div class="form-group"><label>子任务数量</label><input type="number" id="fCount" min="1" max="365" value="30"></div>
+            <div class="form-row add-form-row" id="fCountRow">
+                <div class="form-group"><label id="fTotalLabel">每项总题数</label><input type="number" id="fTotal" min="0" value="20"></div>
+                <div class="form-group"><label>此任务数量</label><input type="number" id="fCount" min="1" max="365" value="30"></div>
+                <div class="form-group"><label>每次完成任务数</label><input type="number" id="fDailyCount" min="1" max="20" value="1"></div>
             </div>
-            <div class="form-row"><div class="form-group"><label>每日完成子任务数</label><input type="number" id="fDailyCount" min="1" max="20" value="1"></div></div>
             <div class="form-row hidden" id="fWeekdayRow">
                 <div class="form-group" style="flex:1 1 100%;"><label>每周任务日（自由勾选）</label>
                     <div class="weekday-selector" id="weekdaySelector">
@@ -776,12 +805,11 @@
                     </div>
                     <input type="hidden" id="selectedWeekdays" value="">
                 </div>
-                <div class="form-group"><label>任务数量</label><input type="number" id="fWeekCount" min="1" max="365" value="10"></div>
             </div>
             <button class="btn-primary" onclick="addStudyTask()">生成周期任务</button>
         </div>
         <div class="tab-panel" id="panelSingle">
-            <div class="form-row">
+            <div class="form-row add-form-row">
                 <div class="form-group"><label>所属模块</label>
                     <select id="fSingleModule" onchange="onModuleChange('fSingleModule','fSingleSubType','fSingleSubTypeRow')">
                         <option value="资料分析">资料分析</option>
@@ -795,13 +823,6 @@
                     </select>
                 </div>
                 <div class="form-group"><label>任务名称</label><input type="text" id="fSingleName" placeholder="如 模考卷1"></div>
-            </div>
-            <div class="form-row hidden" id="fSingleSubTypeRow">
-                <div class="form-group"><label>细分题型</label>
-                    <select id="fSingleSubType"></select>
-                </div>
-            </div>
-            <div class="form-row">
                 <div class="form-group"><label>任务类型</label>
                     <select id="fSingleTaskKind" onchange="onTaskKindChange('fSingleTaskKind','fSingleTotal')">
                         <option value="quantified">量化</option>
@@ -809,7 +830,8 @@
                     </select>
                 </div>
             </div>
-            <div class="form-row" id="fSingleQuantRow">
+            <div class="form-row hidden" id="fSingleSubTypeRow"><div class="form-group"><label>细分题型</label><select id="fSingleSubType"></select></div></div>
+            <div class="form-row add-form-row two" id="fSingleQuantRow">
                 <div class="form-group"><label>任务日期</label><input type="date" id="fSingleDate"></div>
                 <div class="form-group"><label id="fSingleTotalLabel">总题数</label><input type="number" id="fSingleTotal" min="0" value="20"></div>
             </div>
@@ -829,9 +851,9 @@
 
     <!-- ④ 刷题统计 -->
     <div class="card card-stats" id="card-stats">
-        <div class="card-title">统计 <span class="sub" id="statsPeriod"></span></div>
+        <div class="card-title"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V11M12 19V5M19 19v-8M3 20.5h18"/></svg>统计 <span class="sub" id="statsPeriod"></span></div>
         <div class="time-card">
-            <div class="time-card-head"><strong style="color:var(--text-2);">用时统计</strong>
+            <div class="time-card-head"><strong class="section-heading" style="color:var(--text-2);"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>用时统计</strong>
                 <div class="view-toggle time-period-toggle">
                     <button id="btnTimeDay" class="active" onclick="setTimeStatsPeriod('day')">本日</button>
                     <button id="btnTimeWeek" onclick="setTimeStatsPeriod('week')">本周</button>
@@ -844,7 +866,7 @@
             <div id="timeStatsChart"></div>
         </div>
         <div class="time-card practice-stats-card">
-            <div class="time-card-head"><strong style="color:var(--text-2);">刷题统计</strong>
+            <div class="time-card-head"><strong class="section-heading" style="color:var(--text-2);"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/><path d="M3 7h2M3 12h2M3 17h2"/></svg>刷题统计</strong>
                 <div class="view-toggle time-period-toggle">
                     <button id="btnStatsDay" class="active" onclick="setStatsPeriod('day')">本日</button>
                     <button id="btnStatsWeek" onclick="setStatsPeriod('week')">本周</button>
@@ -852,11 +874,6 @@
                     <button id="btnStatsAll" onclick="setStatsPeriod('all')">全部</button>
                     <button id="btnStatsCustom" onclick="setStatsPeriod('custom')">自定义</button>
                 </div>
-            </div>
-            <div class="view-toggle time-period-toggle" style="margin-bottom:10px;">
-                <button id="btnStatsTypeSchedule" class="active" onclick="setStatsTaskType('schedule')">日程任务</button>
-                <button id="btnStatsTypePeriodic" onclick="setStatsTaskType('periodic')">周期任务</button>
-                <button id="btnStatsTypeSingle" onclick="setStatsTaskType('single')">单次任务</button>
             </div>
             <div class="stats-custom-range hidden" id="statsCustomRange" style="display:flex; gap:6px; align-items:center; margin-bottom:10px; flex-wrap:wrap;">
                 <input type="date" id="statsDateStart" style="padding:4px 6px; border:1px solid #f0d6da; border-radius:8px; font-size:12px;" onchange="applyCustomRange()">
@@ -866,15 +883,15 @@
             <div id="statsChart"></div><div id="statsList"></div>
         </div>
         <div class="time-card exam-stats-card" id="card-exam">
-            <div class="time-card-head"><strong style="color:var(--text-2);">模考统计</strong><small style="color:var(--text-3);">点击记录查看详情</small></div>
+            <div class="time-card-head"><strong class="section-heading" style="color:var(--text-2);"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/><path d="M16 16l2 2 3-4"/></svg>模考统计</strong><small style="color:var(--text-3);">点击记录查看详情</small></div>
             <div id="examTrend"></div><div class="exam-filter-chips" id="examFilterChips"></div><div id="examList"></div>
         </div>
     </div>
 
     <div class="card card-settings" id="card-settings">
-        <div class="card-title">设置 <span class="sub">个性化你的学习空间</span></div>
+        <div class="card-title"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6l-.3-2.5h-4L10.4 6A8 8 0 0 0 9 7.1l-2.4-1-2 3.4L6.5 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1A8 8 0 0 0 10.4 18l.3 2.5h4L15 18a8 8 0 0 0 1.4-1.1l2.4 1 2-3.4-2-1.5c.1-.3.2-.7.2-1Z"/></svg>设置 <span class="sub">个性化你的学习空间</span></div>
         <div class="settings-section">
-            <div class="settings-copy"><strong>界面主题</strong><span>选择更适合当下心情的页面氛围，设置会自动保存。</span></div>
+            <div class="settings-copy"><strong><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1.7 1-2.7-.8-.8-.2-2.3 1-2.3h2a5 5 0 0 0 5-5c0-4.4-4-8-9-8Z"/><circle cx="7.5" cy="10" r=".8"/><circle cx="10" cy="6.8" r=".8"/><circle cx="15" cy="7.5" r=".8"/></svg>界面主题</strong><span>选择更适合当下心情的页面氛围，设置会自动保存。</span></div>
             <div class="theme-options" aria-label="主题设置">
                 <button id="themeWhite" class="theme-option" onclick="setTheme('white')"><span class="theme-preview white"><i></i><i></i><i></i></span><strong>纯白</strong><small>浅灰玻璃 · 淡蓝高亮</small><span class="theme-check">✓</span></button>
                 <button id="themeYellow" class="theme-option" onclick="setTheme('yellow')"><span class="theme-preview natural"><i></i><i></i><i></i></span><strong>柔黄</strong><small>自然米白 · 温暖轻盈</small><span class="theme-check">✓</span></button>
@@ -884,7 +901,7 @@
         </div>
         <div class="settings-divider"></div>
         <div class="settings-section cloud-sync-section">
-            <div class="settings-copy"><strong>云端同步</strong><span>使用同一邮箱登录，即可在电脑、iPad 和手机之间同步日程、任务、统计、模考与主题。</span><div class="cloud-status-line"><i id="cloudStatusDot"></i><span id="cloudStatusText">正在初始化云同步…</span></div></div>
+            <div class="settings-copy"><strong><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .6-8A6 6 0 0 0 6.2 8.2 5 5 0 0 0 7 18Z"/><path d="M9 13l3-3 3 3M12 10v7"/></svg>云端同步</strong><span>使用同一邮箱登录，即可在电脑、iPad 和手机之间同步日程、任务、统计、模考与主题。</span><div class="cloud-status-line"><i id="cloudStatusDot"></i><span id="cloudStatusText">正在初始化云同步…</span></div></div>
             <div class="cloud-sync-panel">
                 <div id="cloudSignedOut">
                     <label for="cloudEmail">登录邮箱</label><input type="email" id="cloudEmail" class="cloud-login-input" placeholder="name@example.com" autocomplete="username">
@@ -900,7 +917,7 @@
         </div>
         <div class="settings-divider"></div>
         <div class="settings-section settings-backup">
-            <div class="settings-copy"><strong>数据备份</strong><span>导出学习数据用于跨设备迁移，也可随时导入已有备份。</span></div>
+            <div class="settings-copy"><strong><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 20v-6h8v6"/></svg>数据备份</strong><span>导出学习数据用于跨设备迁移，也可随时导入已有备份。</span></div>
             <div class="settings-backup-actions">
                     <button class="btn-primary" onclick="exportBackup()">导出备份</button>
                     <button class="btn-secondary" onclick="document.getElementById('importBackupFile').click()">导入备份</button>
@@ -935,6 +952,7 @@
         <div class="form-group" id="editStartGroup"><label>起始日期</label><input type="date" id="editStart"></div>
         <div class="form-group" id="editCountGroup"><label>子任务数量</label><input type="number" id="editCount" min="1"></div>
         <div class="modal-actions">
+            <button class="btn-del" onclick="deleteEditingTask()">删除任务</button>
             <button class="btn-cancel" onclick="closeEditModal()">取消</button>
             <button class="btn-save" onclick="saveEditTask()">保存</button>
         </div>
@@ -1105,9 +1123,9 @@ function generateDatesSkipSunday(startDate, count, dailyCount = 1) {
 
 let currentView='day', currentDate=new Date(), selectedDate=getToday(), editingTaskId=null;
 const boardFilters = { status:'', module:'', type:'' };
-const taskListFilters = { status:'', module:'', type:'' };
+const taskListFilters = { status:'undone', module:'', type:'' };
 let subFilterStatus = '';
-let taskSortMode = 'added', taskListExpanded = false, taskEditMode = false, scheduleEditMode = false;
+let taskSortMode = 'module', scheduleEditTarget = null;
 
 function isTaskCompleted(task) { return task.subtasks.length > 0 && task.subtasks.every(s => s.done); }
 function getSortedTasks(mode = 'added') {
@@ -1122,9 +1140,20 @@ function getSortedTasks(mode = 'added') {
     });
 }
 function setTaskSortMode(v) { taskSortMode = v; renderTaskBlocks(); }
-function toggleTaskListExpanded() { taskListExpanded = !taskListExpanded; renderTaskBlocks(); }
-function toggleTaskEditMode() { taskEditMode = !taskEditMode; if(!taskEditMode) subEditMode=null; renderTaskBlocks(); }
-function toggleScheduleEditMode() { scheduleEditMode = !scheduleEditMode; renderBoard(); }
+function toggleScheduleItemEdit(tid, idx) {
+    const same = scheduleEditTarget && scheduleEditTarget.tid === tid && scheduleEditTarget.idx === idx;
+    scheduleEditTarget = same ? null : { tid, idx };
+    renderBoard();
+}
+function scheduleOutlineIcon(kind) {
+    if (kind === 'check') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4L19 6"/></svg>';
+    if (kind === 'save') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h12l2 2v14H5z"/><path d="M8 4v6h8V4M8 20v-6h8v6"/></svg>';
+    if (kind === 'delete') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg>';
+    if (kind === 'left') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/><path d="M20 12H9"/></svg>';
+    if (kind === 'right') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/><path d="M4 12h11"/></svg>';
+    if (kind === 'all-left') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 6l-6 6 6 6M19 6l-6 6 6 6"/></svg>';
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6l6 6-6 6M13 6l6 6-6 6"/></svg>';
+}
 function scrollToCard(id) { const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
 function setBottomNavActive(id) { document.querySelectorAll('.bottom-nav button[data-target]').forEach(btn=>btn.classList.toggle('active',btn.dataset.target===id)); }
 function navigateBottom(id, button) { setBottomNavActive(id); scrollToCard(id); }
@@ -1207,7 +1236,6 @@ function switchTaskTab(t) {
 }
 function onScheduleModeChange() {
     const mode = document.getElementById('fScheduleMode').value;
-    document.getElementById('fCountRow').classList.toggle('hidden', mode === 'weekly');
     document.getElementById('fWeekdayRow').classList.toggle('hidden', mode !== 'weekly');
 }
 function onModuleChange(moduleSelId, subTypeSelId, rowId) {
@@ -1269,7 +1297,7 @@ function addStudyTask() {
         const weekdays = getSelectedWeekdays();
         selectedWeekdays = weekdays;
         if (!weekdays.length) { alert('请至少选择一个日期'); return; }
-        subCount = parseInt(document.getElementById('fWeekCount').value) || 10;
+        subCount = parseInt(document.getElementById('fCount').value) || 10;
         if (subCount < 1) { alert('请输入有效的任务数量'); return; }
         dates = generateDatesByWeekday(s, weekdays, subCount, dailyCount);
     } else {
@@ -1284,7 +1312,6 @@ function addStudyTask() {
     document.getElementById('fName').value=''; document.getElementById('fCount').value='30'; document.getElementById('fTotal').value='20'; document.getElementById('fStart').value=getToday(); document.getElementById('fDailyCount').value='1';
     SELECTED_WEEKDAYS.clear();
     document.querySelectorAll('#weekdaySelector .wd-chip').forEach(el => el.classList.remove('active'));
-    document.getElementById('fWeekCount').value = '10';
     onModuleChange('fModule','fSubType','fSubTypeRow');
     document.getElementById('fTaskKind').value='quantified'; onTaskKindChange('fTaskKind','fTotal');
 }
@@ -1312,6 +1339,12 @@ function openEditModal(id) {
     document.getElementById('editModal').classList.add('active');
 }
 function closeEditModal() { document.getElementById('editModal').classList.remove('active'); editingTaskId = null; }
+function deleteEditingTask() {
+    const id = editingTaskId;
+    if (id === null) return;
+    closeEditModal();
+    deleteStudyTask(id);
+}
 function saveEditTask() {
     const t = appData.studyTasks.find(x => x.id === editingTaskId); if (!t) return;
     const nn = document.getElementById('editName').value.trim(); if (!nn) { alert('名称不能为空'); return; }
@@ -1520,12 +1553,12 @@ function renderFilterBar(containerId) {
         <option value="" ${f.status===''?'selected':''}>全部状态</option><option value="undone" ${f.status==='undone'?'selected':''}>未完成</option><option value="done" ${f.status==='done'?'selected':''}>已完成</option>
     </select></label>`;
     html += `<label class="triangle-filter"><select aria-label="所属模块" onchange="setFilterValue('${scope}','module',this.value)"><option value="">全部模块</option>${MODULES.map(m=>`<option value="${m}" ${f.module===m?'selected':''}>${MODULE_SHORT[m]}</option>`).join('')}</select></label>`;
-    html += `<label class="triangle-filter"><select aria-label="任务类型" onchange="setFilterValue('${scope}','type',this.value)">
-        <option value="" ${f.type===''?'selected':''}>全部类型</option><option value="periodic" ${f.type==='periodic'?'selected':''}>周期任务</option><option value="single" ${f.type==='single'?'selected':''}>单次任务</option>
-    </select></label>`;
-    if (containerId === 'taskListFilterBar') {
-        html += `<label class="triangle-filter"><select aria-label="子任务状态" onchange="setSubFilterValue(this.value)">
-            <option value="" ${subFilterStatus===''?'selected':''}>全部子任务</option><option value="undone" ${subFilterStatus==='undone'?'selected':''}>子任务未完成</option><option value="done" ${subFilterStatus==='done'?'selected':''}>子任务已完成</option>
+    if (scope === 'task') {
+        html += `<label class="triangle-filter"><select aria-label="任务类型" onchange="setFilterValue('task','type',this.value)">
+            <option value="" ${f.type===''?'selected':''}>全部类型</option><option value="periodic" ${f.type==='periodic'?'selected':''}>周期任务</option><option value="single" ${f.type==='single'?'selected':''}>单次任务</option>
+        </select></label>`;
+        html += `<label class="triangle-filter"><select id="taskSortMode" aria-label="排序方式" onchange="setTaskSortMode(this.value)">
+            <option value="module" ${taskSortMode==='module'?'selected':''}>按模块排序</option><option value="added" ${taskSortMode==='added'?'selected':''}>按添加时间</option>
         </select></label>`;
     }
     c.innerHTML = html;
@@ -1540,8 +1573,6 @@ function getSubtasksOnDate(ds) {
 }
 function renderBoard() {
     renderFilterBar('boardFilterBar');
-    const editToggle=document.getElementById('scheduleEditToggle');
-    if(editToggle){editToggle.classList.toggle('active',scheduleEditMode);editToggle.textContent=scheduleEditMode?'完成编辑':'编辑';}
     if (currentView === 'day') renderDayView();
     else { renderNavRange(); renderCalendar(); renderLegend(); renderTodaySection(); }
     renderTaskBlocks();
@@ -1553,6 +1584,19 @@ function renderNavRange() {
     else r.textContent = `${currentDate.getFullYear()}年${currentDate.getMonth()+1}月`;
 }
 
+function compactScheduleGroups(container) {
+    if (!container) return;
+    const groups = Array.from(container.children).filter(el => el.classList.contains('day-group'));
+    if (!groups.length) return;
+    const left = document.createElement('div'), right = document.createElement('div');
+    left.className = 'schedule-column'; right.className = 'schedule-column';
+    groups.forEach((group, index) => {
+        group.style.setProperty('--schedule-order', index);
+        (index % 2 === 0 ? left : right).appendChild(group);
+    });
+    container.replaceChildren(left, right);
+}
+
 function renderDayView() {
     const c = document.getElementById('dayView'); const subs = getSubtasksOnDate(selectedDate);
     if (!subs.length) { c.innerHTML = `<div class="day-view-empty">${selectedDate.slice(5)} 暂无任务</div>`; return; }
@@ -1562,7 +1606,7 @@ function renderDayView() {
     MODULES.forEach(mod => {
         if (!groups[mod]) return;
         const color = MODULE_COLORS[mod], sm = MODULE_SHORT[mod];
-        html += `<div class="day-group"><div class="day-group-content"><div class="day-group-label" style="background:${color}22;color:${color};"><span class="dot" style="background:${color};display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;"></span>${sm}</div><div class="day-group-tasks">`;
+        html += `<div class="day-group"><div class="day-group-content"><div class="day-group-label" style="background:${color}22;color:${color};">${sm}</div><div class="day-group-tasks">`;
         groups[mod].forEach(item => {
             const dc = item.sub.done ? 'done' : '', cc = item.sub.done ? 'done' : '';
             const rate = item.sub.total > 0 ? Math.round(item.sub.correct/item.sub.total*100) : 0;
@@ -1571,13 +1615,16 @@ function renderDayView() {
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
             let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="stat-text">${isEssay?'得分':'正确'}${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
-            if(scheduleEditMode&&!item.sub.done) sh=isNonQ?`<span>用时</span><input type="number" min="0" value="${item.sub.time||''}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<span>${isEssay?'得分':'正确'}</span><input type="number" min="0" value="${item.sub.correct||''}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>${isEssay?'总分':'总题'}</span><input type="number" min="0" value="${item.sub.total||''}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><span>用时</span><input type="number" min="0" value="${item.sub.time||''}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
-            const editAction = scheduleEditMode ? `<div class="schedule-move-actions"><button onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">←</button><button onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">→</button><button onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">«</button><button onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">»</button></div>` : '';
-            html += `<div class="day-view-item ${dc}" style="border-left-color:${color};"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-name">${nameDisplay}</div><div class="dv-meta">${item.sub.date}${isNonQ?'':` · ${isEssay?'总分':'总题'}${item.sub.total}`}${!isNonQ&&ts?' · 用时'+ts:''}</div></div><div class="dv-stats">${sh}</div>${editAction}</div>`;
+            const isEditing = scheduleEditTarget && scheduleEditTarget.tid===item.taskId && scheduleEditTarget.idx===item.subIdx;
+            if(isEditing) sh=isNonQ?`<input type="number" min="0" value="${item.sub.time||''}" placeholder="分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||''}" placeholder="分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
+            const editButton = isEditing ? `<button class="schedule-item-edit icon-edit-done" title="完成编辑" aria-label="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>` : `<button class="schedule-item-edit" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">编辑</button>`;
+            const moveActions = isEditing ? `<div class="schedule-move-actions"><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>` : '';
+            html += `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${sh}${editButton}${moveActions}</div></div></div>`;
         });
         html += `</div></div></div>`;
     });
     c.innerHTML = html;
+    compactScheduleGroups(c);
 }
 
 function renderCalendar() {
@@ -1649,7 +1696,7 @@ function renderTodaySection() {
     MODULES.forEach(mod => {
         if (!groups[mod]) return;
         const color = MODULE_COLORS[mod], sm = MODULE_SHORT[mod];
-        html += `<div class="day-group"><div class="day-group-content"><div class="day-group-label" style="background:${color}22;color:${color};"><span class="dot" style="background:${color};display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;"></span>${sm}</div><div class="day-group-tasks">`;
+        html += `<div class="day-group"><div class="day-group-content"><div class="day-group-label" style="background:${color}22;color:${color};">${sm}</div><div class="day-group-tasks">`;
         groups[mod].forEach(item => {
             const dc = item.sub.done ? 'done' : '', cc = item.sub.done ? 'done' : '';
             const rate = item.sub.total > 0 ? Math.round(item.sub.correct/item.sub.total*100) : 0;
@@ -1658,16 +1705,19 @@ function renderTodaySection() {
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
             let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="stat-text">${isEssay?'得分':'正确'}${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
-            if(scheduleEditMode&&!item.sub.done) sh=isNonQ?`<span>用时</span><input type="number" min="0" value="${item.sub.time||''}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<span>${isEssay?'得分':'正确'}</span><input type="number" min="0" value="${item.sub.correct||''}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>${isEssay?'总分':'总题'}</span><input type="number" min="0" value="${item.sub.total||''}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><span>用时</span><input type="number" min="0" value="${item.sub.time||''}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
-            const editAction = scheduleEditMode ? `<div class="schedule-move-actions"><button onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">←</button><button onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">→</button><button onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">«</button><button onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">»</button></div>` : '';
-            html += `<div class="day-view-item ${dc}" style="border-left-color:${color};"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-name">${nameDisplay}</div><div class="dv-meta">${item.sub.date}${isNonQ?'':` · ${isEssay?'总分':'总题'}${item.sub.total}`}${!isNonQ&&ts?' · 用时'+ts:''}</div></div><div class="dv-stats">${sh}</div>${editAction}</div>`;
+            const isEditing = scheduleEditTarget && scheduleEditTarget.tid===item.taskId && scheduleEditTarget.idx===item.subIdx;
+            if(isEditing) sh=isNonQ?`<input type="number" min="0" value="${item.sub.time||''}" placeholder="分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||''}" placeholder="分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
+            const editButton = isEditing ? `<button class="schedule-item-edit icon-edit-done" title="完成编辑" aria-label="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>` : `<button class="schedule-item-edit" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">编辑</button>`;
+            const moveActions = isEditing ? `<div class="schedule-move-actions"><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>` : '';
+            html += `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${sh}${editButton}${moveActions}</div></div></div>`;
         });
         html += `</div></div></div>`;
     });
     c.innerHTML = `<div class="today-module-grid">${html}</div>`;
+    compactScheduleGroups(c.firstElementChild);
 }
 
-let subEditMode = null; // {tid, idx}
+let subEditMode = null, subEditTaskId = null; // 单项兼容 + 整个任务编辑
 
 function enterSubEditMode(tid, idx) {
     subEditMode = { tid, idx };
@@ -1675,13 +1725,12 @@ function enterSubEditMode(tid, idx) {
     const el = document.querySelector(`[data-task-block="${tid}"]`);
     if (el) el.classList.add('expanded');
 }
-function editScheduleSubtask(tid, idx) {
-    taskListExpanded = true;
-    subEditMode = { tid, idx };
+function toggleAllSubtasksEdit(tid) {
+    subEditTaskId = subEditTaskId === tid ? null : tid;
+    subEditMode = null;
     renderTaskBlocks();
     const card = document.querySelector(`[data-task-block="${tid}"]`);
     if (card) card.classList.add('expanded');
-    scrollToCard('card-tasklist');
 }
 function cancelSubEdit() {
     const tid = subEditMode ? subEditMode.tid : null;
@@ -1742,13 +1791,9 @@ function renderTaskBlocks() {
     renderFilterBar('taskListFilterBar');
     const c = document.getElementById('taskBlockList');
     const filtered = getSortedTasks(taskSortMode).filter(t => passFilter(t, 'task'));
-    const visibleTasks = taskListExpanded ? filtered : filtered.slice(0, 10);
+    const visibleTasks = filtered;
     const sortSelect = document.getElementById('taskSortMode'); if (sortSelect) sortSelect.value = taskSortMode;
-    const editToggle = document.getElementById('taskEditToggle');
-    if (editToggle) { editToggle.classList.toggle('active',taskEditMode); editToggle.textContent=taskEditMode?'完成编辑':'编辑'; }
     c.classList.toggle('module-group-grid',taskSortMode==='module');
-    const toggle = document.getElementById('taskListToggle');
-    if (toggle) { toggle.textContent = taskListExpanded ? '收起任务' : `展开全部${filtered.length>10?'（'+filtered.length+'）':''}`; toggle.style.display = filtered.length > 10 ? '' : 'none'; }
     if (!filtered.length) { c.innerHTML = '<div class="day-view-empty">暂无匹配任务</div>'; }
     else {
         let html = '';
@@ -1761,24 +1806,19 @@ function renderTaskBlocks() {
             const isNonQuantified = t.kind === 'nonQuantified';
             const nameDisplay = t.name;
             const tagDone = completed ? '<span class="tag-done">已完成</span>' : '';
-            const tagType = t.type === 'single' ? '<span class="tag-type">单次</span>' : '<span class="tag-type">周期</span>';
-            const tagKind = isNonQuantified ? '<span class="tag-type">非量化</span>' : '<span class="tag-type">量化</span>';
             const endDate = t.subtasks.length > 0 ? t.subtasks[t.subtasks.length - 1].date : t.startDate;
             const dateRange = t.type === 'single' ? t.startDate : `${t.startDate} ~ ${endDate}`;
             const metaStats = isNonQuantified ? '' : `<span>完成率 ${pct}%</span>`;
             html += `<div class="task-block ${completed?'completed':''}" data-task-block="${t.id}">
                 <div class="task-block-header" onclick="toggleExpand(${t.id})">
-                    <span class="module-dot" style="background:${color};"></span><span class="tag-mod">${t.module}</span>${tagType}${tagKind}${tagDone}
+                    <span class="module-dot" style="background:${color};"></span><span class="tag-mod">${t.module}</span>${tagDone}
                     <strong>${nameDisplay}</strong>
+                    <span class="task-header-summary"><span>共 ${total} 项</span><span>已完成 ${doneCount} 项</span>${metaStats}</span>
                     <span class="toggle-icon"></span>
                 </div>
-                <div class="task-block-meta"><span>日期 ${dateRange}</span><span>共 ${total} 项</span><span>已完成 ${doneCount} 项</span>${metaStats}</div>
+                <div class="task-block-meta"><span>${dateRange}</span></div>
                 <div class="task-block-progress"><div class="bar" style="width:${pct}%;"></div></div>
-                ${taskEditMode?`<div class="task-block-actions">
-                    <button class="btn-edit" onclick="event.stopPropagation();openEditModal(${t.id})">编辑任务</button>
-                    <button class="btn-del" onclick="event.stopPropagation();deleteStudyTask(${t.id})">删除</button>
-                </div>`:''}
-                <div class="subtask-expand">`;
+                <div class="subtask-expand"><div class="task-expanded-actions"><button class="btn-edit" onclick="event.stopPropagation();openEditModal(${t.id})">编辑任务</button><button class="btn-edit ${subEditTaskId===t.id?'icon-edit-done':''}" title="${subEditTaskId===t.id?'完成编辑':'编辑子任务'}" aria-label="${subEditTaskId===t.id?'完成编辑':'编辑子任务'}" onclick="event.stopPropagation();toggleAllSubtasksEdit(${t.id})">${subEditTaskId===t.id?scheduleOutlineIcon('check'):'编辑子任务'}</button></div>`;
             const sortedSubs = [...t.subtasks].map((s, originalIdx) => ({ s, originalIdx }));
             sortedSubs.sort((a, b) => {
                 if (a.s.done !== b.s.done) return a.s.done ? 1 : -1;
@@ -1788,13 +1828,13 @@ function renderTaskBlocks() {
             sortedSubs.forEach(({ s, originalIdx: idx }) => {
                 if (subFilterStatus === 'done' && !s.done) return;
                 if (subFilterStatus === 'undone' && s.done) return;
-                const isEditing = subEditMode && subEditMode.tid === t.id && subEditMode.idx === idx;
+                const isEditing = subEditTaskId === t.id || (subEditMode && subEditMode.tid === t.id && subEditMode.idx === idx);
                 const sNonQ = (t.kind === 'nonQuantified') || (s.kind === 'nonQuantified');
                 if (isEditing) {
                     const subTypeOptions = MODULE_SUBTYPES[t.module] || [];
                     const stHtml = subTypeOptions.length ? `<select id="se-subtype-${t.id}-${idx}" class="se-input se-subtype"><option value="">无</option>${subTypeOptions.map(o=>`<option value="${o}" ${s.subType===o?'selected':''}>${o}</option>`).join('')}</select>` : '';
                     const isEssay = normalizeModule(t.module) === '申论';
-                    const quantInputs = sNonQ ? `<input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="耗时" value="${s.time||''}" min="0">` : `<input type="number" id="se-total-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'总分':'总题'}" value="${s.total||''}" min="0"><input type="number" id="se-correct-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'得分':'正确'}" value="${s.correct||''}" min="0"><input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="耗时" value="${s.time||''}" min="0">`;
+                    const quantInputs = sNonQ ? `<input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="用时" value="${s.time||''}" min="0">` : `<input type="number" id="se-total-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'总分':'总题'}" value="${s.total||''}" min="0"><input type="number" id="se-correct-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'得分':'正确'}" value="${s.correct||''}" min="0"><input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="用时" value="${s.time||''}" min="0">`;
                     html += `<div class="sub-row editing">
                         <div class="sr-num">${s.idx}</div>
                         <div class="sr-edit-form">
@@ -1803,9 +1843,12 @@ function renderTaskBlocks() {
                             ${quantInputs}
                         </div>
                         <div class="sr-actions">
-                            <button onclick="event.stopPropagation();saveSubEdit(${t.id},${idx})" title="保存" class="se-save">保存</button>
-                            <button onclick="event.stopPropagation();cancelSubEdit()" title="取消">取消</button>
-                            <button onclick="event.stopPropagation();deleteSubtask(${t.id},${idx})" title="删除">删除</button>
+                            <button onclick="event.stopPropagation();saveSubEdit(${t.id},${idx})" title="完成编辑" aria-label="完成编辑" class="se-save icon-edit-done">${scheduleOutlineIcon('check')}</button>
+                            <button onclick="event.stopPropagation();deleteSubtask(${t.id},${idx})" title="删除" aria-label="删除">${scheduleOutlineIcon('delete')}</button>
+                            <button title="提前一天" aria-label="提前一天" onclick="event.stopPropagation();moveTaskForward(${t.id},${idx})">${scheduleOutlineIcon('left')}</button>
+                            <button title="顺延一天" aria-label="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${t.id},${idx})">${scheduleOutlineIcon('right')}</button>
+                            <button title="本项及后续整体提前" aria-label="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${t.id},${idx})">${scheduleOutlineIcon('all-left')}</button>
+                            <button title="本项及后续整体顺延" aria-label="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${t.id},${idx})">${scheduleOutlineIcon('all-right')}</button>
                         </div>
                     </div>`;
                 } else {
@@ -1822,8 +1865,7 @@ function renderTaskBlocks() {
                         const isEssay = normalizeModule(t.module) === '申论';
                         statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}<span class="stat-text">${isEssay?'得分':'正确'} ${s.correct}/${s.total}</span><span class="rate">${rate}%</span><span class="dv-time">${ts}</span></div>`;
                     }
-                    const subActions = taskEditMode ? `<div class="sr-actions"><button onclick="event.stopPropagation();enterSubEditMode(${t.id},${idx})" title="编辑子任务">编辑</button></div>` : '';
-                    html += `<div class="sub-row ${dc}"><div class="sr-num">${s.idx}</div><div class="sr-info"><span class="sr-date">${s.date}</span>${statsHtml}</div>${subActions}</div>`;
+                    html += `<div class="sub-row ${dc}"><div class="dv-check ${dc}" role="button" tabindex="0" title="${s.done?'取消完成':'标记完成'}" aria-label="${s.done?'取消完成':'标记完成'}" onclick="event.stopPropagation();toggleSubtaskDone(${t.id},${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleSubtaskDone(${t.id},${idx})}"></div><div class="sr-num">${s.idx}</div><div class="sr-info"><span class="sr-date">${s.date}</span>${statsHtml}</div></div>`;
                 }
             });
             html += `</div></div>`;
@@ -1881,7 +1923,7 @@ function renderDate() {
 }
 function renderAll() { setTheme(document.documentElement.dataset.theme || 'white'); renderDate(); renderSidebarCountdowns(); renderBoard(); renderStats(); renderExamRecords(); }
 
-let statsPeriod = 'day', timeStatsPeriod = 'day', statsTaskType = 'schedule';
+let statsPeriod = 'day', timeStatsPeriod = 'day';
 function setStatsPeriod(p) {
     statsPeriod = p;
     document.getElementById('btnStatsAll').classList.toggle('active', p==='all');
@@ -1893,14 +1935,6 @@ function setStatsPeriod(p) {
     renderStats();
 }
 function applyCustomRange() { renderStats(); }
-function setStatsTaskType(type) {
-    statsTaskType = type;
-    ['Schedule','Periodic','Single'].forEach(name => {
-        const btn=document.getElementById('btnStatsType'+name);
-        if(btn) btn.classList.toggle('active',type===name.toLowerCase());
-    });
-    renderStats();
-}
 function getStatsDateRange() {
     const today = new Date(); today.setHours(0,0,0,0);
     if (statsPeriod === 'day') {
@@ -1937,11 +1971,9 @@ function getValidCompletedTasks() {
 function collectStats() {
     const [start, end] = getStatsDateRange();
     const stats = {}, taskStats = {};
-    const taskTypeMap = new Map((appData.studyTasks || []).map(t => [String(t.id), t.type || 'periodic']));
     MODULES.forEach(m => { stats[m] = { total:0, correct:0, time:0, count:0, entries:[] }; });
     getValidCompletedTasks().forEach(c => {
         if (c.kind === 'nonQuantified') return;
-        if (statsTaskType !== 'schedule' && taskTypeMap.get(String(c.taskId)) !== statsTaskType) return;
         const mod = normalizeModule(c.module);
         if (start && c.date < start) return;
         if (end && c.date > end) return;
