@@ -630,6 +630,24 @@
         .countdown-add-row { margin-top:6px; }
         @media (max-width:520px) { .study-hero { grid-template-columns:1fr; gap:20px; padding:22px; }.hero-brand h1{font-size:28px}.countdown-panel .sb-countdown-item{grid-template-columns:1fr auto}.countdown-panel .exam-date{display:none}.countdown-manager-row{grid-template-columns:1fr 130px 32px} }
         @media (max-width:480px) { .countdown-manager-row { grid-template-columns:1fr 32px; }.countdown-manager-row input[type="date"]{grid-column:1/2}.countdown-manager-row button{grid-column:2;grid-row:1/3} }
+        /* 双列任务布局与编辑模式 */
+        #dayView,.today-module-grid,#taskBlockList { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; align-items:start; }
+        #dayView .day-view-empty,#taskBlockList .day-view-empty { grid-column:1/-1; }
+        .day-group { min-width:0; margin-bottom:0; }
+        .task-block { min-width:0; margin-bottom:0; }
+        .task-list-toolbar { align-items:center; }
+        .edit-mode-toggle { display:inline-flex; align-items:center; justify-content:center; min-height:34px; padding:6px 11px; border-radius:12px; font-size:12px; font-weight:650; }
+        .edit-mode-toggle.active { color:var(--accent)!important; background:var(--accent-soft)!important; }
+        .schedule-move-actions { display:flex; gap:5px; align-items:center; flex-wrap:wrap; }
+        .schedule-move-actions button { width:34px!important; height:30px!important; padding:0!important; display:inline-flex; align-items:center; justify-content:center; font-size:13px!important; border-radius:9px!important; }
+        .day-view-item .dv-name { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .day-view-item .dv-stats { flex-basis:100%; }
+        @media (max-width:720px) {
+            #dayView,.today-module-grid,#taskBlockList { grid-template-columns:minmax(0,1fr); }
+            #dayView .day-group,.today-module-grid .day-group { grid-column:1!important; grid-row:auto!important; }
+            .day-view-item .dv-name { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; word-break:normal; }
+            .day-view-item .dv-stats { grid-column:1/-1; display:flex; flex-wrap:wrap; gap:6px; }
+        }
         @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition-duration:.01ms!important; animation-duration:.01ms!important; } }
     </style>
 </head>
@@ -643,7 +661,7 @@
 
     <!-- ① 计划看板 -->
     <div class="card card-board" id="card-board">
-        <div class="card-title">📋 日程 <span class="sub" id="boardDate"></span></div>
+        <div class="card-title">📋 日程 <span class="sub" id="boardDate"></span> <button id="scheduleEditToggle" class="edit-mode-toggle" onclick="toggleScheduleEditMode()" title="切换日任务编辑模式">✏️ 编辑</button></div>
         <div class="board-toolbar">
             <div class="view-toggle">
                 <button id="btnDayView" class="active" onclick="switchView('day')">日视图</button>
@@ -681,6 +699,7 @@
                     <option value="module">按固定模块顺序</option>
                 </select>
             </label>
+            <button class="edit-mode-toggle" id="taskEditToggle" onclick="toggleTaskEditMode()">✏️ 编辑</button>
             <button class="task-list-toggle" id="taskListToggle" onclick="toggleTaskListExpanded()">展开全部</button>
         </div>
         <div id="taskBlockList"></div>
@@ -735,8 +754,8 @@
             </div>
             <div class="form-row" id="fCountRow">
                 <div class="form-group"><label>子任务数量</label><input type="number" id="fCount" min="1" max="365" value="30"></div>
-                <div class="form-group"><label>起始序号</label><input type="number" id="fStartIdx" min="1" max="999" value="1"></div>
             </div>
+            <div class="form-row"><div class="form-group"><label>每日完成子任务数</label><input type="number" id="fDailyCount" min="1" max="20" value="1"></div></div>
             <div class="form-row hidden" id="fWeekdayRow">
                 <div class="form-group" style="flex:1 1 100%;"><label>每周任务日（自由勾选）</label>
                     <div class="weekday-selector" id="weekdaySelector">
@@ -820,12 +839,17 @@
         <div class="time-card practice-stats-card">
             <div class="time-card-head"><strong style="color:var(--text-2);">📝 刷题统计</strong>
                 <div class="view-toggle time-period-toggle">
-                    <button id="btnStatsAll" class="active" onclick="setStatsPeriod('all')">全部</button>
-                    <button id="btnStatsDay" onclick="setStatsPeriod('day')">本日</button>
+                    <button id="btnStatsDay" class="active" onclick="setStatsPeriod('day')">本日</button>
                     <button id="btnStatsWeek" onclick="setStatsPeriod('week')">本周</button>
                     <button id="btnStatsMonth" onclick="setStatsPeriod('month')">本月</button>
+                    <button id="btnStatsAll" onclick="setStatsPeriod('all')">全部</button>
                     <button id="btnStatsCustom" onclick="setStatsPeriod('custom')">自定义</button>
                 </div>
+            </div>
+            <div class="view-toggle time-period-toggle" style="margin-bottom:10px;">
+                <button id="btnStatsTypeSchedule" class="active" onclick="setStatsTaskType('schedule')">日程任务</button>
+                <button id="btnStatsTypePeriodic" onclick="setStatsTaskType('periodic')">周期任务</button>
+                <button id="btnStatsTypeSingle" onclick="setStatsTaskType('single')">单次任务</button>
             </div>
             <div class="stats-custom-range hidden" id="statsCustomRange" style="display:flex; gap:6px; align-items:center; margin-bottom:10px; flex-wrap:wrap;">
                 <input type="date" id="statsDateStart" style="padding:4px 6px; border:1px solid #f0d6da; border-radius:8px; font-size:12px;" onchange="applyCustomRange()">
@@ -1059,15 +1083,15 @@ function formatDate(date) { return date.getFullYear()+'-'+String(date.getMonth()
 function parseDate(str) { const p=str.split('-').map(Number); return new Date(p[0],p[1]-1,p[2]); }
 function addDays(s,n) { const d=parseDate(s); d.setDate(d.getDate()+n); return formatDate(d); }
 
-function generateDatesSkipSunday(startDate, count) {
+function generateDatesSkipSunday(startDate, count, dailyCount = 1) {
     const dates = [];
     const d = parseDate(startDate);
     while (d.getDay() === 0) d.setDate(d.getDate() + 1);
-    dates.push(formatDate(d));
-    for (let i = 1; i < count; i++) {
+    dailyCount = Math.max(1, parseInt(dailyCount) || 1);
+    while (dates.length < count) {
+        for (let i = 0; i < dailyCount && dates.length < count; i++) dates.push(formatDate(d));
         d.setDate(d.getDate() + 1);
         while (d.getDay() === 0) d.setDate(d.getDate() + 1);
-        dates.push(formatDate(d));
     }
     return dates;
 }
@@ -1076,7 +1100,7 @@ let currentView='day', currentDate=new Date(), selectedDate=getToday(), editingT
 const boardFilters = { status:'', module:'', type:'' };
 const taskListFilters = { status:'', module:'', type:'' };
 let subFilterStatus = '';
-let taskSortMode = 'added', taskListExpanded = false;
+let taskSortMode = 'added', taskListExpanded = false, taskEditMode = false, scheduleEditMode = false;
 
 function isTaskCompleted(task) { return task.subtasks.length > 0 && task.subtasks.every(s => s.done); }
 function getSortedTasks(mode = 'added') {
@@ -1092,6 +1116,8 @@ function getSortedTasks(mode = 'added') {
 }
 function setTaskSortMode(v) { taskSortMode = v; renderTaskBlocks(); }
 function toggleTaskListExpanded() { taskListExpanded = !taskListExpanded; renderTaskBlocks(); }
+function toggleTaskEditMode() { taskEditMode = !taskEditMode; if(!taskEditMode) subEditMode=null; renderTaskBlocks(); }
+function toggleScheduleEditMode() { scheduleEditMode = !scheduleEditMode; renderBoard(); }
 function scrollToCard(id) { const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
 function setBottomNavActive(id) { document.querySelectorAll('.bottom-nav button[data-target]').forEach(btn=>btn.classList.toggle('active',btn.dataset.target===id)); }
 function navigateBottom(id, button) { setBottomNavActive(id); scrollToCard(id); }
@@ -1206,13 +1232,16 @@ function toggleWeekday(wd) {
     else { SELECTED_WEEKDAYS.add(wd); if (el) el.classList.add('active'); }
 }
 function getSelectedWeekdays() { return Array.from(SELECTED_WEEKDAYS).sort((a,b)=>a-b); }
-function generateDatesByWeekday(startDate, weekdays, count) {
+function generateDatesByWeekday(startDate, weekdays, count, dailyCount = 1) {
     const dates = [];
     const d = parseDate(startDate);
+    dailyCount = Math.max(1, parseInt(dailyCount) || 1);
     let safety = 0;
     while (dates.length < count && safety < 3650) {
         const wd = d.getDay();
-        if (weekdays.includes(wd)) dates.push(formatDate(d));
+        if (weekdays.includes(wd)) {
+            for (let i = 0; i < dailyCount && dates.length < count; i++) dates.push(formatDate(d));
+        }
         d.setDate(d.getDate() + 1);
         safety++;
     }
@@ -1223,27 +1252,29 @@ function addStudyTask() {
     const m=document.getElementById('fModule').value, n=document.getElementById('fName').value.trim(), s=document.getElementById('fStart').value;
     const mode = document.getElementById('fScheduleMode').value;
     const kind = document.getElementById('fTaskKind').value;
+    const dailyCount = Math.max(1, parseInt(document.getElementById('fDailyCount').value) || 1);
     const t = (kind === 'nonQuantified') ? 0 : (parseInt(document.getElementById('fTotal').value)||0);
     let st = '';
     if (MODULE_SUBTYPES[m]) { st = document.getElementById('fSubType').value; if (!st) { alert('请选择细分题型'); return; } }
     if(!n){alert('请输入任务名称');return;} if(!s){alert('请选择起始日期');return;}
-    let dates, subCount;
+    let dates, subCount, selectedWeekdays = [];
     if (mode === 'weekly') {
         const weekdays = getSelectedWeekdays();
+        selectedWeekdays = weekdays;
         if (!weekdays.length) { alert('请至少选择一个日期'); return; }
         subCount = parseInt(document.getElementById('fWeekCount').value) || 10;
         if (subCount < 1) { alert('请输入有效的任务数量'); return; }
-        dates = generateDatesByWeekday(s, weekdays, subCount);
+        dates = generateDatesByWeekday(s, weekdays, subCount, dailyCount);
     } else {
         subCount = parseInt(document.getElementById('fCount').value);
         if(!subCount||subCount<1){alert('请输入有效的子任务数量');return;}
-        dates = generateDatesSkipSunday(s, subCount);
+        dates = generateDatesSkipSunday(s, subCount, dailyCount);
     }
-    const startIdx = parseInt(document.getElementById('fStartIdx').value) || 1;
+    const startIdx = 1;
     const subs = dates.map((d, i) => ({idx:startIdx+i, date:d, done:false, total:t, correct:0, time:0, subType:st, kind:kind}));
-    appData.studyTasks.push({id:Date.now(),module:m,name:n,type:'periodic',subtaskCount:subs.length,startDate:s,defaultTotal:t,subtasks:subs,scheduleMode:mode,startIdx:startIdx,subType:st,kind:kind});
+    appData.studyTasks.push({id:Date.now(),module:m,name:n,type:'periodic',subtaskCount:subs.length,startDate:s,defaultTotal:t,subtasks:subs,scheduleMode:mode,startIdx:startIdx,dailyCount:dailyCount,weekdays:selectedWeekdays,subType:st,kind:kind});
     saveData(); renderAll();
-    document.getElementById('fName').value=''; document.getElementById('fCount').value='30'; document.getElementById('fTotal').value='20'; document.getElementById('fStart').value=getToday(); document.getElementById('fStartIdx').value='1';
+    document.getElementById('fName').value=''; document.getElementById('fCount').value='30'; document.getElementById('fTotal').value='20'; document.getElementById('fStart').value=getToday(); document.getElementById('fDailyCount').value='1';
     SELECTED_WEEKDAYS.clear();
     document.querySelectorAll('#weekdaySelector .wd-chip').forEach(el => el.classList.remove('active'));
     document.getElementById('fWeekCount').value = '10';
@@ -1284,7 +1315,7 @@ function saveEditTask() {
         if (ns) {
             const old = t.subtasks, tl = t.defaultTotal||0;
             const mode = t.scheduleMode || 'continuous';
-            const gen = mode === 'weekly' ? (sd,c) => generateDatesByWeekday(sd, t.weekdays||[1], c) : (sd,c) => generateDatesSkipSunday(sd, c);
+            const gen = mode === 'weekly' ? (sd,c) => generateDatesByWeekday(sd, t.weekdays||[1], c, t.dailyCount||1) : (sd,c) => generateDatesSkipSunday(sd, c, t.dailyCount||1);
             const dates = gen(ns, nc);
             const oldSorted = [...old].sort((a,b) => a.idx - b.idx);
             const nw = [];
@@ -1316,9 +1347,9 @@ function deleteStudyTask(id) {
 function getTaskDatesGenerator(t) {
     const mode = t.scheduleMode || 'continuous';
     if (mode === 'weekly' && t.weekdays) {
-        return (startDate, count) => generateDatesByWeekday(startDate, t.weekdays, count);
+        return (startDate, count) => generateDatesByWeekday(startDate, t.weekdays, count, t.dailyCount||1);
     }
-    return (startDate, count) => generateDatesSkipSunday(startDate, count);
+    return (startDate, count) => generateDatesSkipSunday(startDate, count, t.dailyCount||1);
 }
 
 function toggleSubtaskDone(tid, si) {
@@ -1502,6 +1533,8 @@ function getSubtasksOnDate(ds) {
 }
 function renderBoard() {
     renderFilterBar('boardFilterBar');
+    const editToggle=document.getElementById('scheduleEditToggle');
+    if(editToggle){editToggle.classList.toggle('active',scheduleEditMode);editToggle.textContent=scheduleEditMode?'✓ 完成编辑':'✏️ 编辑';}
     if (currentView === 'day') renderDayView();
     else { renderNavRange(); renderCalendar(); renderLegend(); renderTodaySection(); }
     renderTaskBlocks();
@@ -1519,10 +1552,10 @@ function renderDayView() {
     const groups = {};
     subs.forEach(item => { if (!groups[item.module]) groups[item.module] = []; groups[item.module].push(item); });
     let html = '';
-    MODULES.forEach(mod => {
+    MODULES.forEach((mod, moduleIndex) => {
         if (!groups[mod]) return;
         const color = MODULE_COLORS[mod], sm = MODULE_SHORT[mod];
-        html += `<div class="day-group"><div class="day-group-content"><div class="day-group-label" style="background:${color}22;color:${color};"><span class="dot" style="background:${color};display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;"></span>${sm}</div><div class="day-group-tasks">`;
+        html += `<div class="day-group" style="grid-column:${moduleIndex%2+1};grid-row:${Math.floor(moduleIndex/2)+1};"><div class="day-group-content"><div class="day-group-label" style="background:${color}22;color:${color};"><span class="dot" style="background:${color};display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;"></span>${sm}</div><div class="day-group-tasks">`;
         groups[mod].forEach(item => {
             const dc = item.sub.done ? 'done' : '', cc = item.sub.done ? 'done' : '', ci = item.sub.done ? '✓' : '';
             const rate = item.sub.total > 0 ? Math.round(item.sub.correct/item.sub.total*100) : 0;
@@ -1531,23 +1564,26 @@ function renderDayView() {
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
             let sh = '';
-            if (isNonQ) {
-                sh = item.sub.done ? `<span class="dv-time">用时 ${ts||'未填'}</span>` : `<span style="color:#6ab7d6;">用时</span><input type="number" min="0" value="${item.sub.time}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)" style="width:40px;"><span class="dv-time">${ts}</span>`;
+            if (!scheduleEditMode) {
+                sh = isNonQ ? `<span class="dv-time">用时 ${ts||'未填'}</span>` : `<span class="stat-text">${isEssay?'得分':'正确'}${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
+            } else if (isNonQ) {
+                sh = item.sub.done ? `<span class="dv-time">用时 ${ts||'未填'}</span>` : `<span style="color:#6ab7d6;">用时</span><input type="number" min="0" value="${item.sub.time||''}" placeholder="用时" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)" style="width:40px;"><span class="dv-time">${ts}</span>`;
             } else if (item.sub.done) {
                 sh = `<span class="stat-text">${isEssay?'得分':'正确'}${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
             } else {
                 sh = `
                     <span style="color:#b47a84;">${isEssay?'得分':'正确'}</span>
-                    <input type="number" min="0" max="${item.sub.total}" value="${item.sub.correct}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)" ${item.sub.total===0?'disabled':''}>
+                    <input type="number" min="0" max="${item.sub.total}" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)" ${item.sub.total===0?'disabled':''}>
                     <span style="color:#b47a84;">${isEssay?'总分':'总题'}</span>
-                    <input type="number" min="0" value="${item.sub.total}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)" style="width:36px;">
+                    <input type="number" min="0" value="${item.sub.total||''}" placeholder="题量" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)" style="width:36px;">
                     <span style="color:#6ab7d6;">用时</span>
-                    <input type="number" min="0" value="${item.sub.time}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)" style="width:40px;">
+                    <input type="number" min="0" value="${item.sub.time||''}" placeholder="用时" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)" style="width:40px;">
                     <span class="dv-rate">${rate}%</span>
                     <span class="dv-time">${ts}</span>
                 `;
             }
-            html += `<div class="day-view-item ${dc}" style="border-left-color:${color};"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})">${ci}</div><div class="dv-info"><div class="dv-name">${nameDisplay}</div><div class="dv-meta">${item.sub.date}${isNonQ?'':` · ${isEssay?'总分':'总题'}${item.sub.total}`}${ts?' · 用时'+ts:''}</div></div><div class="dv-stats">${sh}</div><div style="display:flex;gap:2px;align-items:center;"><button onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})" style="background:none;border:none;font-size:13px;color:#b47a84;cursor:pointer;padding:2px 4px;" title="单个提前1天">⬅️</button><button onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})" style="background:none;border:none;font-size:13px;color:#b47a84;cursor:pointer;padding:2px 4px;" title="单个延后1天">➡️</button><span style="width:1px;height:16px;background:#ddd;margin:0 2px;"></span><button onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})" style="background:none;border:none;font-size:12px;color:#e67e22;cursor:pointer;padding:2px 3px;" title="从此处起整体提前1天">⏪</button><button onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})" style="background:none;border:none;font-size:12px;color:#e67e22;cursor:pointer;padding:2px 3px;" title="从此处起整体延后1天">⏩</button></div></div>`;
+            const moveActions = scheduleEditMode ? `<div class="schedule-move-actions"><button onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})" title="单个提前1天">←</button><button onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})" title="单个延后1天">→</button><button onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})" title="从此处起整体提前1天">«</button><button onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})" title="从此处起整体延后1天">»</button></div>` : '';
+            html += `<div class="day-view-item ${dc}" style="border-left-color:${color};"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})">${ci}</div><div class="dv-info"><div class="dv-name">${nameDisplay}</div><div class="dv-meta">${item.sub.date}${isNonQ?'':` · ${isEssay?'总分':'总题'}${item.sub.total}`}${ts?' · 用时'+ts:''}</div></div><div class="dv-stats">${sh}</div>${moveActions}</div>`;
         });
         html += `</div></div></div>`;
     });
@@ -1620,10 +1656,10 @@ function renderTodaySection() {
     const groups = {};
     subs.forEach(item => { if (!groups[item.module]) groups[item.module] = []; groups[item.module].push(item); });
     let html = '';
-    MODULES.forEach(mod => {
+    MODULES.forEach((mod, moduleIndex) => {
         if (!groups[mod]) return;
         const color = MODULE_COLORS[mod], sm = MODULE_SHORT[mod];
-        html += `<div class="day-group"><div class="day-group-content"><div class="day-group-label" style="background:${color}22;color:${color};"><span class="dot" style="background:${color};display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;"></span>${sm}</div><div class="day-group-tasks">`;
+        html += `<div class="day-group" style="grid-column:${moduleIndex%2+1};grid-row:${Math.floor(moduleIndex/2)+1};"><div class="day-group-content"><div class="day-group-label" style="background:${color}22;color:${color};"><span class="dot" style="background:${color};display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;"></span>${sm}</div><div class="day-group-tasks">`;
         groups[mod].forEach(item => {
             const dc = item.sub.done ? 'done' : '', cc = item.sub.done ? 'done' : '', ci = item.sub.done ? '✓' : '';
             const rate = item.sub.total > 0 ? Math.round(item.sub.correct/item.sub.total*100) : 0;
@@ -1632,27 +1668,30 @@ function renderTodaySection() {
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
             let sh = '';
-            if (isNonQ) {
-                sh = item.sub.done ? `<span class="dv-time">用时 ${ts||'未填'}</span>` : `<span style="color:#6ab7d6;">用时</span><input type="number" min="0" value="${item.sub.time}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)" style="width:40px;"><span class="dv-time">${ts}</span>`;
+            if (!scheduleEditMode) {
+                sh = isNonQ ? `<span class="dv-time">用时 ${ts||'未填'}</span>` : `<span class="stat-text">${isEssay?'得分':'正确'}${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
+            } else if (isNonQ) {
+                sh = item.sub.done ? `<span class="dv-time">用时 ${ts||'未填'}</span>` : `<span style="color:#6ab7d6;">用时</span><input type="number" min="0" value="${item.sub.time||''}" placeholder="用时" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)" style="width:40px;"><span class="dv-time">${ts}</span>`;
             } else if (item.sub.done) {
                 sh = `<span class="stat-text">${isEssay?'得分':'正确'}${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
             } else {
                 sh = `
                     <span style="color:#b47a84;">${isEssay?'得分':'正确'}</span>
-                    <input type="number" min="0" max="${item.sub.total}" value="${item.sub.correct}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)" ${item.sub.total===0?'disabled':''}>
+                    <input type="number" min="0" max="${item.sub.total}" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)" ${item.sub.total===0?'disabled':''}>
                     <span style="color:#b47a84;">${isEssay?'总分':'总题'}</span>
-                    <input type="number" min="0" value="${item.sub.total}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)" style="width:36px;">
+                    <input type="number" min="0" value="${item.sub.total||''}" placeholder="题量" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)" style="width:36px;">
                     <span style="color:#6ab7d6;">用时</span>
-                    <input type="number" min="0" value="${item.sub.time}" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)" style="width:40px;">
+                    <input type="number" min="0" value="${item.sub.time||''}" placeholder="用时" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)" style="width:40px;">
                     <span class="dv-rate">${rate}%</span>
                     <span class="dv-time">${ts}</span>
                 `;
             }
-            html += `<div class="day-view-item ${dc}" style="border-left-color:${color};"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})">${ci}</div><div class="dv-info"><div class="dv-name">${nameDisplay}</div><div class="dv-meta">${item.sub.date}${isNonQ?'':` · ${isEssay?'总分':'总题'}${item.sub.total}`}${ts?' · 用时'+ts:''}</div></div><div class="dv-stats">${sh}</div><div style="display:flex;gap:2px;align-items:center;"><button onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})" style="background:none;border:none;font-size:13px;color:#b47a84;cursor:pointer;padding:2px 4px;" title="单个提前1天">⬅️</button><button onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})" style="background:none;border:none;font-size:13px;color:#b47a84;cursor:pointer;padding:2px 4px;" title="单个延后1天">➡️</button><span style="width:1px;height:16px;background:#ddd;margin:0 2px;"></span><button onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})" style="background:none;border:none;font-size:12px;color:#e67e22;cursor:pointer;padding:2px 3px;" title="从此处起整体提前1天">⏪</button><button onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})" style="background:none;border:none;font-size:12px;color:#e67e22;cursor:pointer;padding:2px 3px;" title="从此处起整体延后1天">⏩</button></div></div>`;
+            const moveActions = scheduleEditMode ? `<div class="schedule-move-actions"><button onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})" title="单个提前1天">←</button><button onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})" title="单个延后1天">→</button><button onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})" title="从此处起整体提前1天">«</button><button onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})" title="从此处起整体延后1天">»</button></div>` : '';
+            html += `<div class="day-view-item ${dc}" style="border-left-color:${color};"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})">${ci}</div><div class="dv-info"><div class="dv-name">${nameDisplay}</div><div class="dv-meta">${item.sub.date}${isNonQ?'':` · ${isEssay?'总分':'总题'}${item.sub.total}`}${ts?' · 用时'+ts:''}</div></div><div class="dv-stats">${sh}</div>${moveActions}</div>`;
         });
         html += `</div></div></div>`;
     });
-    c.innerHTML = html;
+    c.innerHTML = `<div class="today-module-grid">${html}</div>`;
 }
 
 let subEditMode = null; // {tid, idx}
@@ -1724,6 +1763,8 @@ function renderTaskBlocks() {
     const filtered = getSortedTasks(taskSortMode).filter(t => passFilter(t, 'task'));
     const visibleTasks = taskListExpanded ? filtered : filtered.slice(0, 10);
     const sortSelect = document.getElementById('taskSortMode'); if (sortSelect) sortSelect.value = taskSortMode;
+    const editToggle = document.getElementById('taskEditToggle');
+    if (editToggle) { editToggle.classList.toggle('active',taskEditMode); editToggle.textContent=taskEditMode?'✓ 完成编辑':'✏️ 编辑'; }
     const toggle = document.getElementById('taskListToggle');
     if (toggle) { toggle.textContent = taskListExpanded ? '收起任务' : `展开全部${filtered.length>10?'（'+filtered.length+'）':''}`; toggle.style.display = filtered.length > 10 ? '' : 'none'; }
     if (!filtered.length) { c.innerHTML = '<div class="day-view-empty">暂无匹配任务</div>'; }
@@ -1735,27 +1776,19 @@ function renderTaskBlocks() {
             const pct = total > 0 ? Math.round(doneCount/total*100) : 0;
             const color = MODULE_COLORS[t.module];
             const completed = isTaskCompleted(t);
-            const tagType = t.type === 'single' ? '<span class="tag-type">单次</span>' : '<span class="tag-type">周期</span>';
-            const tagDone = completed ? '<span class="tag-done">✅ 已完成</span>' : '';
             const isNonQuantified = t.kind === 'nonQuantified';
-            const tagKind = isNonQuantified ? '<span class="tag-type" style="background:#e8e0f0;color:#9b59b6;">非量化</span>' : '<span class="tag-type">量化</span>';
             const nameDisplay = completed ? `${t.name}✅` : t.name;
-            const endDate = t.subtasks.length > 0 ? t.subtasks[t.subtasks.length - 1].date : t.startDate;
-            const dateRange = t.type === 'single' ? t.startDate : `${t.startDate} ~ ${endDate}`;
-            const metaStats = isNonQuantified ? '' : `<span>📊 ${pct}%</span>`;
             html += `<div class="task-block ${completed?'completed':''}" data-task-block="${t.id}">
                 <div class="task-block-header" onclick="toggleExpand(${t.id})">
                     <span class="module-dot" style="background:${color};"></span>
-                    <span class="tag-mod">${t.module}</span>${tagType}${tagKind}${tagDone}
+                    <span class="tag-mod">${t.module}</span>
                     <strong>${nameDisplay}</strong>
                     <span class="toggle-icon">▶</span>
                 </div>
-                <div class="task-block-meta"><span>📅 ${dateRange}</span><span>📋 ${total}项</span><span>✅ ${doneCount}完成</span>${metaStats}</div>
-                <div class="task-block-progress"><div class="bar" style="width:${pct}%;"></div></div>
-                <div class="task-block-actions">
+                ${taskEditMode?`<div class="task-block-actions">
                     <button class="btn-edit" onclick="event.stopPropagation();openEditModal(${t.id})">✏️ 编辑</button>
                     <button class="btn-del" onclick="event.stopPropagation();deleteStudyTask(${t.id})">删除</button>
-                </div>
+                </div>`:''}
                 <div class="subtask-expand">`;
             const sortedSubs = [...t.subtasks].map((s, originalIdx) => ({ s, originalIdx }));
             sortedSubs.sort((a, b) => {
@@ -1772,7 +1805,7 @@ function renderTaskBlocks() {
                     const subTypeOptions = MODULE_SUBTYPES[t.module] || [];
                     const stHtml = subTypeOptions.length ? `<select id="se-subtype-${t.id}-${idx}" class="se-input se-subtype"><option value="">无</option>${subTypeOptions.map(o=>`<option value="${o}" ${s.subType===o?'selected':''}>${o}</option>`).join('')}</select>` : '';
                     const isEssay = normalizeModule(t.module) === '申论';
-                    const quantInputs = sNonQ ? `<input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="耗时" value="${s.time}" min="0">` : `<input type="number" id="se-total-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'总分':'总题'}" value="${s.total}" min="0"><input type="number" id="se-correct-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'得分':'正确'}" value="${s.correct}" min="0"><input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="耗时" value="${s.time}" min="0">`;
+                    const quantInputs = sNonQ ? `<input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="耗时" value="${s.time||''}" min="0">` : `<input type="number" id="se-total-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'总分':'总题'}" value="${s.total||''}" min="0"><input type="number" id="se-correct-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'得分':'正确'}" value="${s.correct||''}" min="0"><input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="耗时" value="${s.time||''}" min="0">`;
                     html += `<div class="sub-row editing">
                         <div class="sr-num">${s.idx}</div>
                         <div class="sr-edit-form">
@@ -1800,7 +1833,8 @@ function renderTaskBlocks() {
                         const isEssay = normalizeModule(t.module) === '申论';
                         statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}<span class="stat-item">${isEssay?'总分':'总题'}${s.total}</span><span class="stat-item">${isEssay?'得分':'正确'}${s.correct}</span><span class="stat-item">用时${ts}</span><span class="rate">${rate}%</span></div>`;
                     }
-                    html += `<div class="sub-row ${dc}"><div class="sr-num">${s.idx}</div><div class="sr-info"><span class="sr-date">📅 ${s.date}</span>${statsHtml}</div><div class="sr-actions"><button onclick="event.stopPropagation();toggleSubtaskDone(${t.id},${idx})" title="完成/取消">${s.done?'✅':'✔️'}</button><button onclick="event.stopPropagation();enterSubEditMode(${t.id},${idx})" title="编辑">✏️</button><button onclick="event.stopPropagation();deleteSubtask(${t.id},${idx})" title="删除">🗑️</button><span style="width:1px;height:16px;background:#ddd;display:inline-block;margin:0 1px;"></span><button onclick="event.stopPropagation();moveTaskForward(${t.id},${idx})" style="color:#b47a84;" title="单个提前1天">⬅️</button><button onclick="event.stopPropagation();moveTaskBackward(${t.id},${idx})" style="color:#b47a84;" title="单个延后1天">➡️</button><button onclick="event.stopPropagation();moveTaskForwardAll(${t.id},${idx})" style="color:#e67e22;" title="从此处起整体提前1天">⏪</button><button onclick="event.stopPropagation();moveTaskBackwardAll(${t.id},${idx})" style="color:#e67e22;" title="从此处起整体延后1天">⏩</button></div></div>`;
+                    const subActions = taskEditMode ? `<div class="sr-actions"><button onclick="event.stopPropagation();toggleSubtaskDone(${t.id},${idx})" title="完成/取消">${s.done?'✅':'✔️'}</button><button onclick="event.stopPropagation();enterSubEditMode(${t.id},${idx})" title="编辑">✏️</button><button onclick="event.stopPropagation();deleteSubtask(${t.id},${idx})" title="删除">🗑️</button><span style="width:1px;height:16px;background:#ddd;display:inline-block;margin:0 1px;"></span><button onclick="event.stopPropagation();moveTaskForward(${t.id},${idx})" title="单个提前1天">←</button><button onclick="event.stopPropagation();moveTaskBackward(${t.id},${idx})" title="单个延后1天">→</button><button onclick="event.stopPropagation();moveTaskForwardAll(${t.id},${idx})" title="整体提前1天">«</button><button onclick="event.stopPropagation();moveTaskBackwardAll(${t.id},${idx})" title="整体延后1天">»</button></div>` : '';
+                    html += `<div class="sub-row ${dc}"><div class="sr-num">${s.idx}</div><div class="sr-info"><span class="sr-date">📅 ${s.date}</span>${statsHtml}</div>${subActions}</div>`;
                 }
             });
             html += `</div></div>`;
@@ -1844,7 +1878,7 @@ function renderDate() {
 }
 function renderAll() { setTheme(document.documentElement.dataset.theme || 'white'); renderDate(); renderSidebarCountdowns(); renderBoard(); renderStats(); renderExamRecords(); }
 
-let statsPeriod = 'all', timeStatsPeriod = 'day';
+let statsPeriod = 'day', timeStatsPeriod = 'day', statsTaskType = 'schedule';
 function setStatsPeriod(p) {
     statsPeriod = p;
     document.getElementById('btnStatsAll').classList.toggle('active', p==='all');
@@ -1856,6 +1890,14 @@ function setStatsPeriod(p) {
     renderStats();
 }
 function applyCustomRange() { renderStats(); }
+function setStatsTaskType(type) {
+    statsTaskType = type;
+    ['Schedule','Periodic','Single'].forEach(name => {
+        const btn=document.getElementById('btnStatsType'+name);
+        if(btn) btn.classList.toggle('active',type===name.toLowerCase());
+    });
+    renderStats();
+}
 function getStatsDateRange() {
     const today = new Date(); today.setHours(0,0,0,0);
     if (statsPeriod === 'day') {
@@ -1892,9 +1934,11 @@ function getValidCompletedTasks() {
 function collectStats() {
     const [start, end] = getStatsDateRange();
     const stats = {}, taskStats = {};
+    const taskTypeMap = new Map((appData.studyTasks || []).map(t => [String(t.id), t.type || 'periodic']));
     MODULES.forEach(m => { stats[m] = { total:0, correct:0, time:0, count:0, entries:[] }; });
     getValidCompletedTasks().forEach(c => {
         if (c.kind === 'nonQuantified') return;
+        if (statsTaskType !== 'schedule' && taskTypeMap.get(String(c.taskId)) !== statsTaskType) return;
         const mod = normalizeModule(c.module);
         if (start && c.date < start) return;
         if (end && c.date > end) return;
