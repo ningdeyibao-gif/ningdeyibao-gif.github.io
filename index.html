@@ -1875,11 +1875,25 @@ function getStatsDateRange() {
     }
     return ['', ''];
 }
+/* 统计只使用仍存在的任务/子任务，以及仍存在的模考记录。历史孤立记录不再参与题量和用时。 */
+function getValidCompletedTasks() {
+    const taskMap = new Map((appData.studyTasks || []).map(t => [String(t.id), t]));
+    const examIds = new Set((appData.examRecords || []).map(e => String(e.id)));
+    return (appData.completedTasks || []).filter(c => {
+        if (c.examRecordId !== undefined && c.examRecordId !== null && c.examRecordId !== '') {
+            return examIds.has(String(c.examRecordId));
+        }
+        if (c.taskId === undefined || c.taskId === null || c.taskId === '') return false;
+        const task = taskMap.get(String(c.taskId));
+        if (!task) return false;
+        return (task.subtasks || []).some(s => String(s.idx) === String(c.idx));
+    });
+}
 function collectStats() {
     const [start, end] = getStatsDateRange();
     const stats = {}, taskStats = {};
     MODULES.forEach(m => { stats[m] = { total:0, correct:0, time:0, count:0, entries:[] }; });
-    (appData.completedTasks || []).forEach(c => {
+    getValidCompletedTasks().forEach(c => {
         if (c.kind === 'nonQuantified') return;
         const mod = normalizeModule(c.module);
         if (start && c.date < start) return;
@@ -1921,19 +1935,29 @@ function renderStats() {
     const grandRateColor = grandRate>=80?'#28a745':grandRate>=60?'#f0a868':'#e74c3c';
     const chartEl = document.getElementById('statsChart');
     const grandAvgTime = grandTotal > 0 ? (grandTime/grandTotal).toFixed(1) : '0.0';
-    const maxTotal = Math.max(1, ...MODULES.map(m => stats[m].total));
     let chartHtml = `<div class="stats-summary" style="display:flex; gap:12px; margin-bottom:12px; padding:10px 14px; background:#fcf8f5; border-radius:12px; flex-wrap:wrap; align-items:center;">
         <span style="font-size:13px; font-weight:600; color:#7a4b55;">总题量 <strong style="color:#3d2c2c;">${grandTotal}</strong></span>
         <span style="font-size:13px; font-weight:600; color:#7a4b55;">平均每题用时 <strong style="color:#3d2c2c;">${grandAvgTime}分</strong></span>
         <span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:10px; color:${grandRateColor}; background:${grandRateColor}22;">总正确率 ${grandRate}%</span>
     </div>`;
-    chartHtml += '<div class="stats-bar-chart">';
-    MODULES.forEach(m => {
-        const s = stats[m]; const h = Math.round(s.total/maxTotal*100);
-        const color = MODULE_COLORS[m];
-        chartHtml += `<div class="stats-bar-col"><div class="stats-bar" style="height:${h}%;background:${color};"><div class="stats-bar-val">${s.total||''}</div></div><div class="stats-bar-label">${MODULE_SHORT[m]}</div></div>`;
-    });
-    chartHtml += '</div>';
+    if (grandTotal > 0) {
+        let cursor = 0, pieParts = [];
+        MODULES.forEach(m => {
+            if (!stats[m].total) return;
+            const from = cursor / grandTotal * 360;
+            cursor += stats[m].total;
+            const to = cursor / grandTotal * 360;
+            pieParts.push(`${MODULE_COLORS[m]} ${from}deg ${to}deg`);
+        });
+        const pieLegend = MODULES.filter(m => stats[m].total > 0).map(m => {
+            const value = stats[m].total;
+            const percent = Math.round(value / grandTotal * 100);
+            return `<div class="time-legend-row"><span class="sm-dot" style="background:${MODULE_COLORS[m]};width:9px;height:9px;border-radius:50%;"></span><span>${m}</span><span class="tl-value">${value}题 · ${percent}%</span></div>`;
+        }).join('');
+        chartHtml += `<div class="time-pie-wrap stats-pie-wrap"><div class="time-pie stats-pie" style="background:conic-gradient(${pieParts.join(',')});"><div class="time-pie-center"><strong>${grandTotal}</strong><span>总题量</span></div></div><div class="time-legend">${pieLegend}</div></div>`;
+    } else {
+        chartHtml += '<div class="stats-empty">该时段暂无刷题数据</div>';
+    }
     chartEl.innerHTML = chartHtml;
     const listEl = document.getElementById('statsList');
     let listHtml = '';
@@ -1988,7 +2012,7 @@ function getTimeStatsRange() {
 function renderTimeStats() {
     const el = document.getElementById('timeStatsChart'); if (!el) return;
     const [start,end] = getTimeStatsRange(), times = {}; MODULES.forEach(m=>times[m]=0);
-    (appData.completedTasks||[]).forEach(c=>{ const m=normalizeModule(c.module); if(start&&c.date<start)return; if(end&&c.date>end)return; if(times[m]!==undefined)times[m]+=Number(c.time)||0; });
+    getValidCompletedTasks().forEach(c=>{ const m=normalizeModule(c.module); if(start&&c.date<start)return; if(end&&c.date>end)return; if(times[m]!==undefined)times[m]+=Number(c.time)||0; });
     const total = MODULES.reduce((n,m)=>n+times[m],0);
     if (!total) { el.innerHTML='<div class="stats-empty">该时段暂无用时数据</div>'; return; }
     let cursor=0, parts=[]; MODULES.forEach(m=>{ if(!times[m])return; const from=cursor/total*360; cursor+=times[m]; const to=cursor/total*360; parts.push(`${MODULE_COLORS[m]} ${from}deg ${to}deg`); });
