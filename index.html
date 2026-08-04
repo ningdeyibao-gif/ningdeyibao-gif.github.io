@@ -635,6 +635,12 @@
         #dayView .day-view-empty,#taskBlockList .day-view-empty { grid-column:1/-1; }
         .day-group { min-width:0; margin-bottom:0; }
         .task-block { min-width:0; margin-bottom:0; }
+        #taskBlockList.module-group-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        .task-module-group { display:grid; grid-template-columns:68px minmax(0,1fr); min-width:0; gap:9px; padding:10px; border:1px solid var(--line); border-radius:18px; background:var(--surface); }
+        .task-module-label { display:flex; align-items:center; justify-content:center; min-height:82px; padding:6px; border-radius:12px; font-size:12px; font-weight:700; text-align:center; }
+        .task-module-content { display:flex; flex-direction:column; min-width:0; gap:8px; }
+        .task-module-content .task-block { width:100%; }
+        .module-group-grid .task-block .module-dot,.module-group-grid .task-block .tag-mod { display:none; }
         .task-list-toolbar { align-items:center; }
         .edit-mode-toggle { display:inline-flex; align-items:center; justify-content:center; min-height:34px; padding:6px 11px; border-radius:12px; font-size:12px; font-weight:650; }
         .edit-mode-toggle.active { color:var(--accent)!important; background:var(--accent-soft)!important; }
@@ -644,6 +650,7 @@
         .day-view-item .dv-stats { flex-basis:100%; }
         @media (max-width:720px) {
             #dayView,.today-module-grid,#taskBlockList { grid-template-columns:minmax(0,1fr); }
+            #taskBlockList.module-group-grid { grid-template-columns:minmax(0,1fr); }
             #dayView .day-group,.today-module-grid .day-group { grid-column:1!important; grid-row:auto!important; }
             .day-view-item .dv-name { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; word-break:normal; }
             .day-view-item .dv-stats { grid-column:1/-1; display:flex; flex-wrap:wrap; gap:6px; }
@@ -1765,6 +1772,7 @@ function renderTaskBlocks() {
     const sortSelect = document.getElementById('taskSortMode'); if (sortSelect) sortSelect.value = taskSortMode;
     const editToggle = document.getElementById('taskEditToggle');
     if (editToggle) { editToggle.classList.toggle('active',taskEditMode); editToggle.textContent=taskEditMode?'✓ 完成编辑':'✏️ 编辑'; }
+    c.classList.toggle('module-group-grid',taskSortMode==='module');
     const toggle = document.getElementById('taskListToggle');
     if (toggle) { toggle.textContent = taskListExpanded ? '收起任务' : `展开全部${filtered.length>10?'（'+filtered.length+'）':''}`; toggle.style.display = filtered.length > 10 ? '' : 'none'; }
     if (!filtered.length) { c.innerHTML = '<div class="day-view-empty">暂无匹配任务</div>'; }
@@ -1778,13 +1786,21 @@ function renderTaskBlocks() {
             const completed = isTaskCompleted(t);
             const isNonQuantified = t.kind === 'nonQuantified';
             const nameDisplay = completed ? `${t.name}✅` : t.name;
+            const tagType = t.type === 'single' ? '<span class="tag-type">单次</span>' : '<span class="tag-type">周期</span>';
+            const tagDone = completed ? '<span class="tag-done">✅ 已完成</span>' : '';
+            const tagKind = isNonQuantified ? '<span class="tag-type" style="background:#e8e0f0;color:#9b59b6;">非量化</span>' : '<span class="tag-type">量化</span>';
+            const endDate = t.subtasks.length > 0 ? t.subtasks[t.subtasks.length - 1].date : t.startDate;
+            const dateRange = t.type === 'single' ? t.startDate : `${t.startDate} ~ ${endDate}`;
+            const metaStats = isNonQuantified ? '' : `<span>📊 ${pct}%</span>`;
             html += `<div class="task-block ${completed?'completed':''}" data-task-block="${t.id}">
                 <div class="task-block-header" onclick="toggleExpand(${t.id})">
                     <span class="module-dot" style="background:${color};"></span>
-                    <span class="tag-mod">${t.module}</span>
+                    <span class="tag-mod">${t.module}</span>${tagType}${tagKind}${tagDone}
                     <strong>${nameDisplay}</strong>
                     <span class="toggle-icon">▶</span>
                 </div>
+                <div class="task-block-meta"><span>📅 ${dateRange}</span><span>📋 ${total}项</span><span>✅ ${doneCount}完成</span>${metaStats}</div>
+                <div class="task-block-progress"><div class="bar" style="width:${pct}%;"></div></div>
                 ${taskEditMode?`<div class="task-block-actions">
                     <button class="btn-edit" onclick="event.stopPropagation();openEditModal(${t.id})">✏️ 编辑</button>
                     <button class="btn-del" onclick="event.stopPropagation();deleteStudyTask(${t.id})">删除</button>
@@ -1816,6 +1832,7 @@ function renderTaskBlocks() {
                         <div class="sr-actions">
                             <button onclick="event.stopPropagation();saveSubEdit(${t.id},${idx})" title="保存" class="se-save">💾</button>
                             <button onclick="event.stopPropagation();cancelSubEdit()" title="取消">✖️</button>
+                            <button onclick="event.stopPropagation();deleteSubtask(${t.id},${idx})" title="删除">🗑️</button>
                         </div>
                     </div>`;
                 } else {
@@ -1833,14 +1850,38 @@ function renderTaskBlocks() {
                         const isEssay = normalizeModule(t.module) === '申论';
                         statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}<span class="stat-item">${isEssay?'总分':'总题'}${s.total}</span><span class="stat-item">${isEssay?'得分':'正确'}${s.correct}</span><span class="stat-item">用时${ts}</span><span class="rate">${rate}%</span></div>`;
                     }
-                    const subActions = taskEditMode ? `<div class="sr-actions"><button onclick="event.stopPropagation();toggleSubtaskDone(${t.id},${idx})" title="完成/取消">${s.done?'✅':'✔️'}</button><button onclick="event.stopPropagation();enterSubEditMode(${t.id},${idx})" title="编辑">✏️</button><button onclick="event.stopPropagation();deleteSubtask(${t.id},${idx})" title="删除">🗑️</button><span style="width:1px;height:16px;background:#ddd;display:inline-block;margin:0 1px;"></span><button onclick="event.stopPropagation();moveTaskForward(${t.id},${idx})" title="单个提前1天">←</button><button onclick="event.stopPropagation();moveTaskBackward(${t.id},${idx})" title="单个延后1天">→</button><button onclick="event.stopPropagation();moveTaskForwardAll(${t.id},${idx})" title="整体提前1天">«</button><button onclick="event.stopPropagation();moveTaskBackwardAll(${t.id},${idx})" title="整体延后1天">»</button></div>` : '';
+                    const subActions = taskEditMode ? `<div class="sr-actions"><button onclick="event.stopPropagation();enterSubEditMode(${t.id},${idx})" title="编辑子任务">✏️</button></div>` : '';
                     html += `<div class="sub-row ${dc}"><div class="sr-num">${s.idx}</div><div class="sr-info"><span class="sr-date">📅 ${s.date}</span>${statsHtml}</div>${subActions}</div>`;
                 }
             });
             html += `</div></div>`;
         });
         c.innerHTML = html;
+        if (taskSortMode === 'module') applyTaskModuleGrouping(c, visibleTasks);
     }
+}
+
+function applyTaskModuleGrouping(container, visibleTasks) {
+    const blocks = new Map(Array.from(container.querySelectorAll('.task-block')).map(el => [String(el.dataset.taskBlock), el]));
+    const fragment = document.createDocumentFragment();
+    MODULES.forEach(module => {
+        const tasks = visibleTasks.filter(t => normalizeModule(t.module) === module);
+        if (!tasks.length) return;
+        const group = document.createElement('div');
+        group.className = 'task-module-group';
+        const color = MODULE_COLORS[module];
+        const label = document.createElement('div');
+        label.className = 'task-module-label';
+        label.style.background = color + '22';
+        label.style.color = color;
+        label.textContent = MODULE_SHORT[module] || module;
+        const content = document.createElement('div');
+        content.className = 'task-module-content';
+        tasks.forEach(t => { const block=blocks.get(String(t.id)); if(block) content.appendChild(block); });
+        group.append(label,content);
+        fragment.appendChild(group);
+    });
+    container.replaceChildren(fragment);
 }
 
 const MOTIVATIONAL_QUOTES = [
