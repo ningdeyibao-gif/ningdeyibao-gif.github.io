@@ -1877,7 +1877,7 @@ function renderTaskBlocks() {
             const tagDone = completed ? '<span class="tag-done">已完成</span>' : '';
             const endDate = t.subtasks.length > 0 ? t.subtasks[t.subtasks.length - 1].date : t.startDate;
             const dateRange = t.type === 'single' ? t.startDate : `${t.startDate} ~ ${endDate}`;
-            const metaStats = `<span class="task-meta-inline"><svg class="task-meta-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 16L16 8M8.5 8.5h.01M15.5 15.5h.01"/></svg>完成率 ${pct}%</span>`;
+            const metaStats = `<span class="task-meta-inline"><svg class="task-meta-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 16L16 8M8.5 8.5h.01M15.5 15.5h.01"/></svg>${pct}%</span>`;
             html += `<div class="task-block ${completed?'completed':''}" data-task-block="${t.id}">
                 <div class="task-block-header" onclick="toggleExpand(${t.id})">
                     <span class="module-dot" style="background:${color};"></span><span class="tag-mod">${t.module}</span>${tagDone}
