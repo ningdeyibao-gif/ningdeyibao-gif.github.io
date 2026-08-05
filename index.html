@@ -123,13 +123,13 @@
         .section-heading .title-icon { width:17px; height:17px; }
 
         .calendar-weekdays { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:3px; margin-bottom:4px; }
-        .calendar-weekdays div { text-align:center; font-size:11px; color:#bda0a6; font-weight:600; padding:4px 0; }
+        .calendar-weekdays div { text-align:center; font-size:14px; color:#bda0a6; font-weight:600; padding:5px 0; }
         .calendar-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:3px; min-width:0; }
         .cal-cell { min-height:72px; background:#fcf8f5; border-radius:8px; padding:4px 3px; cursor:pointer; border:1.5px solid transparent; display:flex; flex-direction:column; gap:2px; overflow:hidden; min-width:0; }
         .cal-cell.other-month { opacity:0.3; }
-        .cal-cell.selected { background:#e8f5e9; border-color:#81c784; }
-        .cal-cell .cc-day { font-size:14px; font-weight:600; color:#3d2c2c; text-align:right; padding:0 3px; }
-        .cal-cell .cc-task { font-size:11px; line-height:1.4; padding:1px 3px; border-radius:3px; overflow:hidden; display:flex; align-items:flex-start; gap:3px; min-width:0; }
+        .cal-cell.selected { background:#fcf8f5; border-color:#81c784; }
+        .cal-cell .cc-day { font-size:17px; font-weight:600; color:#3d2c2c; text-align:right; padding:0 3px; }
+        .cal-cell .cc-task { font-size:13px; line-height:1.45; padding:2px 3px; border-radius:3px; overflow:hidden; display:flex; align-items:flex-start; gap:3px; min-width:0; }
         .cal-cell .cc-task .cc-mod-name { flex:0 0 auto; white-space:nowrap; font-weight:600; max-width:60%; overflow:hidden; text-overflow:ellipsis; }
         .cal-cell .cc-task .cc-mod-tasks { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; overflow:hidden; }
         .cal-cell .cc-task .cc-task-line { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
@@ -158,6 +158,7 @@
         .day-view-item.done .dv-stats .stat-text { color:#bbb; }
         .day-view-item .dv-rate { font-size:11px; font-weight:700; color:#c84a4a; background:#fdecec; padding:2px 8px; border-radius:10px; }
         .day-view-item .dv-time { font-size:11px; color:#6ab7d6; background:#e6f3fa; padding:2px 8px; border-radius:10px; font-weight:600; }
+        .correct-pill { font-size:11px; font-weight:700; color:var(--success,#3f8f55); background:color-mix(in srgb,var(--success,#3f8f55) 14%,transparent); padding:2px 8px; border-radius:10px; white-space:nowrap; }
         .day-view-empty { color:#bda0a6; text-align:center; padding:20px 0; font-size:14px; }
 
         .today-section { margin-top:16px; border-top:1px dashed #f0dbdb; padding-top:12px; }
@@ -203,7 +204,12 @@
         .task-block-header strong { font-size:15px; color:#3d2c2c; }
         .task-block-header { flex-wrap:nowrap; }
         .task-block-header strong { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .task-name-date { flex:1 1 auto; min-width:0; display:flex; align-items:center; gap:8px; }
+        .task-name-date strong { flex:1 1 auto; }
+        .task-inline-date { flex:0 0 auto; color:var(--text-3); font-size:11px; white-space:nowrap; }
         .task-header-summary { margin-left:auto; display:flex; align-items:center; justify-content:flex-end; gap:8px; color:var(--text-3); font-size:11px; white-space:nowrap; }
+        .task-meta-inline { display:inline-flex; align-items:center; gap:4px; white-space:nowrap; }
+        .task-meta-icon { width:13px; height:13px; flex:0 0 auto; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
         .task-block-header .task-header-summary + .toggle-icon { margin-left:2px; }
         .task-block.completed .task-block-header strong { color:#bbb; text-decoration:line-through; }
         .task-block-header .toggle-icon { margin-left:auto; font-size:14px; color:#b47a84; transition:transform 0.2s; }
@@ -307,8 +313,8 @@
             .filter-chip { padding:3px 8px; font-size:11px; }
             .filter-divider { display:none; }
             .cal-cell { min-height:54px; padding:2px; }
-            .cal-cell .cc-day { font-size:12px; }
-            .cal-cell .cc-task { font-size:9px; line-height:1.3; }
+            .cal-cell .cc-day { font-size:15px; }
+            .cal-cell .cc-task { font-size:12px; line-height:1.35; }
             .day-group-content { flex-direction:column; gap:4px; }
             .day-group-label { min-width:auto; padding:3px 6px; font-size:12px; }
             .day-group-tasks { padding-left:0; }
@@ -335,7 +341,7 @@
             .card-title { font-size:14px; }
             .view-toggle button { padding:4px 6px; font-size:11px; }
             .cal-cell { min-height:46px; }
-            .cal-cell .cc-task { font-size:8px; }
+            .cal-cell .cc-task { font-size:11px; }
             .filter-label { display:none; }
             .day-view-item .dv-stats { font-size:10px; }
             .stats-bar-chart { height:100px; padding:8px 4px 24px; }
@@ -368,6 +374,15 @@
         .stats-task-row,.stats-sub-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:7px 10px; background:#fffaf8; border-bottom:1px dashed #f0e0e0; font-size:12px; color:#7a4b55; }
         .stats-task-row { cursor:pointer; font-weight:600; }
         .stats-task-row .detail-name,.stats-sub-row .detail-name { flex:1; min-width:120px; color:#3d2c2c; }
+        @media (max-width:600px) {
+            .stats-task-row { align-items:flex-start; }
+            .stats-task-row .detail-name { flex:1 1 calc(100% - 28px); min-width:0; white-space:normal; overflow-wrap:anywhere; word-break:break-word; line-height:1.4; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
+            .stats-task-row .detail-name + span { flex:1 1 100%; padding-left:24px; }
+            .task-block-header { gap:5px; }
+            .task-name-date { gap:5px; }
+            .task-inline-date { font-size:10px; }
+            .task-header-summary { gap:5px; font-size:10px; }
+        }
         .stats-sub-row { padding-left:28px; font-weight:400; }
         .time-card { margin-top:16px; padding:14px; background:#fcf8f5; border-radius:14px; }
         .time-card-head { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
@@ -461,7 +476,7 @@
         .filter-chip:hover { background:var(--accent-soft); }
         .filter-divider { background:var(--line); }
         .cal-cell,.day-view-item,.task-block,.stats-bar-chart,.stats-module-row,.time-card,.exam-card,.exam-trend-wrap { background:var(--surface-strong); border-color:var(--line); }
-        .cal-cell.selected { background:var(--accent-soft); border-color:var(--accent); }
+        .cal-cell.selected { background:var(--surface-strong); border:2px solid var(--accent); box-shadow:none!important; }
         .cal-cell .cc-day,.day-view-item .dv-name,.task-block-header strong,.sub-row .sr-date,.stats-module-row .sm-name,.time-pie-center strong,.exam-card-header .ec-name { color:var(--text); }
         .day-view-item.done { background:color-mix(in srgb,var(--success) 10%,var(--surface-strong)); }
         .day-view-item .dv-check { background:var(--surface-strong); border-color:var(--line-strong); }
@@ -678,6 +693,8 @@
         .schedule-item-edit { flex:0 0 auto; min-height:28px; padding:4px 10px!important; border-radius:10px!important; font-size:12px!important; }
         .icon-edit-done { width:32px!important; height:30px!important; min-height:30px!important; padding:0!important; display:inline-flex!important; align-items:center; justify-content:center; border-radius:9px!important; color:var(--success,#28a745)!important; }
         .icon-edit-done svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
+        .icon-edit-button { width:32px!important; height:30px!important; min-width:32px!important; min-height:30px!important; padding:0!important; display:inline-flex!important; align-items:center; justify-content:center; border-radius:9px!important; color:var(--accent)!important; }
+        .icon-edit-button svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
         .sub-row.editing .se-save svg { width:16px; height:16px; stroke-width:1.9; }
         .schedule-move-actions svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
         .day-view-item .dv-stats .schedule-move-actions { margin-left:auto; flex-wrap:nowrap; }
@@ -700,6 +717,55 @@
             .day-view-item .dv-name { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; word-break:normal; }
             .day-view-item .dv-stats { grid-column:1/-1; display:flex; flex-wrap:wrap; gap:6px; }
         }
+        /* iPad 与手机端的最终布局校准 */
+        @media (min-width:721px) and (max-width:1024px) {
+            .main { padding:18px 20px 36px; }
+            .study-hero { grid-template-columns:minmax(180px,.75fr) minmax(340px,1.25fr); padding:24px; }
+            .card { padding:18px; }
+            .filter-bar { flex-wrap:nowrap; overflow-x:auto; }
+            .triangle-filter { flex:1 0 132px; }
+            #dayView,.today-module-grid { gap:10px; }
+            #dayView .day-group-content,.today-module-grid .day-group-content { grid-template-columns:58px minmax(0,1fr); }
+            .dv-title-row { overflow-x:auto; scrollbar-width:thin; }
+            .task-block-header { overflow-x:auto; }
+            .task-name-date { min-width:240px; }
+            .settings-section { display:grid; grid-template-columns:minmax(180px,.75fr) minmax(0,1.25fr); align-items:start; }
+            .theme-options,.cloud-sync-panel,.settings-backup-actions { min-width:0; width:100%; }
+            .time-card-head { align-items:flex-start; }
+        }
+        @media (max-width:720px) {
+            .main { padding:10px 9px 106px; }
+            .card { padding:12px; border-radius:20px; }
+            .card-title { gap:7px; }
+            .study-hero { grid-template-columns:1fr; gap:14px; padding:18px; }
+            .hero-brand h1 { font-size:27px; }
+            .countdown-panel .sb-countdown-item { grid-template-columns:minmax(0,1fr) auto; }
+            .filter-bar { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:thin; }
+            .triangle-filter { flex:0 0 122px; min-width:122px; }
+            #calendarWrap { overflow-x:auto!important; padding-bottom:5px; }
+            .calendar-weekdays,.calendar-grid { min-width:630px; }
+            #dayView .day-group,.today-module-grid .day-group { padding:8px; }
+            #dayView .day-group-content,.today-module-grid .day-group-content { grid-template-columns:48px minmax(0,1fr); gap:7px; }
+            .day-view-item { padding:8px!important; }
+            .dv-title-row { min-width:max-content; overflow-x:visible; }
+            .day-view-item .dv-info { overflow-x:auto; scrollbar-width:thin; }
+            .task-block { padding:10px; }
+            .task-block-header { overflow-x:auto; scrollbar-width:thin; }
+            .task-name-date { min-width:215px; }
+            .task-header-summary { margin-left:4px; }
+            .sub-row.editing { scrollbar-width:thin; }
+            .time-card { padding:12px; }
+            .time-card-head { align-items:flex-start; }
+            .time-period-toggle { width:100%; justify-content:flex-start; flex-wrap:nowrap; overflow-x:auto; }
+            .time-period-toggle button { flex:0 0 auto; }
+            .time-pie-wrap { gap:14px; }
+            .time-pie { width:165px; height:165px; }
+            .settings-section { display:flex; flex-direction:column; gap:12px; }
+            .settings-copy,.theme-options,.cloud-sync-panel,.settings-backup-actions { width:100%; min-width:0; }
+            .cloud-actions { flex-wrap:wrap; }
+            .exam-card-header { gap:6px; overflow-x:auto; }
+            .modal-box { max-height:88vh; overflow-y:auto; }
+        }
         @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition-duration:.01ms!important; animation-duration:.01ms!important; } }
     </style>
 </head>
@@ -708,7 +774,7 @@
 <div class="main">
     <div class="study-hero">
         <div class="hero-brand"><h1>2027 上岸计划</h1><span id="sbToday">加载中</span></div>
-        <div class="countdown-panel"><div class="countdown-heading"><strong>考试倒计时</strong><button onclick="openCountdownManager()">编辑</button></div><div class="sb-countdown" id="sbCountdown"></div></div>
+        <div class="countdown-panel"><div class="countdown-heading"><strong>考试倒计时</strong><button class="icon-edit-button" title="编辑倒计时" aria-label="编辑倒计时" onclick="openCountdownManager()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button></div><div class="sb-countdown" id="sbCountdown"></div></div>
     </div>
 
     <!-- ① 计划看板 -->
@@ -789,8 +855,8 @@
             </div>
             <div class="form-row add-form-row" id="fCountRow">
                 <div class="form-group"><label id="fTotalLabel">每项总题数</label><input type="number" id="fTotal" min="0" value="20"></div>
-                <div class="form-group"><label>此任务数量</label><input type="number" id="fCount" min="1" max="365" value="30"></div>
-                <div class="form-group"><label>每次完成任务数</label><input type="number" id="fDailyCount" min="1" max="20" value="1"></div>
+                <div class="form-group"><label>子任务数量</label><input type="number" id="fCount" min="1" max="365" value="30"></div>
+                <div class="form-group"><label>每天完成子任务数量</label><input type="number" id="fDailyCount" min="1" max="20" value="1"></div>
             </div>
             <div class="form-row hidden" id="fWeekdayRow">
                 <div class="form-group" style="flex:1 1 100%;"><label>每周任务日（自由勾选）</label>
@@ -949,7 +1015,7 @@
     <div class="modal-box">
         <h3>编辑任务</h3>
         <div class="form-group"><label>任务名称</label><input type="text" id="editName"></div>
-        <div class="form-group" id="editStartGroup"><label>起始日期</label><input type="date" id="editStart"></div>
+        <div class="form-group" id="editStartGroup"><label id="editStartLabel">起始日期</label><input type="date" id="editStart"></div>
         <div class="form-group" id="editCountGroup"><label>子任务数量</label><input type="number" id="editCount" min="1"></div>
         <div class="modal-actions">
             <button class="btn-del" onclick="deleteEditingTask()">删除任务</button>
@@ -1146,6 +1212,8 @@ function toggleScheduleItemEdit(tid, idx) {
     renderBoard();
 }
 function scheduleOutlineIcon(kind) {
+    if (kind === 'edit') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg>';
+    if (kind === 'settings') return '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6l-.3-2.5h-4L10.4 6A8 8 0 0 0 9 7.1l-2.4-1-2 3.4L6.5 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1A8 8 0 0 0 10.4 18l.3 2.5h4L15 18a8 8 0 0 0 1.4-1.1l2.4 1 2-3.4-2-1.5c.1-.3.2-.7.2-1Z"/></svg>';
     if (kind === 'check') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4L19 6"/></svg>';
     if (kind === 'save') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h12l2 2v14H5z"/><path d="M8 4v6h8V4M8 20v-6h8v6"/></svg>';
     if (kind === 'delete') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg>';
@@ -1333,6 +1401,7 @@ function addSingleTask() {
 function openEditModal(id) {
     const t = appData.studyTasks.find(x => x.id === id); if (!t) return;
     editingTaskId = id; document.getElementById('editName').value = t.name;
+    document.getElementById('editStartLabel').textContent = t.type === 'periodic' ? '起始日期' : '任务日期';
     document.getElementById('editStartGroup').style.display = ''; document.getElementById('editStart').value = t.startDate;
     if (t.type === 'periodic') { document.getElementById('editCountGroup').style.display = ''; document.getElementById('editCount').value = t.subtaskCount; }
     else document.getElementById('editCountGroup').style.display = 'none';
@@ -1614,12 +1683,12 @@ function renderDayView() {
             const nameDisplay = `${item.taskName} 第${item.sub.idx}项`;
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
-            let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="stat-text">${isEssay?'得分':'正确'}${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
+            let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
             const isEditing = scheduleEditTarget && scheduleEditTarget.tid===item.taskId && scheduleEditTarget.idx===item.subIdx;
             if(isEditing) sh=isNonQ?`<input type="number" min="0" value="${item.sub.time||''}" placeholder="分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||''}" placeholder="分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
-            const editButton = isEditing ? `<button class="schedule-item-edit icon-edit-done" title="完成编辑" aria-label="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>` : `<button class="schedule-item-edit" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">编辑</button>`;
+            const editButton = isEditing ? `<button class="schedule-item-edit icon-edit-done" title="完成编辑" aria-label="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>` : `<button class="schedule-item-edit icon-edit-button" title="编辑" aria-label="编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('edit')}</button>`;
             const moveActions = isEditing ? `<div class="schedule-move-actions"><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>` : '';
-            html += `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${sh}${editButton}${moveActions}</div></div></div>`;
+            html += `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${sh}${moveActions}${editButton}</div></div></div>`;
         });
         html += `</div></div></div>`;
     });
@@ -1704,12 +1773,12 @@ function renderTodaySection() {
             const nameDisplay = `${item.taskName} 第${item.sub.idx}项`;
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
-            let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="stat-text">${isEssay?'得分':'正确'}${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
+            let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
             const isEditing = scheduleEditTarget && scheduleEditTarget.tid===item.taskId && scheduleEditTarget.idx===item.subIdx;
             if(isEditing) sh=isNonQ?`<input type="number" min="0" value="${item.sub.time||''}" placeholder="分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||''}" placeholder="分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
-            const editButton = isEditing ? `<button class="schedule-item-edit icon-edit-done" title="完成编辑" aria-label="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>` : `<button class="schedule-item-edit" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">编辑</button>`;
+            const editButton = isEditing ? `<button class="schedule-item-edit icon-edit-done" title="完成编辑" aria-label="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>` : `<button class="schedule-item-edit icon-edit-button" title="编辑" aria-label="编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('edit')}</button>`;
             const moveActions = isEditing ? `<div class="schedule-move-actions"><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>` : '';
-            html += `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${sh}${editButton}${moveActions}</div></div></div>`;
+            html += `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${sh}${moveActions}${editButton}</div></div></div>`;
         });
         html += `</div></div></div>`;
     });
@@ -1808,17 +1877,16 @@ function renderTaskBlocks() {
             const tagDone = completed ? '<span class="tag-done">已完成</span>' : '';
             const endDate = t.subtasks.length > 0 ? t.subtasks[t.subtasks.length - 1].date : t.startDate;
             const dateRange = t.type === 'single' ? t.startDate : `${t.startDate} ~ ${endDate}`;
-            const metaStats = isNonQuantified ? '' : `<span>完成率 ${pct}%</span>`;
+            const metaStats = `<span class="task-meta-inline"><svg class="task-meta-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 16L16 8M8.5 8.5h.01M15.5 15.5h.01"/></svg>完成率 ${pct}%</span>`;
             html += `<div class="task-block ${completed?'completed':''}" data-task-block="${t.id}">
                 <div class="task-block-header" onclick="toggleExpand(${t.id})">
                     <span class="module-dot" style="background:${color};"></span><span class="tag-mod">${t.module}</span>${tagDone}
-                    <strong>${nameDisplay}</strong>
-                    <span class="task-header-summary"><span>共 ${total} 项</span><span>已完成 ${doneCount} 项</span>${metaStats}</span>
+                    <span class="task-name-date"><strong>${nameDisplay}</strong><span class="task-inline-date task-meta-inline"><svg class="task-meta-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M8 3.5v4M16 3.5v4M3.5 10h17"/></svg>${dateRange}</span></span>
+                    <span class="task-header-summary"><span class="task-meta-inline"><svg class="task-meta-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M5 12h9M5 18h7"/><path d="M16 16l2 2 3-4"/></svg>${doneCount}/${total}项</span>${metaStats}</span>
                     <span class="toggle-icon"></span>
                 </div>
-                <div class="task-block-meta"><span>${dateRange}</span></div>
                 <div class="task-block-progress"><div class="bar" style="width:${pct}%;"></div></div>
-                <div class="subtask-expand"><div class="task-expanded-actions"><button class="btn-edit" onclick="event.stopPropagation();openEditModal(${t.id})">编辑任务</button><button class="btn-edit ${subEditTaskId===t.id?'icon-edit-done':''}" title="${subEditTaskId===t.id?'完成编辑':'编辑子任务'}" aria-label="${subEditTaskId===t.id?'完成编辑':'编辑子任务'}" onclick="event.stopPropagation();toggleAllSubtasksEdit(${t.id})">${subEditTaskId===t.id?scheduleOutlineIcon('check'):'编辑子任务'}</button></div>`;
+                <div class="subtask-expand"><div class="task-expanded-actions"><button class="btn-edit ${subEditTaskId===t.id?'icon-edit-done':'icon-edit-button'}" title="${subEditTaskId===t.id?'完成编辑':'编辑子任务'}" aria-label="${subEditTaskId===t.id?'完成编辑':'编辑子任务'}" onclick="event.stopPropagation();toggleAllSubtasksEdit(${t.id})">${subEditTaskId===t.id?scheduleOutlineIcon('check'):scheduleOutlineIcon('edit')}</button>${subEditTaskId===t.id?`<button class="btn-edit icon-edit-button" title="任务设置" aria-label="任务设置" onclick="event.stopPropagation();openEditModal(${t.id})">${scheduleOutlineIcon('settings')}</button>`:''}</div>`;
             const sortedSubs = [...t.subtasks].map((s, originalIdx) => ({ s, originalIdx }));
             sortedSubs.sort((a, b) => {
                 if (a.s.done !== b.s.done) return a.s.done ? 1 : -1;
@@ -1863,7 +1931,7 @@ function renderTaskBlocks() {
                         const rate = s.total > 0 ? Math.round(s.correct/s.total*100) : 0;
                         const ts = s.time > 0 ? `${s.time}分` : '未填';
                         const isEssay = normalizeModule(t.module) === '申论';
-                        statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}<span class="stat-text">${isEssay?'得分':'正确'} ${s.correct}/${s.total}</span><span class="rate">${rate}%</span><span class="dv-time">${ts}</span></div>`;
+                        statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}<span class="correct-pill">${s.correct}/${s.total}</span><span class="rate">${rate}%</span><span class="dv-time">${ts}</span></div>`;
                     }
                     html += `<div class="sub-row ${dc}"><div class="dv-check ${dc}" role="button" tabindex="0" title="${s.done?'取消完成':'标记完成'}" aria-label="${s.done?'取消完成':'标记完成'}" onclick="event.stopPropagation();toggleSubtaskDone(${t.id},${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleSubtaskDone(${t.id},${idx})}"></div><div class="sr-num">${s.idx}</div><div class="sr-info"><span class="sr-date">${s.date}</span>${statsHtml}</div></div>`;
                 }
@@ -2375,7 +2443,7 @@ function renderExamRecords() {
             }
         });
             if (e.remark) detailHtml += `<div class="exam-remark">${e.remark}</div>`;
-            detailHtml += `<div class="exam-actions"><button class="btn-edit" onclick="event.stopPropagation();openExamModal(${e.id})">编辑</button><button class="btn-del" onclick="event.stopPropagation();deleteExamRecord(${e.id})">删除</button></div>`;
+            detailHtml += `<div class="exam-actions"><button class="btn-edit icon-edit-button" title="编辑模考" aria-label="编辑模考" onclick="event.stopPropagation();openExamModal(${e.id})">${scheduleOutlineIcon('edit')}</button><button class="btn-del" onclick="event.stopPropagation();deleteExamRecord(${e.id})">删除</button></div>`;
         html += `<div class="exam-card" onclick="this.classList.toggle('expanded')">
             <div class="exam-card-header">
                 <span class="ec-name">${e.name}</span>
