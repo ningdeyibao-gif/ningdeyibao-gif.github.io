@@ -833,6 +833,7 @@
                         <option value="常识">常识</option>
                         <option value="公共基础知识">公共基础知识</option>
                         <option value="申论">申论</option>
+                        <option value="清单">清单</option>
                     </select>
                 </div>
                 <div class="form-group"><label>任务名称</label><input type="text" id="fName" placeholder="如 600题精讲"></div>
@@ -886,6 +887,7 @@
                         <option value="常识">常识</option>
                         <option value="公共基础知识">公共基础知识</option>
                         <option value="申论">申论</option>
+                        <option value="清单">清单</option>
                     </select>
                 </div>
                 <div class="form-group"><label>任务名称</label><input type="text" id="fSingleName" placeholder="如 模考卷1"></div>
@@ -1120,9 +1122,9 @@ async function signInCloudWithPassword() {
 }
 async function signOutCloud(){if(!cloudClient)return;await cloudClient.auth.signOut();cloudUser=null;cloudReady=false;updateCloudAuthUI();const pwd=document.getElementById('cloudPassword');if(pwd)pwd.value='';setCloudStatus('已退出，数据继续保存在本机','');}
 
-const MODULE_COLORS = { '资料分析':'#6f9fc9','数量关系':'#9a82b4','言语理解与表达':'#d9a067','判断推理':'#78aa83','政治理论':'#c97979','常识':'#c3a34e','公共基础知识':'#bd8792','申论':'#c883a5' };
+const MODULE_COLORS = { '资料分析':'#6f9fc9','数量关系':'#9a82b4','言语理解与表达':'#d9a067','判断推理':'#78aa83','政治理论':'#c97979','常识':'#c3a34e','公共基础知识':'#bd8792','申论':'#c883a5','清单':'#8496a5' };
 const MODULES = Object.keys(MODULE_COLORS);
-const MODULE_SHORT = { '资料分析':'资料','数量关系':'数量','判断推理':'判断','言语理解与表达':'言语','政治理论':'政治','常识':'常识','公共基础知识':'公基','申论':'申论' };
+const MODULE_SHORT = { '资料分析':'资料','数量关系':'数量','判断推理':'判断','言语理解与表达':'言语','政治理论':'政治','常识':'常识','公共基础知识':'公基','申论':'申论','清单':'清单' };
 const MODULE_ALIAS = { '政治常识':'政治理论','言语理解':'言语理解与表达' };
 const MODULE_SUBTYPES = {
     '判断推理': ['图形推理','定义判断','类比推理','逻辑判断'],
@@ -1680,7 +1682,7 @@ function renderDayView() {
             const dc = item.sub.done ? 'done' : '', cc = item.sub.done ? 'done' : '';
             const rate = item.sub.total > 0 ? Math.round(item.sub.correct/item.sub.total*100) : 0;
             const ts = item.sub.time > 0 ? `${item.sub.time}分` : '';
-            const nameDisplay = `${item.taskName} 第${item.sub.idx}项`;
+            const nameDisplay = item.taskType === 'single' ? item.taskName : `${item.taskName} 第${item.sub.idx}项`;
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
             let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
@@ -1736,7 +1738,8 @@ function renderCalendar() {
             items.forEach(item => {
                 const doneCls = item.sub.done ? 'done' : '';
                 const ck = item.sub.done ? ' ✓' : '';
-                linesHtml += `<span class="cc-task-line ${doneCls}">${item.task.name} ${item.sub.idx}${ck}</span>`;
+                const calendarTaskName = item.task.type === 'single' ? item.task.name : `${item.task.name} ${item.sub.idx}`;
+                linesHtml += `<span class="cc-task-line ${doneCls}">${calendarTaskName}${ck}</span>`;
             });
             th += `<div class="cc-task" style="background:${color}22;color:${color};"><span class="cc-mod-name">${sm}</span><span class="cc-mod-tasks">${linesHtml}</span></div>`;
         });
@@ -1770,7 +1773,7 @@ function renderTodaySection() {
             const dc = item.sub.done ? 'done' : '', cc = item.sub.done ? 'done' : '';
             const rate = item.sub.total > 0 ? Math.round(item.sub.correct/item.sub.total*100) : 0;
             const ts = item.sub.time > 0 ? `${item.sub.time}分` : '';
-            const nameDisplay = `${item.taskName} 第${item.sub.idx}项`;
+            const nameDisplay = item.taskType === 'single' ? item.taskName : `${item.taskName} 第${item.sub.idx}项`;
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
             let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
@@ -1877,7 +1880,7 @@ function renderTaskBlocks() {
             const tagDone = completed ? '<span class="tag-done">已完成</span>' : '';
             const endDate = t.subtasks.length > 0 ? t.subtasks[t.subtasks.length - 1].date : t.startDate;
             const dateRange = t.type === 'single' ? t.startDate : `${t.startDate} ~ ${endDate}`;
-            const metaStats = `<span class="task-meta-inline"><svg class="task-meta-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 16L16 8M8.5 8.5h.01M15.5 15.5h.01"/></svg>${pct}%</span>`;
+            const metaStats = `<span class="task-meta-inline"><svg class="task-meta-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4L19 6"/></svg>${pct}%</span>`;
             html += `<div class="task-block ${completed?'completed':''}" data-task-block="${t.id}">
                 <div class="task-block-header" onclick="toggleExpand(${t.id})">
                     <span class="module-dot" style="background:${color};"></span><span class="tag-mod">${t.module}</span>${tagDone}
@@ -1898,13 +1901,14 @@ function renderTaskBlocks() {
                 if (subFilterStatus === 'undone' && s.done) return;
                 const isEditing = subEditTaskId === t.id || (subEditMode && subEditMode.tid === t.id && subEditMode.idx === idx);
                 const sNonQ = (t.kind === 'nonQuantified') || (s.kind === 'nonQuantified');
+                const subNumberHtml = t.type === 'single' ? '' : `<div class="sr-num">${s.idx}</div>`;
                 if (isEditing) {
                     const subTypeOptions = MODULE_SUBTYPES[t.module] || [];
                     const stHtml = subTypeOptions.length ? `<select id="se-subtype-${t.id}-${idx}" class="se-input se-subtype"><option value="">无</option>${subTypeOptions.map(o=>`<option value="${o}" ${s.subType===o?'selected':''}>${o}</option>`).join('')}</select>` : '';
                     const isEssay = normalizeModule(t.module) === '申论';
                     const quantInputs = sNonQ ? `<input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="用时" value="${s.time||''}" min="0">` : `<input type="number" id="se-total-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'总分':'总题'}" value="${s.total||''}" min="0"><input type="number" id="se-correct-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'得分':'正确'}" value="${s.correct||''}" min="0"><input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="用时" value="${s.time||''}" min="0">`;
                     html += `<div class="sub-row editing">
-                        <div class="sr-num">${s.idx}</div>
+                        ${subNumberHtml}
                         <div class="sr-edit-form">
                             <input type="date" id="se-date-${t.id}-${idx}" class="se-input" value="${s.date}">
                             ${stHtml}
@@ -1933,7 +1937,7 @@ function renderTaskBlocks() {
                         const isEssay = normalizeModule(t.module) === '申论';
                         statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}<span class="correct-pill">${s.correct}/${s.total}</span><span class="rate">${rate}%</span><span class="dv-time">${ts}</span></div>`;
                     }
-                    html += `<div class="sub-row ${dc}"><div class="dv-check ${dc}" role="button" tabindex="0" title="${s.done?'取消完成':'标记完成'}" aria-label="${s.done?'取消完成':'标记完成'}" onclick="event.stopPropagation();toggleSubtaskDone(${t.id},${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleSubtaskDone(${t.id},${idx})}"></div><div class="sr-num">${s.idx}</div><div class="sr-info"><span class="sr-date">${s.date}</span>${statsHtml}</div></div>`;
+                    html += `<div class="sub-row ${dc}"><div class="dv-check ${dc}" role="button" tabindex="0" title="${s.done?'取消完成':'标记完成'}" aria-label="${s.done?'取消完成':'标记完成'}" onclick="event.stopPropagation();toggleSubtaskDone(${t.id},${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleSubtaskDone(${t.id},${idx})}"></div>${subNumberHtml}<div class="sr-info"><span class="sr-date">${s.date}</span>${statsHtml}</div></div>`;
                 }
             });
             html += `</div></div>`;
