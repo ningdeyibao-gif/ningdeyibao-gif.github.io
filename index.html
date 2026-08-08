@@ -1570,7 +1570,7 @@ function moveTaskBackwardAll(tid, si) {
     renderAll();
     if (wasExpanded) { const el = document.querySelector(`[data-task-block="${tid}"]`); if (el) el.classList.add('expanded'); }
 }
-function updateSubtaskStat(tid, si, f, v) { const t = appData.studyTasks.find(x => x.id === tid); if (!t) return; const s = t.subtasks[si]; if (f === 'total') s.total = parseInt(v)||0; else if (f === 'correct') s.correct = parseInt(v)||0; else if (f === 'time') s.time = parseFloat(v)||0; if (s.total > 0 && s.correct > s.total) s.correct = s.total; saveData(); renderAll(); }
+function updateSubtaskStat(tid, si, f, v) { const t = appData.studyTasks.find(x => x.id === tid); if (!t) return; const s = t.subtasks[si]; if (f === 'total') s.total = parseInt(v)||0; else if (f === 'correct') s.correct = parseInt(v)||0; else if (f === 'time') s.time = parseFloat(v)||0; if (s.total > 0 && s.correct > s.total) s.correct = s.total; saveData(); }
 
 function toggleExpand(taskId) {
     const el = document.querySelector(`[data-task-block="${taskId}"]`);
@@ -1838,6 +1838,7 @@ function saveSubEdit(tid, idx) {
     }
     t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
     subEditMode = null;
+    subEditTaskId = null;
     const _el = document.querySelector(`[data-task-block="${tid}"]`); const wasExpanded = _el ? _el.classList.contains('expanded') : false;
     saveData(); renderAll();
     if (wasExpanded) { const el = document.querySelector(`[data-task-block="${tid}"]`); if (el) el.classList.add('expanded'); }
