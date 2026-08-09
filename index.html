@@ -548,7 +548,7 @@
             .hero-copy strong { font-size:18px; }.hero-copy small { max-width:220px; }.hero-art { width:150px; max-width:40%; }
             .theme-options { min-width:100%; grid-template-columns:1fr; }
             .settings-backup-actions { min-width:100%; grid-template-columns:1fr; }.cloud-sync-panel { min-width:100%; }.cloud-email-row { flex-direction:column; align-items:stretch; }.cloud-email-row button{width:100%;}
-            .bottom-nav { position:fixed; display:grid; grid-template-columns:repeat(5,1fr); align-items:end; left:10px; right:10px; bottom:10px; height:70px; padding:8px 8px 6px; background:var(--card-bg); border:1px solid var(--line); border-radius:24px; box-shadow:0 12px 38px rgba(50,50,45,.15); backdrop-filter:blur(24px); z-index:1500; }
+            .bottom-nav { position:fixed; display:grid; grid-template-columns:repeat(6,1fr); align-items:end; left:10px; right:10px; bottom:10px; height:70px; padding:8px 8px 6px; background:var(--card-bg); border:1px solid var(--line); border-radius:24px; box-shadow:0 12px 38px rgba(50,50,45,.15); backdrop-filter:blur(24px); z-index:1500; }
             .bottom-nav button { border:0; background:transparent; color:var(--text-3); display:flex; flex-direction:column; align-items:center; gap:2px; font-size:19px; cursor:pointer; }
             .bottom-nav button small { font-size:10px; }.bottom-nav .bottom-main { color:var(--accent); transform:translateY(-12px); }
             .bottom-nav .bottom-main span { width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:50%; color:white; background:linear-gradient(135deg,#edb651,#db9834); box-shadow:0 8px 18px var(--accent-shadow); font-size:28px; }
@@ -558,7 +558,7 @@
         /* 无侧栏布局与全局底部导航 */
         body { display:block; }
         .main { max-width:1180px; padding-bottom:112px; }
-        .bottom-nav { position:fixed; display:grid; grid-template-columns:repeat(5,1fr); align-items:end; left:50%; transform:translateX(-50%); width:min(560px,calc(100% - 20px)); bottom:12px; height:72px; padding:8px 10px 7px; background:var(--card-bg); border:1px solid var(--line); border-radius:25px; box-shadow:0 12px 38px rgba(50,50,45,.15); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); z-index:1500; }
+        .bottom-nav { position:fixed; display:grid; grid-template-columns:repeat(6,1fr); align-items:end; left:50%; transform:translateX(-50%); width:min(620px,calc(100% - 20px)); bottom:12px; height:72px; padding:8px 10px 7px; background:var(--card-bg); border:1px solid var(--line); border-radius:25px; box-shadow:0 12px 38px rgba(50,50,45,.15); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); z-index:1500; }
         .bottom-nav button { border:0; background:transparent; color:var(--text-3); display:flex; flex-direction:column; align-items:center; gap:2px; font-size:19px; cursor:pointer; }
         .bottom-nav button small { font-size:10px; }
         .bottom-nav .bottom-main { color:var(--accent); transform:translateY(-13px); }
@@ -767,9 +767,70 @@
             .modal-box { max-height:88vh; overflow-y:auto; }
         }
         @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition-duration:.01ms!important; animation-duration:.01ms!important; } }
+
+        /* 当日时间轴 */
+        .schedule-row { display:flex; align-items:stretch; gap:12px; min-width:0; }
+        .schedule-row .card-board { flex:1 1 auto; min-width:0; }
+        .card-timeline { display:none; flex:0 0 155px; width:155px; padding:12px; margin-right:0; border-color:var(--line); }
+        body.timeline-panel-open .card-timeline { display:block; animation:timelinePanelIn .24s ease; }
+        .card-timeline .timeline-head { flex-direction:column; align-items:stretch; gap:5px; }
+        .card-timeline .card-title { font-size:18px; flex-wrap:nowrap; gap:3px; white-space:nowrap; }
+        .card-timeline .card-title .title-icon { width:17px; height:17px; }
+        .card-timeline .card-title .sub { margin-left:auto; font-size:8px; white-space:nowrap; }
+        .card-timeline .timeline-date-nav { gap:2px; }
+        .card-timeline .timeline-date-nav button { min-width:0; flex:1 1 0; height:23px; padding:0 2px; border-radius:7px; font-size:9px; }
+        .card-timeline .timeline-date-nav button:first-child,
+        .card-timeline .timeline-date-nav button:last-child { font-size:17px; font-weight:650; line-height:1; padding-bottom:2px; }
+        .timeline-controls-row { display:flex; align-items:center; gap:3px; }
+        .timeline-controls-row .timeline-date-nav { flex:1 1 auto; min-width:0; }
+        .board-control-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; min-width:0; overflow-x:auto; scrollbar-width:thin; }
+        .board-control-row .filter-bar { flex:0 0 auto; margin-bottom:0; overflow:visible; padding-bottom:0; }
+        .board-control-row .nav-week { flex:0 0 auto; justify-content:flex-start; margin-bottom:0; gap:5px; }
+        .board-control-row .nav-week .range { min-width:112px; }
+        .timeline-edit-button { align-self:flex-end; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:7px; background:var(--surface); color:var(--text-3); cursor:pointer; padding:0; }
+        .timeline-edit-button svg { width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+        .timeline-edit-button.active { color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
+        .timeline-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+        .timeline-date-nav { display:flex; align-items:center; gap:6px; }
+        .timeline-date-nav button { min-width:34px; height:32px; padding:0 10px; border:1px solid var(--line); border-radius:10px; background:var(--surface); color:var(--text-2); cursor:pointer; }
+        .timeline-date-nav button:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-soft); }
+        .timeline-scroll { overflow-x:auto; overflow-y:hidden; border:1px solid var(--line); border-radius:16px; background:color-mix(in srgb,var(--surface) 88%,transparent); }
+        .timeline-grid { --slot-h:18px; position:relative; min-width:97px; height:calc(var(--slot-h) * 32); margin:10px 6px 10px 32px; }
+        .timeline-slot { position:absolute; left:0; right:0; height:var(--slot-h); cursor:pointer; border-top:1px solid var(--line); }
+        .timeline-slot.half-hour { border-top-style:dashed; border-top-color:color-mix(in srgb,var(--line) 65%,transparent); }
+        .timeline-slot:hover { background:var(--accent-soft); }
+        .timeline-slot-label { position:absolute; left:-32px; top:-7px; width:32px; padding-right:2px; text-align:right; font-size:9px; color:var(--text-3); pointer-events:none; }
+        .timeline-slot-hit { position:absolute; left:0; right:0; top:0; bottom:0; }
+        .timeline-now { position:absolute; left:0; right:0; height:2px; z-index:8; background:#ef6a6a; pointer-events:none; }
+        .timeline-now::before { content:""; position:absolute; left:-4px; top:-3px; width:8px; height:8px; border-radius:50%; background:#ef6a6a; }
+        .timeline-task { position:absolute; z-index:10; min-height:0; padding:0 4px; border-radius:7px; border:1px solid color-mix(in srgb,var(--task-color) 55%,transparent); background:color-mix(in srgb,var(--task-color) 20%,var(--card-bg)); box-shadow:0 3px 9px rgba(40,45,55,.11); overflow:hidden; touch-action:auto; cursor:default; animation:timelineDrop .24s ease; }
+        .timeline-task-layer.editing .timeline-task { padding-right:23px; touch-action:none; cursor:grab; }
+        .timeline-task.dragging { opacity:.72; cursor:grabbing; box-shadow:0 12px 28px rgba(40,45,55,.24); z-index:40; }
+        .timeline-task.done .timeline-task-name { text-decoration:line-through; opacity:.65; }
+        .timeline-task-main { display:flex; align-items:flex-start; gap:2px; min-width:0; margin:0; padding:0; }
+        .timeline-check { width:13px; height:13px; flex:0 0 auto; border-radius:50%; border:1.5px solid var(--task-color); background:var(--card-bg); display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:800; color:white; cursor:pointer; }
+        .timeline-task.done .timeline-check { background:#67b86c; border-color:#67b86c; }
+        .timeline-task-name { min-width:0; font-size:9px; line-height:12px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:clip; }
+        .timeline-remove { position:absolute; right:5px; top:0; border:0; background:transparent; color:var(--text-3); font-size:15px; line-height:16px; cursor:pointer; padding:0; }
+        .timeline-resize { position:absolute; left:24px; right:24px; height:10px; cursor:ns-resize; z-index:2; }
+        .timeline-resize.top { top:-2px; }.timeline-resize.bottom { bottom:-2px; }
+        .timeline-resize::after { content:""; position:absolute; left:42%; right:42%; top:4px; height:2px; border-radius:2px; background:color-mix(in srgb,var(--text-3) 55%,transparent); }
+        .timeline-empty { padding:9px 2px 2px; color:var(--text-3); font-size:10px; line-height:1.4; }
+        .timeline-task-picker { display:grid; gap:8px; max-height:42vh; overflow:auto; margin:12px 0; }
+        .timeline-picker-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--line); border-radius:12px; cursor:pointer; background:var(--surface); }
+        .timeline-picker-item.active { border-color:var(--accent); background:var(--accent-soft); }
+        .timeline-picker-dot { width:10px; height:10px; border-radius:50%; flex:0 0 auto; }
+        .timeline-picker-empty { padding:18px; text-align:center; color:var(--text-3); }
+        .timeline-duration-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; }
+        .timeline-duration-grid button { padding:8px 5px; border:1px solid var(--line); background:var(--surface); color:var(--text-2); border-radius:10px; cursor:pointer; }
+        .timeline-duration-grid button.active { color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
+        .planned-time-pill { color:var(--accent); font-size:11px; white-space:nowrap; }
+        @keyframes timelineDrop { from { transform:scale(.97); opacity:.55; } to { transform:scale(1); opacity:1; } }
+        @keyframes timelinePanelIn { from { transform:translateX(-14px); opacity:0; } to { transform:translateX(0); opacity:1; } }
+        @media (max-width:900px) { .schedule-row { flex-direction:column; }.card-timeline { flex-basis:auto; width:min(260px,100%); }.timeline-grid { min-width:184px; }.timeline-duration-grid { grid-template-columns:repeat(2,1fr); } }
     </style>
 </head>
-<body>
+<body class="timeline-panel-open">
 
 <div class="main">
     <div class="study-hero">
@@ -777,7 +838,18 @@
         <div class="countdown-panel"><div class="countdown-heading"><strong>考试倒计时</strong><button class="icon-edit-button" title="编辑倒计时" aria-label="编辑倒计时" onclick="openCountdownManager()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button></div><div class="sb-countdown" id="sbCountdown"></div></div>
     </div>
 
-    <!-- ① 计划看板 -->
+    <div class="schedule-row">
+    <!-- ① 当日时间轴 -->
+    <div class="card card-timeline" id="card-timeline">
+        <div class="timeline-head">
+            <div class="card-title" style="margin-bottom:0;"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>时间轴 <span class="sub" id="timelineDate"></span></div>
+            <div class="timeline-controls-row"><div class="timeline-date-nav"><button onclick="navigateTimeline(-1)" aria-label="前一天">‹</button><button onclick="goTimelineToday()">今天</button><button onclick="navigateTimeline(1)" aria-label="后一天">›</button></div><button class="timeline-edit-button" id="timelineEditButton" onclick="toggleTimelineEdit()" aria-label="编辑时间轴" title="编辑时间轴"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button></div>
+        </div>
+        <div class="timeline-scroll"><div class="timeline-grid" id="timelineGrid"></div></div>
+        <div class="timeline-empty" id="timelineSummary"></div>
+    </div>
+
+    <!-- ② 计划看板 -->
     <div class="card card-board" id="card-board">
         <div class="card-title"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M8 3.5v4M16 3.5v4M3.5 10h17"/></svg>日程 <span class="sub" id="boardDate"></span></div>
         <div class="board-toolbar">
@@ -787,12 +859,14 @@
                 <button id="btnMonthView" onclick="switchView('month')">月视图</button>
             </div>
         </div>
-        <div class="filter-bar" id="boardFilterBar"></div>
-        <div class="nav-week">
-            <button onclick="navigate(-1)" aria-label="上一时间段">‹</button>
-            <span class="range" id="navRange"></span>
-            <button onclick="navigate(1)" aria-label="下一时间段">›</button>
-            <button onclick="goToday()" style="margin-left:4px;">今</button>
+        <div class="board-control-row">
+            <div class="filter-bar" id="boardFilterBar"></div>
+            <div class="nav-week">
+                <button onclick="navigate(-1)" aria-label="上一时间段">‹</button>
+                <span class="range" id="navRange"></span>
+                <button onclick="navigate(1)" aria-label="下一时间段">›</button>
+                <button onclick="goToday()" style="margin-left:2px;">今</button>
+            </div>
         </div>
         <div id="dayView"></div>
         <div id="calendarWrap" class="hidden" style="overflow:hidden; min-width:0;">
@@ -804,6 +878,7 @@
             <div class="today-section-header">今日任务</div>
             <div id="todayList"></div>
         </div>
+    </div>
     </div>
 
     <!-- ② 任务列表 -->
@@ -848,7 +923,7 @@
             <div class="form-row add-form-row two" id="fQuantRow">
                 <div class="form-group"><label>排期模式</label>
                     <select id="fScheduleMode" onchange="onScheduleModeChange()">
-                        <option value="continuous">连续日期（跳过周日）</option>
+                        <option value="continuous">连续日期（含周日）</option>
                         <option value="weekly">按周星期自定义</option>
                     </select>
                 </div>
@@ -997,12 +1072,23 @@
 </div>
 
 <nav class="bottom-nav" aria-label="主要导航">
+    <button class="bottom-tab" data-target="card-timeline" onclick="navigateBottom('card-timeline',this)" aria-label="时间轴"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><small>时间轴</small></button>
     <button class="bottom-tab active" data-target="card-board" onclick="navigateBottom('card-board',this)" aria-label="日程"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M8 3.5v4M16 3.5v4M3.5 10h17"/></svg><small>日程</small></button>
     <button class="bottom-tab" data-target="card-tasklist" onclick="navigateBottom('card-tasklist',this)" aria-label="任务"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg><small>任务</small></button>
     <button class="bottom-main" data-target="card-addtask" onclick="navigateBottom('card-addtask',this)" aria-label="添加"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><small>添加</small></button>
     <button class="bottom-tab" data-target="card-stats" onclick="navigateBottom('card-stats',this)" aria-label="统计"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V11M12 19V5M19 19v-8"/><path d="M3 20.5h18"/></svg><small>统计</small></button>
     <button class="bottom-tab" data-target="card-settings" onclick="navigateBottom('card-settings',this)" aria-label="设置"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg><small>设置</small></button>
 </nav>
+
+<div class="modal-overlay" id="timelineModal">
+    <div class="modal-box">
+        <h3>安排任务</h3>
+        <div style="color:var(--text-3);font-size:13px;">开始时间：<strong id="timelineModalStart" style="color:var(--text-2);"></strong></div>
+        <div class="timeline-task-picker" id="timelineTaskPicker"></div>
+        <div class="form-group"><label>计划持续时长</label><div class="timeline-duration-grid" id="timelineDurationPicker"></div></div>
+        <div class="modal-actions"><button class="btn-cancel" onclick="closeTimelineModal()">取消</button><button class="btn-save" onclick="confirmTimelineAssignment()">确认安排</button></div>
+    </div>
+</div>
 
 <div class="modal-overlay" id="countdownModal">
     <div class="modal-box countdown-manager-box">
@@ -1152,7 +1238,7 @@ function loadData() {
             appData.exams = p.exams || [];
             appData.studyTasks = (p.studyTasks || []).map(t => {
                 if (!t.subtasks) t.subtasks = [];
-                t.subtasks.forEach(s => { if (s.done===undefined) s.done=false; if (s.total===undefined) s.total=0; if (s.correct===undefined) s.correct=0; if (s.time===undefined) s.time=0; if (s.subType===undefined) s.subType=''; if (s.kind===undefined) s.kind='quantified'; });
+                t.subtasks.forEach(s => { if (s.done===undefined) s.done=false; if (s.total===undefined) s.total=0; if (s.correct===undefined) s.correct=0; if (s.time===undefined) s.time=0; if (s.subType===undefined) s.subType=''; if (s.kind===undefined) s.kind='quantified'; if (s.planStart===undefined) s.planStart=''; if (s.planDuration===undefined) s.planDuration=0; if (s.planEnd===undefined) s.planEnd=''; });
                 return t;
             });
             appData.examRecords = p.examRecords || [];
@@ -1176,15 +1262,13 @@ function formatDate(date) { return date.getFullYear()+'-'+String(date.getMonth()
 function parseDate(str) { const p=str.split('-').map(Number); return new Date(p[0],p[1]-1,p[2]); }
 function addDays(s,n) { const d=parseDate(s); d.setDate(d.getDate()+n); return formatDate(d); }
 
-function generateDatesSkipSunday(startDate, count, dailyCount = 1) {
+function generateContinuousDates(startDate, count, dailyCount = 1) {
     const dates = [];
     const d = parseDate(startDate);
-    while (d.getDay() === 0) d.setDate(d.getDate() + 1);
     dailyCount = Math.max(1, parseInt(dailyCount) || 1);
     while (dates.length < count) {
         for (let i = 0; i < dailyCount && dates.length < count; i++) dates.push(formatDate(d));
         d.setDate(d.getDate() + 1);
-        while (d.getDay() === 0) d.setDate(d.getDate() + 1);
     }
     return dates;
 }
@@ -1210,6 +1294,7 @@ function getSortedTasks(mode = 'added') {
 function setTaskSortMode(v) { taskSortMode = v; renderTaskBlocks(); }
 function toggleScheduleItemEdit(tid, idx) {
     const same = scheduleEditTarget && scheduleEditTarget.tid === tid && scheduleEditTarget.idx === idx;
+    if(same){const task=appData.studyTasks.find(t=>t.id===tid),sub=task&&task.subtasks[idx];if(sub&&!sub.time&&sub.planDuration){sub.time=sub.planDuration;saveData();}}
     scheduleEditTarget = same ? null : { tid, idx };
     renderBoard();
 }
@@ -1226,9 +1311,18 @@ function scheduleOutlineIcon(kind) {
 }
 function scrollToCard(id) { const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
 function setBottomNavActive(id) { document.querySelectorAll('.bottom-nav button[data-target]').forEach(btn=>btn.classList.toggle('active',btn.dataset.target===id)); }
-function navigateBottom(id, button) { setBottomNavActive(id); scrollToCard(id); }
+function navigateBottom(id, button) {
+    if(id==='card-timeline'){
+        const opening=!document.body.classList.contains('timeline-panel-open');
+        document.body.classList.toggle('timeline-panel-open',opening);
+        if(opening){setBottomNavActive(id);timelineShouldFocusNow=timelineSelectedDate===getToday();renderTimeline();requestAnimationFrame(()=>scrollToCard(id));}
+        else {setBottomNavActive('card-board');requestAnimationFrame(()=>scrollToCard('card-board'));}
+        return;
+    }
+    setBottomNavActive(id); scrollToCard(id);
+}
 function initBottomNavigation() {
-    const ids=['card-board','card-tasklist','card-addtask','card-stats','card-settings'];
+    const ids=['card-timeline','card-board','card-tasklist','card-addtask','card-stats','card-settings'];
     const elements=ids.map(id=>document.getElementById(id)).filter(Boolean);
     if (!('IntersectionObserver' in window) || !elements.length) return;
     const observer=new IntersectionObserver(entries=>{
@@ -1373,7 +1467,7 @@ function addStudyTask() {
     } else {
         subCount = parseInt(document.getElementById('fCount').value);
         if(!subCount||subCount<1){alert('请输入有效的子任务数量');return;}
-        dates = generateDatesSkipSunday(s, subCount, dailyCount);
+        dates = generateContinuousDates(s, subCount, dailyCount);
     }
     const startIdx = 1;
     const subs = dates.map((d, i) => ({idx:startIdx+i, date:d, done:false, total:t, correct:0, time:0, subType:st, kind:kind}));
@@ -1392,8 +1486,7 @@ function addSingleTask() {
     let st = '';
     if (MODULE_SUBTYPES[m]) { st = document.getElementById('fSingleSubType').value; if (!st) { alert('请选择细分题型'); return; } }
     if(!n){alert('请输入任务名称');return;} if(!d){alert('请选择日期');return;}
-    let dd = d; const pd = parseDate(d); if (pd.getDay() === 0) { pd.setDate(pd.getDate()+1); dd = formatDate(pd); alert('周日为固定休息日，已自动顺延至周一'); }
-    appData.studyTasks.push({id:Date.now(),module:m,name:n,type:'single',subtaskCount:1,startDate:dd,defaultTotal:t,subtasks:[{idx:1,date:dd,done:false,total:t,correct:0,time:0,subType:st,kind:kind}],subType:st,kind:kind});
+    appData.studyTasks.push({id:Date.now(),module:m,name:n,type:'single',subtaskCount:1,startDate:d,defaultTotal:t,subtasks:[{idx:1,date:d,done:false,total:t,correct:0,time:0,subType:st,kind:kind}],subType:st,kind:kind});
     saveData(); renderAll();
     document.getElementById('fSingleName').value=''; document.getElementById('fSingleTotal').value='20'; document.getElementById('fSingleDate').value=getToday();
     onModuleChange('fSingleModule','fSingleSubType','fSingleSubTypeRow');
@@ -1426,7 +1519,7 @@ function saveEditTask() {
         if (ns) {
             const old = t.subtasks, tl = t.defaultTotal||0;
             const mode = t.scheduleMode || 'continuous';
-            const gen = mode === 'weekly' ? (sd,c) => generateDatesByWeekday(sd, t.weekdays||[1], c, t.dailyCount||1) : (sd,c) => generateDatesSkipSunday(sd, c, t.dailyCount||1);
+            const gen = mode === 'weekly' ? (sd,c) => generateDatesByWeekday(sd, t.weekdays||[1], c, t.dailyCount||1) : (sd,c) => generateContinuousDates(sd, c, t.dailyCount||1);
             const dates = gen(ns, nc);
             const oldSorted = [...old].sort((a,b) => a.idx - b.idx);
             const nw = [];
@@ -1440,7 +1533,7 @@ function saveEditTask() {
             }
             t.subtasks = nw; t.subtaskCount = nc; t.startDate = ns;
         }
-    } else { const nd = document.getElementById('editStart').value; if (nd) { let dd = nd; const pd = parseDate(nd); if (pd.getDay() === 0) { pd.setDate(pd.getDate()+1); dd = formatDate(pd); } t.startDate = dd; t.subtasks[0].date = dd; } }
+    } else { const nd = document.getElementById('editStart').value; if (nd) { t.startDate = nd; t.subtasks[0].date = nd; } }
     saveData(); renderAll(); closeEditModal();
 }
 function deleteStudyTask(id) {
@@ -1460,13 +1553,12 @@ function getTaskDatesGenerator(t) {
     if (mode === 'weekly' && t.weekdays) {
         return (startDate, count) => generateDatesByWeekday(startDate, t.weekdays, count, t.dailyCount||1);
     }
-    return (startDate, count) => generateDatesSkipSunday(startDate, count, t.dailyCount||1);
+    return (startDate, count) => generateContinuousDates(startDate, count, t.dailyCount||1);
 }
 
 function toggleSubtaskDone(tid, si) {
     const t = appData.studyTasks.find(x => x.id === tid); if (!t) return;
     const s = t.subtasks[si];
-    const gen = getTaskDatesGenerator(t);
     const isNonQuantified = (t.kind === 'nonQuantified') || (s.kind === 'nonQuantified');
     if (!s.done) {
         s.done = true;
@@ -1482,26 +1574,10 @@ function toggleSubtaskDone(tid, si) {
                 idx: s.idx,
                 kind: isNonQuantified ? 'nonQuantified' : 'quantified'
             });
-        const undone = t.subtasks.filter(ss => !ss.done);
-        if (undone.length > 0) {
-            const newDates = gen(addDays(s.date, 1), undone.length);
-            undone.forEach((ss, i) => {
-                if (newDates[i]) ss.date = newDates[i];
-            });
-        }
         t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
     } else {
         appData.completedTasks = appData.completedTasks.filter(c => !(c.taskId === t.id && c.idx === s.idx));
         s.done = false; s.correct = 0; s.time = 0;
-        const afterAndSelf = t.subtasks.filter((ss, i) => i >= si);
-        if (afterAndSelf.length > 0) {
-            const prevTask = t.subtasks[si - 1];
-            const baseDate = prevTask ? addDays(prevTask.date, 1) : addDays(s.date, 1);
-            const newDates = gen(baseDate, afterAndSelf.length);
-            afterAndSelf.forEach((ss, i) => {
-                if (newDates[i]) ss.date = newDates[i];
-            });
-        }
         t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
     }
     saveData();
@@ -1516,7 +1592,6 @@ function moveTaskForward(tid, si) {
     const s = t.subtasks[si];
     const d = parseDate(s.date);
     d.setDate(d.getDate() - 1);
-    if (d.getDay() === 0) d.setDate(d.getDate() - 1);
     s.date = formatDate(d);
     t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
     saveData();
@@ -1530,7 +1605,6 @@ function moveTaskBackward(tid, si) {
     const s = t.subtasks[si];
     const d = parseDate(s.date);
     d.setDate(d.getDate() + 1);
-    if (d.getDay() === 0) d.setDate(d.getDate() + 1);
     s.date = formatDate(d);
     t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
     saveData();
@@ -1545,7 +1619,6 @@ function moveTaskForwardAll(tid, si) {
     toMove.forEach(ss => {
         const d = parseDate(ss.date);
         d.setDate(d.getDate() - 1);
-        if (d.getDay() === 0) d.setDate(d.getDate() - 1);
         ss.date = formatDate(d);
     });
     t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
@@ -1561,7 +1634,6 @@ function moveTaskBackwardAll(tid, si) {
     toMove.forEach(ss => {
         const d = parseDate(ss.date);
         d.setDate(d.getDate() + 1);
-        if (d.getDay() === 0) d.setDate(d.getDate() + 1);
         ss.date = formatDate(d);
     });
     t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
@@ -1587,11 +1659,12 @@ function switchView(v) {
     document.getElementById('calendarWrap').classList.toggle('hidden', isDay);
     document.getElementById('todaySection').classList.toggle('hidden', isDay);
     document.getElementById('moduleLegend').classList.toggle('hidden', isDay);
-    if (!isDay) selectedDate = getToday();
+    if (!isDay) { selectedDate = getToday(); syncTimelineDate(selectedDate); }
     renderBoard();
 }
-function navigate(d) { if(currentView==='week')currentDate.setDate(currentDate.getDate()+d*7); else if(currentView==='month')currentDate.setMonth(currentDate.getMonth()+d); else currentDate.setDate(currentDate.getDate()+d); selectedDate=formatDate(currentDate); renderBoard(); }
-function goToday() { currentDate = new Date(); selectedDate = getToday(); renderBoard(); }
+function syncTimelineDate(date){timelineSelectedDate=date;timelineShouldFocusNow=date===getToday();renderTimeline();}
+function navigate(d) { if(currentView==='week')currentDate.setDate(currentDate.getDate()+d*7); else if(currentView==='month')currentDate.setMonth(currentDate.getMonth()+d); else currentDate.setDate(currentDate.getDate()+d); selectedDate=formatDate(currentDate); syncTimelineDate(selectedDate); renderBoard(); }
+function goToday() { currentDate = new Date(); selectedDate = getToday(); syncTimelineDate(selectedDate); renderBoard(); }
 
 function setFilter(scope, dim, val) {
     const f = scope === 'task' ? taskListFilters : boardFilters;
@@ -1661,9 +1734,11 @@ function compactScheduleGroups(container) {
     if (!groups.length) return;
     const left = document.createElement('div'), right = document.createElement('div');
     left.className = 'schedule-column'; right.className = 'schedule-column';
+    let leftHeight=0,rightHeight=0;
     groups.forEach((group, index) => {
         group.style.setProperty('--schedule-order', index);
-        (index % 2 === 0 ? left : right).appendChild(group);
+        const height=group.getBoundingClientRect().height||group.scrollHeight||1;
+        if(leftHeight<=rightHeight){left.appendChild(group);leftHeight+=height;}else{right.appendChild(group);rightHeight+=height;}
     });
     container.replaceChildren(left, right);
 }
@@ -1687,7 +1762,7 @@ function renderDayView() {
             const isEssay = item.module === '申论';
             let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
             const isEditing = scheduleEditTarget && scheduleEditTarget.tid===item.taskId && scheduleEditTarget.idx===item.subIdx;
-            if(isEditing) sh=isNonQ?`<input type="number" min="0" value="${item.sub.time||''}" placeholder="分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||''}" placeholder="分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
+            if(isEditing) sh=isNonQ?`<input type="number" min="0" value="${item.sub.time||item.sub.planDuration||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||item.sub.planDuration||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
             const editButton = isEditing ? `<button class="schedule-item-edit icon-edit-done" title="完成编辑" aria-label="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>` : `<button class="schedule-item-edit icon-edit-button" title="编辑" aria-label="编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('edit')}</button>`;
             const moveActions = isEditing ? `<div class="schedule-move-actions"><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>` : '';
             html += `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${sh}${moveActions}${editButton}</div></div></div>`;
@@ -1754,7 +1829,7 @@ function selectDate(ds) {
     selectedDate = ds; const d = parseDate(ds);
     if (currentView === 'week') { const c = new Date(currentDate), day = c.getDay()||7; const m = new Date(c); m.setDate(c.getDate()-day+1); const s = new Date(m); s.setDate(m.getDate()+6); m.setHours(0,0,0,0); s.setHours(23,59,59,999); if (d < m || d > s) currentDate = new Date(d); }
     else if (currentView === 'month') { if (d.getMonth() !== currentDate.getMonth() || d.getFullYear() !== currentDate.getFullYear()) currentDate = new Date(d); }
-    renderBoard();
+    syncTimelineDate(ds); renderBoard();
 }
 
 function renderTodaySection() {
@@ -1778,7 +1853,7 @@ function renderTodaySection() {
             const isEssay = item.module === '申论';
             let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
             const isEditing = scheduleEditTarget && scheduleEditTarget.tid===item.taskId && scheduleEditTarget.idx===item.subIdx;
-            if(isEditing) sh=isNonQ?`<input type="number" min="0" value="${item.sub.time||''}" placeholder="分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||''}" placeholder="分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
+            if(isEditing) sh=isNonQ?`<input type="number" min="0" value="${item.sub.time||item.sub.planDuration||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||item.sub.planDuration||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
             const editButton = isEditing ? `<button class="schedule-item-edit icon-edit-done" title="完成编辑" aria-label="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>` : `<button class="schedule-item-edit icon-edit-button" title="编辑" aria-label="编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('edit')}</button>`;
             const moveActions = isEditing ? `<div class="schedule-move-actions"><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>` : '';
             html += `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${sh}${moveActions}${editButton}</div></div></div>`;
@@ -1788,6 +1863,123 @@ function renderTodaySection() {
     c.innerHTML = `<div class="today-module-grid">${html}</div>`;
     compactScheduleGroups(c.firstElementChild);
 }
+
+const TIMELINE_START_MIN = 7 * 60, TIMELINE_END_MIN = 23 * 60, TIMELINE_SLOT_MIN = 30, TIMELINE_SLOT_HEIGHT = 18;
+const TIMELINE_DURATIONS = [30,60,90,120,150,180];
+let timelineModalState = { startMin:480, taskKey:'', duration:60 };
+let timelineDragState = null;
+let timelineSelectedDate = getToday(), timelineShouldFocusNow = true;
+let timelineEditMode = false;
+
+function minutesToClock(total) {
+    total = Math.max(0, Math.round(total));
+    return `${String(Math.floor(total/60)).padStart(2,'0')}:${String(total%60).padStart(2,'0')}`;
+}
+function clockToMinutes(clock) {
+    if (!clock || !/^\d{2}:\d{2}$/.test(clock)) return null;
+    const [h,m] = clock.split(':').map(Number); return h*60+m;
+}
+function getTimelineTasks(date = getToday()) {
+    const result = [];
+    appData.studyTasks.forEach(t => t.subtasks.forEach((s, idx) => {
+        if (s.date === date) result.push({ task:t, sub:s, idx, key:`${t.id}:${idx}` });
+    }));
+    return result;
+}
+function navigateTimeline(days) {
+    timelineSelectedDate=addDays(timelineSelectedDate,days);timelineShouldFocusNow=timelineSelectedDate===getToday();selectedDate=timelineSelectedDate;currentDate=parseDate(timelineSelectedDate);renderTimeline();renderBoard();
+}
+function goTimelineToday(){timelineSelectedDate=getToday();timelineShouldFocusNow=true;selectedDate=timelineSelectedDate;currentDate=new Date();renderTimeline();renderBoard();}
+function toggleTimelineEdit(){
+    timelineEditMode=!timelineEditMode;timelineDragState=null;renderTimeline();
+}
+function findTimelineTask(key) {
+    const [tid, idx] = String(key).split(':').map(Number);
+    const task = appData.studyTasks.find(t => t.id === tid);
+    return task && task.subtasks[idx] ? { task, sub:task.subtasks[idx], idx } : null;
+}
+function setSubtaskPlan(task, sub, startMin, duration, propagate = true) {
+    duration = Math.max(TIMELINE_SLOT_MIN, Math.round(duration/TIMELINE_SLOT_MIN)*TIMELINE_SLOT_MIN);
+    startMin = Math.max(TIMELINE_START_MIN, Math.min(TIMELINE_END_MIN-duration, Math.round(startMin/TIMELINE_SLOT_MIN)*TIMELINE_SLOT_MIN));
+    const apply = target => { target.planStart=minutesToClock(startMin); target.planDuration=duration; target.planEnd=minutesToClock(startMin+duration); };
+    apply(sub);
+    if (propagate && task.type === 'periodic') {
+        task.subtasks.forEach(next => { if (next !== sub && next.idx > sub.idx) apply(next); });
+    }
+}
+function clearSubtaskPlan(tid, idx) {
+    const t=appData.studyTasks.find(x=>x.id===tid); if(!t||!t.subtasks[idx])return;
+    const s=t.subtasks[idx]; s.planStart=''; s.planDuration=0; s.planEnd=''; saveData(); renderAll();
+}
+function updateSubtaskPlanDuration(tid, idx, value) {
+    const t=appData.studyTasks.find(x=>x.id===tid); if(!t||!t.subtasks[idx])return;
+    const s=t.subtasks[idx], duration=Math.max(0,Math.round((parseFloat(value)||0)/30)*30);
+    if (!duration) { s.planDuration=0; s.planEnd=''; }
+    else { const start=clockToMinutes(s.planStart); s.planDuration=duration; if(start!==null)s.planEnd=minutesToClock(start+duration); }
+    saveData();
+}
+function getTimelineLanes(items) {
+    const sorted=[...items].sort((a,b)=>a.start-b.start||a.end-b.end), laneEnds=[];
+    sorted.forEach(item=>{ let lane=laneEnds.findIndex(end=>end<=item.start); if(lane<0)lane=laneEnds.length; laneEnds[lane]=item.end; item.lane=lane; });
+    sorted.forEach(item=>item.laneCount=Math.max(1,laneEnds.length));
+    return sorted;
+}
+function renderTimeline() {
+    const grid=document.getElementById('timelineGrid'), summary=document.getElementById('timelineSummary'), dateEl=document.getElementById('timelineDate');
+    if(!grid)return; const viewDate=timelineSelectedDate||getToday(), isToday=viewDate===getToday(); if(dateEl)dateEl.textContent=viewDate;
+    const editButton=document.getElementById('timelineEditButton');if(editButton){editButton.classList.toggle('active',timelineEditMode);editButton.setAttribute('aria-pressed',timelineEditMode?'true':'false');editButton.setAttribute('aria-label',timelineEditMode?'完成时间轴编辑':'编辑时间轴');editButton.title=timelineEditMode?'完成编辑':'编辑时间轴';}
+    let html='';
+    for(let i=0;i<32;i++) { const min=TIMELINE_START_MIN+i*30, isHalf=i%2===1; html+=`<div class="timeline-slot ${isHalf?'half-hour':''}" style="top:${i*TIMELINE_SLOT_HEIGHT}px" onclick="openTimelineModal(${min})">${isHalf?'':`<span class="timeline-slot-label">${minutesToClock(min)}</span>`}<span class="timeline-slot-hit"></span></div>`; }
+    html+=`<span class="timeline-slot-label" style="top:${32*TIMELINE_SLOT_HEIGHT-9}px;">23:00</span>`;
+    const now=new Date(), nowMin=now.getHours()*60+now.getMinutes();
+    if(isToday&&nowMin>=TIMELINE_START_MIN&&nowMin<=TIMELINE_END_MIN)html+=`<div class="timeline-now" title="当前时间 ${minutesToClock(nowMin)}" style="top:${(nowMin-TIMELINE_START_MIN)/30*TIMELINE_SLOT_HEIGHT}px"></div>`;
+    const all=getTimelineTasks(viewDate), scheduled=all.filter(x=>x.sub.planStart&&x.sub.planDuration).map(x=>({...x,start:clockToMinutes(x.sub.planStart),end:clockToMinutes(x.sub.planStart)+(x.sub.planDuration||30)}));
+    html+=`<div class="timeline-task-layer ${timelineEditMode?'editing':''}" style="position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;">`;
+    getTimelineLanes(scheduled).forEach(item=>{
+        const color=MODULE_COLORS[normalizeModule(item.task.module)]||'#8aa9c8', top=(item.start-TIMELINE_START_MIN)/30*TIMELINE_SLOT_HEIGHT, height=(item.sub.planDuration/30)*TIMELINE_SLOT_HEIGHT;
+        const laneWidth=100/item.laneCount, left=item.lane*laneWidth;
+        html+=`<div class="timeline-task ${item.sub.done?'done':''} ${item.sub.planDuration===30?'short':''}" data-timeline-key="${item.key}" style="--task-color:${color};top:${top}px;height:${height}px;left:calc(${left}% + 2px);width:calc(${laneWidth}% - 4px);pointer-events:auto;">
+            ${timelineEditMode?`<div class="timeline-resize top" data-resize="top"></div><div class="timeline-resize bottom" data-resize="bottom"></div><button class="timeline-remove" title="移出时间轴" onclick="event.stopPropagation();clearSubtaskPlan(${item.task.id},${item.idx})">×</button>`:''}
+            <div class="timeline-task-main"><span class="timeline-check" onclick="event.stopPropagation();toggleSubtaskDone(${item.task.id},${item.idx})">${item.sub.done?'✓':''}</span><span class="timeline-task-name" title="${MODULE_SHORT[normalizeModule(item.task.module)]||normalizeModule(item.task.module)} ${item.task.name}${item.task.type==='single'?'':item.sub.idx}">${MODULE_SHORT[normalizeModule(item.task.module)]||normalizeModule(item.task.module)} ${item.task.name}${item.task.type==='single'?'':item.sub.idx}</span></div></div>`;
+    });
+    html+='</div>'; grid.innerHTML=html;
+    summary.textContent=all.length?`${isToday?'今天':viewDate}共 ${all.length} 项任务，已安排 ${scheduled.length} 项，待安排 ${all.length-scheduled.length} 项。`:`${isToday?'今天':viewDate}暂无任务，请前往「添加」创建任务。`;
+    bindTimelineDrag();
+    if(isToday&&timelineShouldFocusNow){timelineShouldFocusNow=false;requestAnimationFrame(()=>{const scroller=grid.closest('.timeline-scroll');if(scroller&&nowMin>=TIMELINE_START_MIN&&nowMin<=TIMELINE_END_MIN){const y=(nowMin-TIMELINE_START_MIN)/30*TIMELINE_SLOT_HEIGHT;scroller.scrollTop=Math.max(0,y-scroller.clientHeight*.35);}});}
+}
+function openTimelineModal(startMin) {
+    timelineModalState={startMin,taskKey:'',duration:60};
+    document.getElementById('timelineModalStart').textContent=minutesToClock(startMin);
+    const tasks=getTimelineTasks(timelineSelectedDate).filter(x=>!x.sub.planStart).sort((a,b)=>MODULES.indexOf(normalizeModule(a.task.module))-MODULES.indexOf(normalizeModule(b.task.module))||a.task.name.localeCompare(b.task.name,'zh-CN')||a.sub.idx-b.sub.idx);
+    document.getElementById('timelineTaskPicker').innerHTML=tasks.length?tasks.map(x=>`<div class="timeline-picker-item" data-key="${x.key}" onclick="selectTimelineTask('${x.key}',this)"><span class="timeline-picker-dot" style="background:${MODULE_COLORS[normalizeModule(x.task.module)]||'#8aa9c8'}"></span><span><strong>${x.task.name}</strong><small style="display:block;color:var(--text-3);">${x.task.module}${x.task.type==='single'?'':` · 第 ${x.sub.idx} 项`}</small></span></div>`).join(''):'<div class="timeline-picker-empty">今日任务均已安排时段</div>';
+    document.getElementById('timelineDurationPicker').innerHTML=TIMELINE_DURATIONS.map(d=>`<button class="${d===60?'active':''}" onclick="selectTimelineDuration(${d},this)">${d} 分钟</button>`).join('');
+    document.getElementById('timelineModal').classList.add('active');
+}
+function selectTimelineTask(key,el){timelineModalState.taskKey=key;document.querySelectorAll('.timeline-picker-item').forEach(x=>x.classList.toggle('active',x===el));}
+function selectTimelineDuration(duration,el){timelineModalState.duration=duration;document.querySelectorAll('#timelineDurationPicker button').forEach(x=>x.classList.toggle('active',x===el));}
+function closeTimelineModal(){document.getElementById('timelineModal').classList.remove('active');}
+function confirmTimelineAssignment(){
+    if(!timelineModalState.taskKey){alert('请选择要安排的任务');return;} const found=findTimelineTask(timelineModalState.taskKey);if(!found)return;
+    setSubtaskPlan(found.task,found.sub,timelineModalState.startMin,timelineModalState.duration,true);saveData();closeTimelineModal();renderAll();
+}
+function bindTimelineDrag(){
+    if(!timelineEditMode)return;
+    document.querySelectorAll('.timeline-task').forEach(card=>card.addEventListener('pointerdown',event=>{
+        if(event.target.closest('button,.timeline-check'))return;
+        const found=findTimelineTask(card.dataset.timelineKey);if(!found)return;
+        const mode=event.target.dataset.resize||'move', start=clockToMinutes(found.sub.planStart), duration=found.sub.planDuration;
+        timelineDragState={card,found,mode,start,duration,startY:event.clientY,lastDelta:0};card.classList.add('dragging');card.setPointerCapture(event.pointerId);event.preventDefault();
+    }));
+}
+document.addEventListener('pointermove',event=>{
+    const d=timelineDragState;if(!d)return;const slots=Math.round((event.clientY-d.startY)/TIMELINE_SLOT_HEIGHT),delta=slots*30;if(delta===d.lastDelta)return;d.lastDelta=delta;
+    let start=d.start,duration=d.duration;if(d.mode==='move')start+=delta;else if(d.mode==='top'){start+=delta;duration-=delta;}else duration+=delta;
+    duration=Math.max(30,Math.min(TIMELINE_END_MIN-TIMELINE_START_MIN,duration));start=Math.max(TIMELINE_START_MIN,Math.min(TIMELINE_END_MIN-duration,start));
+    d.preview={start,duration};d.card.style.top=`${(start-TIMELINE_START_MIN)/30*TIMELINE_SLOT_HEIGHT}px`;d.card.style.height=`${duration/30*TIMELINE_SLOT_HEIGHT}px`;
+});
+document.addEventListener('pointerup',event=>{
+    const d=timelineDragState;if(!d)return;d.card.classList.remove('dragging');if(d.preview){setSubtaskPlan(d.found.task,d.found.sub,d.preview.start,d.preview.duration,true);saveData();renderAll();}timelineDragState=null;
+});
 
 let subEditMode = null, subEditTaskId = null; // 单项兼容 + 整个任务编辑
 
@@ -1818,9 +2010,11 @@ function saveSubEdit(tid, idx) {
     const totalEl = document.getElementById(`se-total-${tid}-${idx}`);
     const correctEl = document.getElementById(`se-correct-${tid}-${idx}`);
     const timeEl = document.getElementById(`se-time-${tid}-${idx}`);
+    const planEl = document.getElementById(`se-plan-${tid}-${idx}`);
     const newTotal = totalEl ? (parseInt(totalEl.value) || 0) : 0;
     const newCorrect = correctEl ? (parseInt(correctEl.value) || 0) : 0;
     const newTime = timeEl ? (parseFloat(timeEl.value) || 0) : 0;
+    const newPlanDuration = planEl ? Math.max(0, Math.round((parseFloat(planEl.value)||0)/30)*30) : (s.planDuration||0);
     let newSubType = s.subType || '';
     const stSel = document.getElementById(`se-subtype-${tid}-${idx}`);
     if (stSel) newSubType = stSel.value;
@@ -1828,6 +2022,8 @@ function saveSubEdit(tid, idx) {
     if (!isNonQ && newTotal > 0 && newCorrect > newTotal) { alert('正确数不能大于总题数'); return; }
     const wasDone = s.done;
     s.date = newDate; s.total = newTotal; s.correct = newCorrect; s.time = newTime; s.subType = newSubType;
+    if (s.planStart && newPlanDuration) setSubtaskPlan(t, s, clockToMinutes(s.planStart), newPlanDuration, true);
+    else if (!newPlanDuration) { s.planDuration=0; s.planEnd=''; }
     appData.completedTasks = appData.completedTasks.filter(c => !(c.taskId === tid && c.idx === s.idx));
     if (wasDone) {
         appData.completedTasks.push({
@@ -1907,7 +2103,7 @@ function renderTaskBlocks() {
                     const subTypeOptions = MODULE_SUBTYPES[t.module] || [];
                     const stHtml = subTypeOptions.length ? `<select id="se-subtype-${t.id}-${idx}" class="se-input se-subtype"><option value="">无</option>${subTypeOptions.map(o=>`<option value="${o}" ${s.subType===o?'selected':''}>${o}</option>`).join('')}</select>` : '';
                     const isEssay = normalizeModule(t.module) === '申论';
-                    const quantInputs = sNonQ ? `<input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="用时" value="${s.time||''}" min="0">` : `<input type="number" id="se-total-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'总分':'总题'}" value="${s.total||''}" min="0"><input type="number" id="se-correct-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'得分':'正确'}" value="${s.correct||''}" min="0"><input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="用时" value="${s.time||''}" min="0">`;
+                    const quantInputs = (sNonQ ? `<input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="实际用时" value="${s.time||s.planDuration||''}" min="0">` : `<input type="number" id="se-total-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'总分':'总题'}" value="${s.total||''}" min="0"><input type="number" id="se-correct-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'得分':'正确'}" value="${s.correct||''}" min="0"><input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="实际用时" value="${s.time||s.planDuration||''}" min="0">`)+`<input type="number" id="se-plan-${t.id}-${idx}" class="se-input se-small" placeholder="计划分钟" value="${s.planDuration||''}" min="0" step="30">`;
                     html += `<div class="sub-row editing">
                         ${subNumberHtml}
                         <div class="sr-edit-form">
@@ -1929,14 +2125,15 @@ function renderTaskBlocks() {
                     const statusText = s.done ? '已完成' : (s.date < getToday() ? '已逾期' : '待完成');
                     const sc2 = s.done ? '#a8d5a2' : (s.date < getToday() ? '#e87878' : '#bda0a6');
                     const stTag = s.subType ? `<span class="stat-item" style="color:#6ab7d6;">${s.subType}</span>` : '';
+                    const planTag = s.planDuration ? `<span class="planned-time-pill">计划 ${s.planStart||''} · ${s.planDuration}分</span>` : '';
                     let statsHtml;
                     if (sNonQ) {
-                        statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}</div>`;
+                        statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}${planTag}</div>`;
                     } else {
                         const rate = s.total > 0 ? Math.round(s.correct/s.total*100) : 0;
                         const ts = s.time > 0 ? `${s.time}分` : '未填';
                         const isEssay = normalizeModule(t.module) === '申论';
-                        statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}<span class="correct-pill">${s.correct}/${s.total}</span><span class="rate">${rate}%</span><span class="dv-time">${ts}</span></div>`;
+                        statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}<span class="correct-pill">${s.correct}/${s.total}</span><span class="rate">${rate}%</span><span class="dv-time">${ts}</span>${planTag}</div>`;
                     }
                     html += `<div class="sub-row ${dc}"><div class="dv-check ${dc}" role="button" tabindex="0" title="${s.done?'取消完成':'标记完成'}" aria-label="${s.done?'取消完成':'标记完成'}" onclick="event.stopPropagation();toggleSubtaskDone(${t.id},${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleSubtaskDone(${t.id},${idx})}"></div>${subNumberHtml}<div class="sr-info"><span class="sr-date">${s.date}</span>${statsHtml}</div></div>`;
                 }
@@ -1994,7 +2191,7 @@ function renderDate() {
     const footer = document.getElementById('sidebarFooter');
     if (footer) footer.innerHTML = getDailyQuote();
 }
-function renderAll() { setTheme(document.documentElement.dataset.theme || 'white'); renderDate(); renderSidebarCountdowns(); renderBoard(); renderStats(); renderExamRecords(); }
+function renderAll() { setTheme(document.documentElement.dataset.theme || 'white'); renderDate(); renderSidebarCountdowns(); renderTimeline(); renderBoard(); renderStats(); renderExamRecords(); }
 
 let statsPeriod = 'day', timeStatsPeriod = 'day';
 function setStatsPeriod(p) {
@@ -2532,7 +2729,7 @@ initBottomNavigation();
 initCloudSync();
 window.addEventListener('online',()=>{if(cloudUser)pullCloudData(false);});
 window.addEventListener('focus',()=>{if(cloudUser&&cloudReady)pullCloudData(false);});
-setInterval(() => { renderDate(); }, 60000);
+setInterval(() => { renderDate(); renderTimeline(); }, 60000);
 </script>
 </body>
 </html>
