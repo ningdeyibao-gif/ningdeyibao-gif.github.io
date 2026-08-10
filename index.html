@@ -548,7 +548,7 @@
             .hero-copy strong { font-size:18px; }.hero-copy small { max-width:220px; }.hero-art { width:150px; max-width:40%; }
             .theme-options { min-width:100%; grid-template-columns:1fr; }
             .settings-backup-actions { min-width:100%; grid-template-columns:1fr; }.cloud-sync-panel { min-width:100%; }.cloud-email-row { flex-direction:column; align-items:stretch; }.cloud-email-row button{width:100%;}
-            .bottom-nav { position:fixed; display:grid; grid-template-columns:repeat(6,1fr); align-items:end; left:10px; right:10px; bottom:10px; height:70px; padding:8px 8px 6px; background:var(--card-bg); border:1px solid var(--line); border-radius:24px; box-shadow:0 12px 38px rgba(50,50,45,.15); backdrop-filter:blur(24px); z-index:1500; }
+            .bottom-nav { position:fixed; display:grid; grid-template-columns:repeat(5,1fr); align-items:end; left:10px; right:10px; bottom:10px; height:70px; padding:8px 8px 6px; background:var(--card-bg); border:1px solid var(--line); border-radius:24px; box-shadow:0 12px 38px rgba(50,50,45,.15); backdrop-filter:blur(24px); z-index:1500; }
             .bottom-nav button { border:0; background:transparent; color:var(--text-3); display:flex; flex-direction:column; align-items:center; gap:2px; font-size:19px; cursor:pointer; }
             .bottom-nav button small { font-size:10px; }.bottom-nav .bottom-main { color:var(--accent); transform:translateY(-12px); }
             .bottom-nav .bottom-main span { width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:50%; color:white; background:linear-gradient(135deg,#edb651,#db9834); box-shadow:0 8px 18px var(--accent-shadow); font-size:28px; }
@@ -558,7 +558,7 @@
         /* 无侧栏布局与全局底部导航 */
         body { display:block; }
         .main { max-width:1180px; padding-bottom:112px; }
-        .bottom-nav { position:fixed; display:grid; grid-template-columns:repeat(6,1fr); align-items:end; left:50%; transform:translateX(-50%); width:min(620px,calc(100% - 20px)); bottom:12px; height:72px; padding:8px 10px 7px; background:var(--card-bg); border:1px solid var(--line); border-radius:25px; box-shadow:0 12px 38px rgba(50,50,45,.15); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); z-index:1500; }
+        .bottom-nav { position:fixed; display:grid; grid-template-columns:repeat(5,1fr); align-items:end; left:50%; transform:translateX(-50%); width:min(560px,calc(100% - 20px)); bottom:12px; height:72px; padding:8px 10px 7px; background:var(--card-bg); border:1px solid var(--line); border-radius:25px; box-shadow:0 12px 38px rgba(50,50,45,.15); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); z-index:1500; }
         .bottom-nav button { border:0; background:transparent; color:var(--text-3); display:flex; flex-direction:column; align-items:center; gap:2px; font-size:19px; cursor:pointer; }
         .bottom-nav button small { font-size:10px; }
         .bottom-nav .bottom-main { color:var(--accent); transform:translateY(-13px); }
@@ -770,17 +770,18 @@
 
         /* 当日时间轴 */
         .schedule-row { display:flex; align-items:stretch; gap:12px; min-width:0; }
-        .schedule-row .card-board { flex:1 1 auto; min-width:0; }
-        .card-timeline { display:none; flex:0 0 155px; width:155px; padding:12px; margin-right:0; border-color:var(--line); }
-        body.timeline-panel-open .card-timeline { display:block; animation:timelinePanelIn .24s ease; }
-        .card-timeline .timeline-head { flex-direction:column; align-items:stretch; gap:5px; }
-        .card-timeline .card-title { font-size:18px; flex-wrap:nowrap; gap:3px; white-space:nowrap; }
-        .card-timeline .card-title .title-icon { width:17px; height:17px; }
-        .card-timeline .card-title .sub { margin-left:auto; font-size:8px; white-space:nowrap; }
-        .card-timeline .timeline-date-nav { gap:2px; }
-        .card-timeline .timeline-date-nav button { min-width:0; flex:1 1 0; height:23px; padding:0 2px; border-radius:7px; font-size:9px; }
-        .card-timeline .timeline-date-nav button:first-child,
-        .card-timeline .timeline-date-nav button:last-child { font-size:17px; font-weight:650; line-height:1; padding-bottom:2px; }
+        .board-pane { flex:1 1 auto; min-width:0; }
+        .timeline-panel { display:none; flex:0 0 155px; width:155px; padding-right:12px; border-right:1px solid var(--line); }
+        body.timeline-panel-open .timeline-panel { display:block; animation:timelinePanelIn .24s ease; }
+        .timeline-panel .timeline-head { flex-direction:column; align-items:stretch; gap:5px; }
+        .timeline-inline-date { color:var(--text-3); font-size:9px; text-align:center; white-space:nowrap; }
+        .timeline-panel .timeline-date-nav { gap:2px; }
+        .timeline-panel .timeline-date-nav button { min-width:0; flex:1 1 0; height:23px; padding:0 2px; border-radius:7px; font-size:9px; }
+        .timeline-panel .timeline-date-nav button:first-child,
+        .timeline-panel .timeline-date-nav button:last-child { font-size:17px; font-weight:650; line-height:1; padding-bottom:2px; }
+        .schedule-timeline-toggle { width:28px!important; height:28px!important; min-width:28px!important; padding:0!important; display:inline-flex!important; align-items:center; justify-content:center; border-radius:8px!important; color:var(--accent)!important; }
+        .schedule-timeline-toggle svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+        .schedule-timeline-toggle.active { border-color:var(--accent)!important; }
         .timeline-controls-row { display:flex; align-items:center; gap:3px; }
         .timeline-controls-row .timeline-date-nav { flex:1 1 auto; min-width:0; }
         .board-control-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; min-width:0; overflow-x:auto; scrollbar-width:thin; }
@@ -826,7 +827,7 @@
         .planned-time-pill { color:var(--accent); font-size:11px; white-space:nowrap; }
         @keyframes timelineDrop { from { transform:scale(.97); opacity:.55; } to { transform:scale(1); opacity:1; } }
         @keyframes timelinePanelIn { from { transform:translateX(-14px); opacity:0; } to { transform:translateX(0); opacity:1; } }
-        @media (max-width:900px) { .schedule-row { flex-direction:column; }.card-timeline { flex-basis:auto; width:min(260px,100%); }.timeline-grid { min-width:184px; }.timeline-duration-grid { grid-template-columns:repeat(2,1fr); } }
+        @media (max-width:900px) { .schedule-row { flex-direction:column; }.timeline-panel { flex-basis:auto; width:min(260px,100%); padding-right:0; padding-bottom:12px; border-right:0; border-bottom:1px solid var(--line); }.timeline-grid { min-width:184px; }.timeline-duration-grid { grid-template-columns:repeat(2,1fr); } }
 
         /* 纯白主题：白底、浅灰线，蓝色只作为文字与描边强调 */
         :root[data-theme="white"] {
@@ -896,11 +897,11 @@
         <div class="countdown-panel"><div class="countdown-heading"><strong>考试倒计时</strong><button class="icon-edit-button" title="编辑倒计时" aria-label="编辑倒计时" onclick="openCountdownManager()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button></div><div class="sb-countdown" id="sbCountdown"></div></div>
     </div>
 
-    <div class="schedule-row">
+    <div class="card card-board schedule-row" id="card-board">
     <!-- ① 当日时间轴 -->
-    <div class="card card-timeline" id="card-timeline">
+    <div class="timeline-panel" id="card-timeline">
         <div class="timeline-head">
-            <div class="card-title" style="margin-bottom:0;"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>时间轴 <span class="sub" id="timelineDate"></span></div>
+            <div class="timeline-inline-date" id="timelineDate"></div>
             <div class="timeline-controls-row"><div class="timeline-date-nav"><button onclick="navigateTimeline(-1)" aria-label="前一天">‹</button><button onclick="goTimelineToday()">今天</button><button onclick="navigateTimeline(1)" aria-label="后一天">›</button></div><button class="timeline-edit-button" id="timelineEditButton" onclick="toggleTimelineEdit()" aria-label="编辑时间轴" title="编辑时间轴"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button></div>
         </div>
         <div class="timeline-scroll"><div class="timeline-grid" id="timelineGrid"></div></div>
@@ -908,8 +909,8 @@
     </div>
 
     <!-- ② 计划看板 -->
-    <div class="card card-board" id="card-board">
-        <div class="card-title"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M8 3.5v4M16 3.5v4M3.5 10h17"/></svg>日程 <span class="sub" id="boardDate"></span></div>
+    <div class="board-pane">
+        <div class="card-title"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M8 3.5v4M16 3.5v4M3.5 10h17"/></svg>日程 <button class="schedule-timeline-toggle active" id="scheduleTimelineToggle" onclick="toggleTimelinePanel()" aria-label="隐藏时间轴" title="显示或隐藏时间轴"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button><span class="sub" id="boardDate"></span></div>
         <div class="board-toolbar">
             <div class="view-toggle">
                 <button id="btnDayView" class="active" onclick="switchView('day')">日视图</button>
@@ -1130,7 +1131,6 @@
 </div>
 
 <nav class="bottom-nav" aria-label="主要导航">
-    <button class="bottom-tab" data-target="card-timeline" onclick="navigateBottom('card-timeline',this)" aria-label="时间轴"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><small>时间轴</small></button>
     <button class="bottom-tab active" data-target="card-board" onclick="navigateBottom('card-board',this)" aria-label="日程"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M8 3.5v4M16 3.5v4M3.5 10h17"/></svg><small>日程</small></button>
     <button class="bottom-tab" data-target="card-tasklist" onclick="navigateBottom('card-tasklist',this)" aria-label="任务"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg><small>任务</small></button>
     <button class="bottom-main" data-target="card-addtask" onclick="navigateBottom('card-addtask',this)" aria-label="添加"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><small>添加</small></button>
@@ -1370,18 +1370,15 @@ function scheduleOutlineIcon(kind) {
 }
 function scrollToCard(id) { const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
 function setBottomNavActive(id) { document.querySelectorAll('.bottom-nav button[data-target]').forEach(btn=>btn.classList.toggle('active',btn.dataset.target===id)); }
-function navigateBottom(id, button) {
-    if(id==='card-timeline'){
-        const opening=!document.body.classList.contains('timeline-panel-open');
-        document.body.classList.toggle('timeline-panel-open',opening);
-        if(opening){setBottomNavActive(id);timelineShouldFocusNow=timelineSelectedDate===getToday();renderTimeline();requestAnimationFrame(()=>scrollToCard(id));}
-        else {setBottomNavActive('card-board');requestAnimationFrame(()=>scrollToCard('card-board'));}
-        return;
-    }
-    setBottomNavActive(id); scrollToCard(id);
+function navigateBottom(id, button) { setBottomNavActive(id); scrollToCard(id); }
+function toggleTimelinePanel(){
+    const opening=!document.body.classList.contains('timeline-panel-open'),button=document.getElementById('scheduleTimelineToggle');
+    document.body.classList.toggle('timeline-panel-open',opening);
+    if(button){button.classList.toggle('active',opening);button.setAttribute('aria-label',opening?'隐藏时间轴':'显示时间轴');}
+    if(opening){timelineShouldFocusNow=timelineSelectedDate===getToday();renderTimeline();}
 }
 function initBottomNavigation() {
-    const ids=['card-timeline','card-board','card-tasklist','card-addtask','card-stats','card-settings'];
+    const ids=['card-board','card-tasklist','card-addtask','card-stats','card-settings'];
     const elements=ids.map(id=>document.getElementById(id)).filter(Boolean);
     if (!('IntersectionObserver' in window) || !elements.length) return;
     const observer=new IntersectionObserver(entries=>{
