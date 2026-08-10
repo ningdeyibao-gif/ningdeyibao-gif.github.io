@@ -808,8 +808,7 @@
         .timeline-task.dragging { opacity:.72; cursor:grabbing; box-shadow:0 12px 28px rgba(40,45,55,.24); z-index:40; }
         .timeline-task.done .timeline-task-name { text-decoration:line-through; opacity:.65; }
         .timeline-task-main { display:flex; align-items:flex-start; gap:2px; min-width:0; margin:0; padding:0; }
-        .timeline-check { width:13px; height:13px; flex:0 0 auto; border-radius:50%; border:1.5px solid var(--task-color); background:var(--card-bg); display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:800; color:white; cursor:pointer; }
-        .timeline-task.done .timeline-check { background:#67b86c; border-color:#67b86c; }
+        .timeline-done-mark { flex:0 0 auto; color:#53a85a; font-size:11px; line-height:12px; font-weight:900; }
         .timeline-task-name { min-width:0; font-size:9px; line-height:12px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:clip; }
         .timeline-remove { position:absolute; right:5px; top:0; border:0; background:transparent; color:var(--text-3); font-size:15px; line-height:16px; cursor:pointer; padding:0; }
         .timeline-resize { position:absolute; left:24px; right:24px; height:10px; cursor:ns-resize; z-index:2; }
@@ -828,6 +827,65 @@
         @keyframes timelineDrop { from { transform:scale(.97); opacity:.55; } to { transform:scale(1); opacity:1; } }
         @keyframes timelinePanelIn { from { transform:translateX(-14px); opacity:0; } to { transform:translateX(0); opacity:1; } }
         @media (max-width:900px) { .schedule-row { flex-direction:column; }.card-timeline { flex-basis:auto; width:min(260px,100%); }.timeline-grid { min-width:184px; }.timeline-duration-grid { grid-template-columns:repeat(2,1fr); } }
+
+        /* 纯白主题：白底、浅灰线，蓝色只作为文字与描边强调 */
+        :root[data-theme="white"] {
+            --page-bg:#fff; --card-bg:#fff; --surface:#fff; --surface-strong:#fff; --surface-soft:#fafafa;
+            --text:#26282c; --text-2:#60656d; --text-3:#969ba3;
+            --line:#e7e9ed; --line-strong:#d9dde3;
+            --accent:#5b94cf; --accent-soft:#fff; --accent-shadow:transparent;
+            --nature:#5b94cf; --nature-soft:#fff; --shadow:none; --glass-highlight:transparent;
+        }
+        :root[data-theme="white"] body { background:#fff!important; }
+        :root[data-theme="white"] .card,
+        :root[data-theme="white"] .study-hero,
+        :root[data-theme="white"] .time-card,
+        :root[data-theme="white"] .bottom-nav,
+        :root[data-theme="white"] .modal-box,
+        :root[data-theme="white"] .task-block,
+        :root[data-theme="white"] .day-view-item,
+        :root[data-theme="white"] .stats-module-row,
+        :root[data-theme="white"] .stats-bar-chart,
+        :root[data-theme="white"] .exam-card,
+        :root[data-theme="white"] .exam-trend-wrap,
+        :root[data-theme="white"] .cal-cell,
+        :root[data-theme="white"] .stats-task-row,
+        :root[data-theme="white"] .stats-sub-row,
+        :root[data-theme="white"] .countdown-panel .sb-countdown-item,
+        :root[data-theme="white"] .inline-exam-form,
+        :root[data-theme="white"] .cloud-sync-panel,
+        :root[data-theme="white"] .timeline-scroll,
+        :root[data-theme="white"] .timeline-picker-item,
+        :root[data-theme="white"] .task-module-group,
+        :root[data-theme="white"] .sub-row.editing { background:#fff!important; box-shadow:none!important; backdrop-filter:none!important; -webkit-backdrop-filter:none!important; }
+        :root[data-theme="white"] button,
+        :root[data-theme="white"] input,
+        :root[data-theme="white"] select,
+        :root[data-theme="white"] textarea,
+        :root[data-theme="white"] .filter-chip,
+        :root[data-theme="white"] .wd-chip,
+        :root[data-theme="white"] .triangle-filter select,
+        :root[data-theme="white"] .view-toggle,
+        :root[data-theme="white"] .tab-bar { background:#fff!important; box-shadow:none!important; }
+        :root[data-theme="white"] .btn-primary,
+        :root[data-theme="white"] .view-toggle button.active,
+        :root[data-theme="white"] .filter-chip.active,
+        :root[data-theme="white"] .wd-chip.active,
+        :root[data-theme="white"] .tab-bar button.active,
+        :root[data-theme="white"] .modal-box .btn-save,
+        :root[data-theme="white"] .bottom-nav .bottom-tab.active,
+        :root[data-theme="white"] .bottom-nav .bottom-main.active { background:#fff!important; color:var(--accent)!important; border-color:var(--accent)!important; box-shadow:none!important; }
+        :root[data-theme="white"] button:hover,
+        :root[data-theme="white"] .sidebar-item:hover,
+        :root[data-theme="white"] .timeline-slot:hover { background:#f8f9fb!important; }
+        :root[data-theme="white"] .study-hero { background:#fff!important; }
+        :root[data-theme="white"] .day-view-item.done { background:#fff!important; }
+        :root[data-theme="white"] .task-block-header .tag-type,
+        :root[data-theme="white"] .correct-pill,
+        :root[data-theme="white"] .exam-card-header .ec-type,
+        :root[data-theme="white"] .dv-time,
+        :root[data-theme="white"] .planned-time-pill { background:#fff!important; border:1px solid var(--line)!important; }
+        :root[data-theme="white"] .theme-option.active { box-shadow:none!important; }
     </style>
 </head>
 <body class="timeline-panel-open">
@@ -1082,11 +1140,12 @@
 
 <div class="modal-overlay" id="timelineModal">
     <div class="modal-box">
-        <h3>安排任务</h3>
-        <div style="color:var(--text-3);font-size:13px;">开始时间：<strong id="timelineModalStart" style="color:var(--text-2);"></strong></div>
+        <h3 id="timelineModalTitle">安排任务</h3>
+        <div id="timelineStartDisplay" style="color:var(--text-3);font-size:13px;">开始时间：<strong id="timelineModalStart" style="color:var(--text-2);"></strong></div>
+        <div class="form-group hidden" id="timelineStartEditGroup"><label>计划开始时间</label><input type="time" id="timelineEditStartInput" min="07:00" max="22:30" step="1800"></div>
         <div class="timeline-task-picker" id="timelineTaskPicker"></div>
         <div class="form-group"><label>计划持续时长</label><div class="timeline-duration-grid" id="timelineDurationPicker"></div></div>
-        <div class="modal-actions"><button class="btn-cancel" onclick="closeTimelineModal()">取消</button><button class="btn-save" onclick="confirmTimelineAssignment()">确认安排</button></div>
+        <div class="modal-actions"><button class="btn-cancel" onclick="closeTimelineModal()">取消</button><button class="btn-save" id="timelineConfirmButton" onclick="confirmTimelineAssignment()">确认安排</button></div>
     </div>
 </div>
 
@@ -1866,8 +1925,9 @@ function renderTodaySection() {
 
 const TIMELINE_START_MIN = 7 * 60, TIMELINE_END_MIN = 23 * 60, TIMELINE_SLOT_MIN = 30, TIMELINE_SLOT_HEIGHT = 18;
 const TIMELINE_DURATIONS = [30,60,90,120,150,180];
-let timelineModalState = { startMin:480, taskKey:'', duration:60 };
+let timelineModalState = { mode:'assign', startMin:480, taskKey:'', duration:60 };
 let timelineDragState = null;
+let timelineSuppressClickUntil = 0;
 let timelineSelectedDate = getToday(), timelineShouldFocusNow = true;
 let timelineEditMode = false;
 
@@ -1938,9 +1998,9 @@ function renderTimeline() {
     getTimelineLanes(scheduled).forEach(item=>{
         const color=MODULE_COLORS[normalizeModule(item.task.module)]||'#8aa9c8', top=(item.start-TIMELINE_START_MIN)/30*TIMELINE_SLOT_HEIGHT, height=(item.sub.planDuration/30)*TIMELINE_SLOT_HEIGHT;
         const laneWidth=100/item.laneCount, left=item.lane*laneWidth;
-        html+=`<div class="timeline-task ${item.sub.done?'done':''} ${item.sub.planDuration===30?'short':''}" data-timeline-key="${item.key}" style="--task-color:${color};top:${top}px;height:${height}px;left:calc(${left}% + 2px);width:calc(${laneWidth}% - 4px);pointer-events:auto;">
+        html+=`<div class="timeline-task ${item.sub.done?'done':''} ${item.sub.planDuration===30?'short':''}" data-timeline-key="${item.key}" onclick="event.stopPropagation();openTimelineTaskEditor('${item.key}')" style="--task-color:${color};top:${top}px;height:${height}px;left:calc(${left}% + 2px);width:calc(${laneWidth}% - 4px);pointer-events:auto;">
             ${timelineEditMode?`<div class="timeline-resize top" data-resize="top"></div><div class="timeline-resize bottom" data-resize="bottom"></div><button class="timeline-remove" title="移出时间轴" onclick="event.stopPropagation();clearSubtaskPlan(${item.task.id},${item.idx})">×</button>`:''}
-            <div class="timeline-task-main"><span class="timeline-check" onclick="event.stopPropagation();toggleSubtaskDone(${item.task.id},${item.idx})">${item.sub.done?'✓':''}</span><span class="timeline-task-name" title="${MODULE_SHORT[normalizeModule(item.task.module)]||normalizeModule(item.task.module)} ${item.task.name}${item.task.type==='single'?'':item.sub.idx}">${MODULE_SHORT[normalizeModule(item.task.module)]||normalizeModule(item.task.module)} ${item.task.name}${item.task.type==='single'?'':item.sub.idx}</span></div></div>`;
+            <div class="timeline-task-main">${item.sub.done?'<span class="timeline-done-mark">✓</span>':''}<span class="timeline-task-name" title="${MODULE_SHORT[normalizeModule(item.task.module)]||normalizeModule(item.task.module)} ${item.task.name}${item.task.type==='single'?'':item.sub.idx}">${MODULE_SHORT[normalizeModule(item.task.module)]||normalizeModule(item.task.module)} ${item.task.name}${item.task.type==='single'?'':item.sub.idx}</span></div></div>`;
     });
     html+='</div>'; grid.innerHTML=html;
     summary.textContent=all.length?`${isToday?'今天':viewDate}共 ${all.length} 项任务，已安排 ${scheduled.length} 项，待安排 ${all.length-scheduled.length} 项。`:`${isToday?'今天':viewDate}暂无任务，请前往「添加」创建任务。`;
@@ -1948,11 +2008,28 @@ function renderTimeline() {
     if(isToday&&timelineShouldFocusNow){timelineShouldFocusNow=false;requestAnimationFrame(()=>{const scroller=grid.closest('.timeline-scroll');if(scroller&&nowMin>=TIMELINE_START_MIN&&nowMin<=TIMELINE_END_MIN){const y=(nowMin-TIMELINE_START_MIN)/30*TIMELINE_SLOT_HEIGHT;scroller.scrollTop=Math.max(0,y-scroller.clientHeight*.35);}});}
 }
 function openTimelineModal(startMin) {
-    timelineModalState={startMin,taskKey:'',duration:60};
+    timelineModalState={mode:'assign',startMin,taskKey:'',duration:60};
+    document.getElementById('timelineModalTitle').textContent='安排任务';
+    document.getElementById('timelineConfirmButton').textContent='确认安排';
+    document.getElementById('timelineStartDisplay').classList.remove('hidden');
+    document.getElementById('timelineStartEditGroup').classList.add('hidden');
+    document.getElementById('timelineTaskPicker').classList.remove('hidden');
     document.getElementById('timelineModalStart').textContent=minutesToClock(startMin);
     const tasks=getTimelineTasks(timelineSelectedDate).filter(x=>!x.sub.planStart).sort((a,b)=>MODULES.indexOf(normalizeModule(a.task.module))-MODULES.indexOf(normalizeModule(b.task.module))||a.task.name.localeCompare(b.task.name,'zh-CN')||a.sub.idx-b.sub.idx);
     document.getElementById('timelineTaskPicker').innerHTML=tasks.length?tasks.map(x=>`<div class="timeline-picker-item" data-key="${x.key}" onclick="selectTimelineTask('${x.key}',this)"><span class="timeline-picker-dot" style="background:${MODULE_COLORS[normalizeModule(x.task.module)]||'#8aa9c8'}"></span><span><strong>${x.task.name}</strong><small style="display:block;color:var(--text-3);">${x.task.module}${x.task.type==='single'?'':` · 第 ${x.sub.idx} 项`}</small></span></div>`).join(''):'<div class="timeline-picker-empty">今日任务均已安排时段</div>';
     document.getElementById('timelineDurationPicker').innerHTML=TIMELINE_DURATIONS.map(d=>`<button class="${d===60?'active':''}" onclick="selectTimelineDuration(${d},this)">${d} 分钟</button>`).join('');
+    document.getElementById('timelineModal').classList.add('active');
+}
+function openTimelineTaskEditor(key){
+    if(Date.now()<timelineSuppressClickUntil)return;const found=findTimelineTask(key);if(!found)return;
+    const startMin=clockToMinutes(found.sub.planStart);timelineModalState={mode:'edit',startMin,taskKey:key,duration:found.sub.planDuration||30};
+    document.getElementById('timelineModalTitle').textContent='修改计划时段';
+    document.getElementById('timelineConfirmButton').textContent='保存修改';
+    document.getElementById('timelineStartDisplay').classList.add('hidden');
+    document.getElementById('timelineStartEditGroup').classList.remove('hidden');
+    document.getElementById('timelineTaskPicker').classList.add('hidden');
+    document.getElementById('timelineEditStartInput').value=minutesToClock(startMin);
+    document.getElementById('timelineDurationPicker').innerHTML=TIMELINE_DURATIONS.map(d=>`<button class="${d===timelineModalState.duration?'active':''}" onclick="selectTimelineDuration(${d},this)">${d} 分钟</button>`).join('');
     document.getElementById('timelineModal').classList.add('active');
 }
 function selectTimelineTask(key,el){timelineModalState.taskKey=key;document.querySelectorAll('.timeline-picker-item').forEach(x=>x.classList.toggle('active',x===el));}
@@ -1960,6 +2037,7 @@ function selectTimelineDuration(duration,el){timelineModalState.duration=duratio
 function closeTimelineModal(){document.getElementById('timelineModal').classList.remove('active');}
 function confirmTimelineAssignment(){
     if(!timelineModalState.taskKey){alert('请选择要安排的任务');return;} const found=findTimelineTask(timelineModalState.taskKey);if(!found)return;
+    if(timelineModalState.mode==='edit'){const value=document.getElementById('timelineEditStartInput').value,start=clockToMinutes(value);if(start===null||start<TIMELINE_START_MIN||start>=TIMELINE_END_MIN){alert('请选择 07:00 至 22:30 之间的开始时间');return;}timelineModalState.startMin=start;}
     setSubtaskPlan(found.task,found.sub,timelineModalState.startMin,timelineModalState.duration,true);saveData();closeTimelineModal();renderAll();
 }
 function bindTimelineDrag(){
@@ -1978,7 +2056,7 @@ document.addEventListener('pointermove',event=>{
     d.preview={start,duration};d.card.style.top=`${(start-TIMELINE_START_MIN)/30*TIMELINE_SLOT_HEIGHT}px`;d.card.style.height=`${duration/30*TIMELINE_SLOT_HEIGHT}px`;
 });
 document.addEventListener('pointerup',event=>{
-    const d=timelineDragState;if(!d)return;d.card.classList.remove('dragging');if(d.preview){setSubtaskPlan(d.found.task,d.found.sub,d.preview.start,d.preview.duration,true);saveData();renderAll();}timelineDragState=null;
+    const d=timelineDragState;if(!d)return;d.card.classList.remove('dragging');if(d.preview){timelineSuppressClickUntil=Date.now()+350;setSubtaskPlan(d.found.task,d.found.sub,d.preview.start,d.preview.duration,true);saveData();renderAll();}timelineDragState=null;
 });
 
 let subEditMode = null, subEditTaskId = null; // 单项兼容 + 整个任务编辑
