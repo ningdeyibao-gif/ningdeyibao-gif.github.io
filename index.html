@@ -229,6 +229,7 @@
         .sub-row .dv-check.done { background:#a8d5a2; border-color:#a8d5a2; }
         .sub-row.done .sr-num { background:#a8d5a2; color:#fff; }
         .sub-row .sr-info { flex:1; min-width:0; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .sub-row .sr-name { font-size:13px; color:#3d2c2c; font-weight:650; }
         .sub-row .sr-date { font-size:13px; color:#3d2c2c; font-weight:500; }
         .sub-row.done .sr-date { color:#bbb; text-decoration:line-through; }
         .sub-row .sr-stats { display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:12px; }
@@ -548,7 +549,7 @@
             .hero-copy strong { font-size:18px; }.hero-copy small { max-width:220px; }.hero-art { width:150px; max-width:40%; }
             .theme-options { min-width:100%; grid-template-columns:1fr; }
             .settings-backup-actions { min-width:100%; grid-template-columns:1fr; }.cloud-sync-panel { min-width:100%; }.cloud-email-row { flex-direction:column; align-items:stretch; }.cloud-email-row button{width:100%;}
-            .bottom-nav { position:fixed; display:grid; grid-template-columns:repeat(6,1fr); align-items:end; left:10px; right:10px; bottom:10px; height:70px; padding:8px 8px 6px; background:var(--card-bg); border:1px solid var(--line); border-radius:24px; box-shadow:0 12px 38px rgba(50,50,45,.15); backdrop-filter:blur(24px); z-index:1500; }
+            .bottom-nav { position:fixed; display:grid; grid-template-columns:repeat(5,1fr); align-items:end; left:10px; right:10px; bottom:10px; height:70px; padding:8px 8px 6px; background:var(--card-bg); border:1px solid var(--line); border-radius:24px; box-shadow:0 12px 38px rgba(50,50,45,.15); backdrop-filter:blur(24px); z-index:1500; }
             .bottom-nav button { border:0; background:transparent; color:var(--text-3); display:flex; flex-direction:column; align-items:center; gap:2px; font-size:19px; cursor:pointer; }
             .bottom-nav button small { font-size:10px; }.bottom-nav .bottom-main { color:var(--accent); transform:translateY(-12px); }
             .bottom-nav .bottom-main span { width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:50%; color:white; background:linear-gradient(135deg,#edb651,#db9834); box-shadow:0 8px 18px var(--accent-shadow); font-size:28px; }
@@ -558,7 +559,7 @@
         /* 无侧栏布局与全局底部导航 */
         body { display:block; }
         .main { max-width:1180px; padding-bottom:112px; }
-        .bottom-nav { position:fixed; display:grid; grid-template-columns:repeat(6,1fr); align-items:end; left:50%; transform:translateX(-50%); width:min(620px,calc(100% - 20px)); bottom:12px; height:72px; padding:8px 10px 7px; background:var(--card-bg); border:1px solid var(--line); border-radius:25px; box-shadow:0 12px 38px rgba(50,50,45,.15); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); z-index:1500; }
+        .bottom-nav { position:fixed; display:grid; grid-template-columns:repeat(5,1fr); align-items:end; left:50%; transform:translateX(-50%); width:min(620px,calc(100% - 20px)); bottom:12px; height:72px; padding:8px 10px 7px; background:var(--card-bg); border:1px solid var(--line); border-radius:25px; box-shadow:0 12px 38px rgba(50,50,45,.15); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); z-index:1500; }
         .bottom-nav button { border:0; background:transparent; color:var(--text-3); display:flex; flex-direction:column; align-items:center; gap:2px; font-size:19px; cursor:pointer; }
         .bottom-nav button small { font-size:10px; }
         .bottom-nav .bottom-main { color:var(--accent); transform:translateY(-13px); }
@@ -657,8 +658,8 @@
         .countdown-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
         .countdown-heading strong { color:var(--nature); font-size:13px; font-weight:700; }
         .countdown-heading button { padding:4px 10px; border:0!important; border-radius:10px; background:var(--accent-soft)!important; color:var(--accent)!important; font-size:11px; font-weight:650; box-shadow:none!important; }
-        .countdown-panel .sb-countdown { display:flex; flex-direction:column; gap:6px; }
-        .countdown-panel .sb-countdown-item { min-width:0; padding:8px 11px; display:grid; grid-template-columns:minmax(110px,1fr) auto auto; gap:12px; align-items:center; border-radius:13px; background:var(--surface-strong); border:1px solid var(--line); box-shadow:inset 0 1px 0 var(--glass-highlight); }
+        .countdown-panel .sb-countdown { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
+        .countdown-panel .sb-countdown-item { min-width:0; min-height:38px; padding:5px 8px; display:grid; grid-template-columns:minmax(72px,1fr) auto auto; gap:7px; align-items:center; border-radius:11px; background:var(--surface-strong); border:1px solid var(--line); box-shadow:inset 0 1px 0 var(--glass-highlight); }
         .countdown-panel .exam-name { color:var(--text-2); font-size:12px; font-weight:650; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
         .countdown-panel .exam-days { color:var(--accent); font-size:13px; font-weight:750; white-space:nowrap; }
         .countdown-panel .exam-date { color:var(--nature); font-size:10px; white-space:nowrap; }
@@ -666,7 +667,7 @@
         .countdown-manager-row input { width:100%; padding:9px 11px; border-radius:12px; }
         .countdown-manager-row button { width:34px; height:34px; border-radius:50%; color:var(--danger)!important; font-size:20px; }
         .countdown-add-row { margin-top:6px; }
-        @media (max-width:520px) { .study-hero { grid-template-columns:1fr; gap:20px; padding:22px; }.hero-brand h1{font-size:28px}.countdown-panel .sb-countdown-item{grid-template-columns:1fr auto}.countdown-panel .exam-date{display:none}.countdown-manager-row{grid-template-columns:1fr 130px 32px} }
+        @media (max-width:520px) { .study-hero { grid-template-columns:1fr; gap:20px; padding:22px; }.hero-brand h1{font-size:28px}.countdown-panel .sb-countdown-item{grid-template-columns:minmax(0,1fr) auto}.countdown-panel .exam-date{display:none}.countdown-manager-row{grid-template-columns:1fr 130px 32px} }
         @media (max-width:480px) { .countdown-manager-row { grid-template-columns:1fr 32px; }.countdown-manager-row input[type="date"]{grid-column:1/2}.countdown-manager-row button{grid-column:2;grid-row:1/3} }
         /* 双列任务布局与编辑模式 */
         #dayView,.today-module-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; align-items:start; }
@@ -783,8 +784,40 @@
         .timeline-controls-row .timeline-date-nav { flex:0 0 auto; min-width:0; }
         .board-control-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; min-width:0; overflow-x:auto; scrollbar-width:thin; }
         .board-control-row .filter-bar { flex:0 0 auto; margin-bottom:0; overflow:visible; padding-bottom:0; }
-        .board-control-row .nav-week { flex:0 0 auto; justify-content:flex-start; margin-bottom:0; gap:5px; }
-        .board-control-row .nav-week .range { min-width:112px; }
+        .board-control-row .nav-week { flex:0 0 auto; margin:0 0 0 auto; gap:4px; }
+        .board-control-row .nav-week button { width:28px; height:28px; border-radius:8px; }
+        .board-control-row .view-toggle { flex:0 0 auto; }
+        .day-mode-toggle { display:flex; flex:0 0 auto; padding:2px; border:1px solid var(--line); border-radius:9px; background:var(--surface); }
+        .day-mode-toggle button { border:0; border-radius:7px; padding:5px 9px; background:transparent; color:var(--text-3); font-size:10px; cursor:pointer; white-space:nowrap; }
+        .day-mode-toggle button.active { background:var(--surface-strong); color:var(--accent); box-shadow:0 1px 4px rgba(40,45,55,.08); }
+        #dayTimelineCompactButton { width:28px; padding:0; align-items:center; justify-content:center; }
+        #dayTimelineCompactButton svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+        .schedule-module-label { flex:0 0 auto; min-width:42px; padding:6px; display:flex; align-items:center; justify-content:center; border-radius:12px; font-size:10px; font-weight:700; text-align:center; }
+        .schedule-timeline { border:1px solid var(--line); border-radius:14px; overflow:auto; background:var(--surface); }
+        .schedule-timeline-columns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; min-width:680px; padding:12px 12px 12px 0; }
+        .schedule-timeline-column-title { margin:0 0 7px 42px; color:var(--text-3); font-size:10px; font-weight:650; text-align:center; }
+        .schedule-timeline-axis { --schedule-slot-h:58px; position:relative; min-width:280px; margin-left:42px; }
+        .schedule-timeline-slot { position:absolute; left:0; right:0; height:var(--schedule-slot-h); border-top:1px solid var(--line); cursor:pointer; }
+        .schedule-timeline-slot.half-hour { border-top-style:dashed; opacity:.75; }
+        .schedule-timeline-label { position:absolute; left:-42px; top:-7px; width:38px; color:var(--text-3); font-size:10px; text-align:right; pointer-events:none; }
+        .schedule-timeline-task { position:absolute; z-index:5; padding:1px 3px; min-height:56px; pointer-events:auto; touch-action:auto; }
+        .schedule-timeline-task.editing { touch-action:none; cursor:grab; }
+        .schedule-timeline-task .day-view-item { height:100%; min-height:54px; margin:0; box-sizing:border-box; align-content:center; }
+        .schedule-timeline-task .timeline-resize { display:none; }
+        .schedule-timeline-task.editing .timeline-resize { display:block; }
+        .schedule-timeline-task.dragging { opacity:.72; z-index:30; }
+        .schedule-timeline-unplanned { margin-top:12px; }
+        .schedule-timeline-unplanned-title { margin-bottom:7px; color:var(--text-3); font-size:12px; font-weight:700; }
+        .schedule-timeline-unplanned-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+        .schedule-compact-columns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; padding:10px; border:1px solid var(--line); border-radius:14px; background:var(--surface); }
+        .schedule-compact-column { display:flex; flex-direction:column; gap:8px; min-width:0; }
+        .schedule-compact-row { display:grid; grid-template-columns:40px minmax(0,1fr); align-items:stretch; min-width:0; }
+        .schedule-compact-time { position:relative; display:flex; align-items:flex-start; justify-content:flex-end; padding:3px 5px 0 0; color:var(--text-3); font-size:9px; line-height:1; }
+        .schedule-compact-time::before { content:""; position:absolute; right:-2px; top:14px; width:5px; height:5px; border-radius:50%; background:var(--line-strong); z-index:1; }
+        .schedule-compact-item { position:relative; height:58px; min-height:58px; cursor:pointer; border-left:1px solid var(--line); padding-left:5px; }
+        .schedule-compact-item .day-view-item { height:100%; min-height:58px; box-sizing:border-box; margin:0; }
+        #dayView.timeline-mode { display:block; width:100%; }
+        @media (max-width:700px) { .schedule-timeline-unplanned-list { grid-template-columns:1fr; } }
         .timeline-edit-button { align-self:flex-end; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:7px; background:var(--surface); color:var(--text-3); cursor:pointer; padding:0; }
         .timeline-edit-button svg { width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
         .timeline-edit-button.active { color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
@@ -793,7 +826,7 @@
         .timeline-date-nav button { min-width:34px; height:32px; padding:0 10px; border:1px solid var(--line); border-radius:10px; background:var(--surface); color:var(--text-2); cursor:pointer; }
         .timeline-date-nav button:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-soft); }
         .timeline-scroll { overflow-x:auto; overflow-y:hidden; border:1px solid var(--line); border-radius:16px; background:color-mix(in srgb,var(--surface) 88%,transparent); }
-        .timeline-columns { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; min-width:560px; padding:10px 6px 10px 0; }
+        .timeline-columns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; min-width:520px; padding:10px 6px 10px 0; }
         .timeline-column { min-width:0; }
         .timeline-column-title { margin:0 0 6px 28px; color:var(--text-3); font-size:9px; text-align:center; }
         .timeline-grid { --slot-h:18px; position:relative; min-width:97px; margin-left:28px; }
@@ -876,6 +909,7 @@
         :root[data-theme="white"] .modal-box .btn-save,
         :root[data-theme="white"] .bottom-nav .bottom-tab.active,
         :root[data-theme="white"] .bottom-nav .bottom-main.active { background:#fff!important; color:var(--accent)!important; border-color:var(--accent)!important; box-shadow:none!important; }
+        .card-stats .time-card,.card-stats .stats-summary,.card-stats .stats-bar-chart,.card-stats .stats-module-row,.card-stats .stats-task-row,.card-stats .stats-sub-row,.card-stats .exam-card,.card-stats .exam-trend-wrap { background:var(--surface-strong)!important; border-color:var(--line)!important; box-shadow:inset 0 1px 0 var(--glass-highlight)!important; }
         :root[data-theme="white"] button:hover,
         :root[data-theme="white"] .sidebar-item:hover,
         :root[data-theme="white"] .timeline-slot:hover { background:#f8f9fb!important; }
@@ -898,34 +932,18 @@
     </div>
 
     <div class="schedule-row">
-    <!-- ① 当日时间轴 -->
-    <div class="card card-timeline" id="card-timeline">
-        <div class="timeline-head">
-            <div class="card-title" style="margin-bottom:0;"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>时间轴 <span class="sub timeline-inline-date" id="timelineDate"></span></div>
-            <div class="timeline-controls-row"><div class="timeline-date-nav"><button onclick="navigateTimeline(-1)" aria-label="前一天">‹</button><button onclick="goTimelineToday()">今天</button><button onclick="navigateTimeline(1)" aria-label="后一天">›</button></div><button class="timeline-edit-button" id="timelineEditButton" onclick="toggleTimelineEdit()" aria-label="编辑时间轴" title="编辑时间轴"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button></div>
-        </div>
-        <div class="timeline-scroll"><div class="timeline-columns" id="timelineGrid"></div></div>
-        <div class="timeline-empty" id="timelineSummary"></div>
-    </div>
-
     <!-- ② 计划看板 -->
     <div class="card card-board" id="card-board">
         <div class="card-title"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M8 3.5v4M16 3.5v4M3.5 10h17"/></svg>日程 <span class="sub" id="boardDate"></span></div>
-        <div class="board-toolbar">
-            <div class="view-toggle">
-                <button id="btnDayView" class="active" onclick="switchView('day')">日视图</button>
-                <button id="btnWeekView" onclick="switchView('week')">周视图</button>
-                <button id="btnMonthView" onclick="switchView('month')">月视图</button>
-            </div>
-        </div>
         <div class="board-control-row">
-            <div class="filter-bar" id="boardFilterBar"></div>
-            <div class="nav-week">
-                <button onclick="navigate(-1)" aria-label="上一时间段">‹</button>
-                <span class="range" id="navRange"></span>
-                <button onclick="navigate(1)" aria-label="下一时间段">›</button>
-                <button onclick="goToday()" style="margin-left:2px;">今</button>
+            <div class="view-toggle">
+                <button id="btnDayView" class="active" onclick="switchView('day')">日</button>
+                <button id="btnWeekView" onclick="switchView('week')">周</button>
+                <button id="btnMonthView" onclick="switchView('month')">月</button>
             </div>
+            <div class="day-mode-toggle" id="dayModeToggle"><button id="btnDayModuleMode" class="active" onclick="switchDayScheduleMode('module')">按模块</button><button id="btnDayTimelineMode" onclick="switchDayScheduleMode('timeline')">按时间</button><button id="dayTimelineCompactButton" class="hidden" onclick="toggleTimelineEmptySlots()" title="隐藏空时段" aria-label="隐藏空时段"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M8 12h8M10 17h4"/></svg></button><button id="dayTimelineEditButton" class="hidden" onclick="toggleTimelineEdit()" title="编辑排期" aria-label="编辑排期">✎</button></div>
+            <div class="filter-bar" id="boardFilterBar"></div>
+            <div class="nav-week"><button onclick="navigate(-1)" aria-label="上一时间段">&lt;</button><button onclick="goToday()">今</button><button onclick="navigate(1)" aria-label="下一时间段">&gt;</button><span class="range hidden" id="navRange"></span></div>
         </div>
         <div id="dayView"></div>
         <div id="calendarWrap" class="hidden" style="overflow:hidden; min-width:0;">
@@ -993,6 +1011,7 @@
                 <div class="form-group"><label>子任务数量</label><input type="number" id="fCount" min="1" max="365" value="30"></div>
                 <div class="form-group"><label>每天完成子任务数量</label><input type="number" id="fDailyCount" min="1" max="20" value="1"></div>
             </div>
+            <div class="form-group"><label>批量子任务（可选，每行：子任务名称｜题量）</label><textarea id="fSubtaskBatch" rows="5" placeholder="基础讲义1｜20&#10;基础讲义2｜30&#10;错题复盘｜0"></textarea><small style="color:var(--text-3);">填写后将按行生成子任务，并覆盖上方“子任务数量”和默认题量。</small></div>
             <div class="form-row hidden" id="fWeekdayRow">
                 <div class="form-group" style="flex:1 1 100%;"><label>每周任务日（自由勾选）</label>
                     <div class="weekday-selector" id="weekdaySelector">
@@ -1132,7 +1151,6 @@
 
 <nav class="bottom-nav" aria-label="主要导航">
     <button class="bottom-tab active" data-target="card-board" onclick="navigateBottom('card-board',this)" aria-label="日程"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M8 3.5v4M16 3.5v4M3.5 10h17"/></svg><small>日程</small></button>
-    <button class="bottom-tab" data-target="card-timeline" onclick="navigateBottom('card-timeline',this)" aria-label="时间轴"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><small>时间轴</small></button>
     <button class="bottom-tab" data-target="card-tasklist" onclick="navigateBottom('card-tasklist',this)" aria-label="任务"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg><small>任务</small></button>
     <button class="bottom-main" data-target="card-addtask" onclick="navigateBottom('card-addtask',this)" aria-label="添加"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><small>添加</small></button>
     <button class="bottom-tab" data-target="card-stats" onclick="navigateBottom('card-stats',this)" aria-label="统计"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V11M12 19V5M19 19v-8"/><path d="M3 20.5h18"/></svg><small>统计</small></button>
@@ -1163,8 +1181,19 @@
     <div class="modal-box">
         <h3>编辑任务</h3>
         <div class="form-group"><label>任务名称</label><input type="text" id="editName"></div>
+        <div class="form-row">
+            <div class="form-group"><label>所属模块</label><select id="editModule" onchange="onEditTaskFormChange()"><option value="资料分析">资料分析</option><option value="数量关系">数量关系</option><option value="言语理解与表达">言语理解与表达</option><option value="判断推理">判断推理</option><option value="政治理论">政治理论</option><option value="常识">常识</option><option value="公共基础知识">公共基础知识</option><option value="申论">申论</option><option value="清单">清单</option></select></div>
+            <div class="form-group"><label>任务类型</label><select id="editType" onchange="onEditTaskFormChange()"><option value="periodic">周期任务</option><option value="single">单次任务</option></select></div>
+            <div class="form-group"><label>内容类型</label><select id="editKind" onchange="onEditTaskFormChange()"><option value="quantified">量化</option><option value="nonQuantified">非量化</option></select></div>
+        </div>
+        <div class="form-group hidden" id="editSubTypeGroup"><label>细分题型</label><select id="editSubType"></select></div>
+        <div class="form-group" id="editScheduleModeGroup"><label>排期模式</label><select id="editScheduleMode" onchange="onEditTaskFormChange()"><option value="continuous">连续日期（含周日）</option><option value="weekly">按周星期自定义</option></select></div>
         <div class="form-group" id="editStartGroup"><label id="editStartLabel">起始日期</label><input type="date" id="editStart"></div>
+        <div class="form-group" id="editTotalGroup"><label id="editTotalLabel">每项总题数</label><input type="number" id="editTotal" min="0"></div>
         <div class="form-group" id="editCountGroup"><label>子任务数量</label><input type="number" id="editCount" min="1"></div>
+        <div class="form-group" id="editDailyCountGroup"><label>每天完成子任务数量</label><input type="number" id="editDailyCount" min="1" max="20"></div>
+        <div class="form-group hidden" id="editWeekdayGroup"><label>每周任务日</label><div class="weekday-selector" id="editWeekdaySelector"><span class="wd-chip" data-wd="1" onclick="toggleEditWeekday(1)">周一</span><span class="wd-chip" data-wd="2" onclick="toggleEditWeekday(2)">周二</span><span class="wd-chip" data-wd="3" onclick="toggleEditWeekday(3)">周三</span><span class="wd-chip" data-wd="4" onclick="toggleEditWeekday(4)">周四</span><span class="wd-chip" data-wd="5" onclick="toggleEditWeekday(5)">周五</span><span class="wd-chip" data-wd="6" onclick="toggleEditWeekday(6)">周六</span><span class="wd-chip" data-wd="0" onclick="toggleEditWeekday(0)">周日</span></div></div>
+        <div class="form-group" id="editSubtaskBatchGroup"><label>批量编辑子任务（每行：子任务名称｜题量）</label><textarea id="editSubtaskBatch" rows="7" placeholder="子任务名称｜题量"></textarea><small style="color:var(--text-3);">增删行可同步增减子任务；留空名称则继续使用任务名称和编号。</small></div>
         <div class="modal-actions">
             <button class="btn-del" onclick="deleteEditingTask()">删除任务</button>
             <button class="btn-cancel" onclick="closeEditModal()">取消</button>
@@ -1269,7 +1298,9 @@ async function signInCloudWithPassword() {
 async function signOutCloud(){if(!cloudClient)return;await cloudClient.auth.signOut();cloudUser=null;cloudReady=false;updateCloudAuthUI();const pwd=document.getElementById('cloudPassword');if(pwd)pwd.value='';setCloudStatus('已退出，数据继续保存在本机','');}
 
 const MODULE_COLORS = { '资料分析':'#6f9fc9','数量关系':'#9a82b4','言语理解与表达':'#d9a067','判断推理':'#78aa83','政治理论':'#c97979','常识':'#c3a34e','公共基础知识':'#bd8792','申论':'#c883a5','清单':'#8496a5' };
+const MODULE_PASTEL_COLORS = { '资料分析':'#9ec9ed','数量关系':'#c3addd','言语理解与表达':'#f0bd7e','判断推理':'#9dcea8','政治理论':'#e7a1a1','常识':'#dfc66f','公共基础知识':'#d9a7b2','申论':'#e1a5c3','清单':'#aebfce' };
 const MODULES = Object.keys(MODULE_COLORS);
+function getSoftModuleColor(module){return MODULE_PASTEL_COLORS[module]||'#abc9df';}
 const MODULE_SHORT = { '资料分析':'资料','数量关系':'数量','判断推理':'判断','言语理解与表达':'言语','政治理论':'政治','常识':'常识','公共基础知识':'公基','申论':'申论','清单':'清单' };
 const MODULE_ALIAS = { '政治常识':'政治理论','言语理解':'言语理解与表达' };
 const MODULE_SUBTYPES = {
@@ -1298,7 +1329,7 @@ function loadData() {
             appData.exams = p.exams || [];
             appData.studyTasks = (p.studyTasks || []).map(t => {
                 if (!t.subtasks) t.subtasks = [];
-                t.subtasks.forEach(s => { if (s.done===undefined) s.done=false; if (s.total===undefined) s.total=0; if (s.correct===undefined) s.correct=0; if (s.time===undefined) s.time=0; if (s.subType===undefined) s.subType=''; if (s.kind===undefined) s.kind='quantified'; if (s.planStart===undefined) s.planStart=''; if (s.planDuration===undefined) s.planDuration=0; if (s.planEnd===undefined) s.planEnd=''; });
+                t.subtasks.forEach(s => { if (s.name===undefined) s.name=''; if (s.done===undefined) s.done=false; if (s.total===undefined) s.total=0; if (s.correct===undefined) s.correct=0; if (s.time===undefined) s.time=0; if (s.subType===undefined) s.subType=''; if (s.kind===undefined) s.kind='quantified'; if (s.planStart===undefined) s.planStart=''; if (s.planDuration===undefined) s.planDuration=0; if (s.planEnd===undefined) s.planEnd=''; });
                 return t;
             });
             appData.examRecords = p.examRecords || [];
@@ -1333,7 +1364,7 @@ function generateContinuousDates(startDate, count, dailyCount = 1) {
     return dates;
 }
 
-let currentView='day', currentDate=new Date(), selectedDate=getToday(), editingTaskId=null;
+let currentView='day', dayScheduleMode='module', timelineHideEmptySlots=true, currentDate=new Date(), selectedDate=getToday(), editingTaskId=null;
 const boardFilters = { status:'', module:'', type:'' };
 const taskListFilters = { status:'undone', module:'', type:'' };
 let subFilterStatus = '';
@@ -1372,7 +1403,7 @@ function scrollToCard(id) { const el=document.getElementById(id); if(el) el.scro
 function setBottomNavActive(id) { document.querySelectorAll('.bottom-nav button[data-target]').forEach(btn=>btn.classList.toggle('active',btn.dataset.target===id)); }
 function navigateBottom(id, button) { setBottomNavActive(id); scrollToCard(id); }
 function initBottomNavigation() {
-    const ids=['card-timeline','card-board','card-tasklist','card-addtask','card-stats','card-settings'];
+    const ids=['card-board','card-tasklist','card-addtask','card-stats','card-settings'];
     const elements=ids.map(id=>document.getElementById(id)).filter(Boolean);
     if (!('IntersectionObserver' in window) || !elements.length) return;
     const observer=new IntersectionObserver(entries=>{
@@ -1497,6 +1528,16 @@ function generateDatesByWeekday(startDate, weekdays, count, dailyCount = 1) {
     return dates;
 }
 
+function parseSubtaskBatch(text) {
+    return String(text||'').split(/\r?\n/).map(line=>line.trim()).filter(Boolean).map(line=>{
+        const parts=line.split(/[｜|\t，,]/),name=(parts.shift()||'').trim(),total=Math.max(0,parseInt((parts.shift()||'').trim())||0);
+        return {name,total};
+    });
+}
+function formatSubtaskBatch(subtasks) {
+    return (subtasks||[]).map(s=>`${s.name||''}｜${s.total||0}`).join('\n');
+}
+
 function addStudyTask() {
     const m=document.getElementById('fModule').value, n=document.getElementById('fName').value.trim(), s=document.getElementById('fStart').value;
     const mode = document.getElementById('fScheduleMode').value;
@@ -1506,24 +1547,25 @@ function addStudyTask() {
     let st = '';
     if (MODULE_SUBTYPES[m]) { st = document.getElementById('fSubType').value; if (!st) { alert('请选择细分题型'); return; } }
     if(!n){alert('请输入任务名称');return;} if(!s){alert('请选择起始日期');return;}
+    const batch=parseSubtaskBatch(document.getElementById('fSubtaskBatch').value);
     let dates, subCount, selectedWeekdays = [];
     if (mode === 'weekly') {
         const weekdays = getSelectedWeekdays();
         selectedWeekdays = weekdays;
         if (!weekdays.length) { alert('请至少选择一个日期'); return; }
-        subCount = parseInt(document.getElementById('fCount').value) || 10;
+        subCount = batch.length || parseInt(document.getElementById('fCount').value) || 10;
         if (subCount < 1) { alert('请输入有效的任务数量'); return; }
         dates = generateDatesByWeekday(s, weekdays, subCount, dailyCount);
     } else {
-        subCount = parseInt(document.getElementById('fCount').value);
+        subCount = batch.length || parseInt(document.getElementById('fCount').value);
         if(!subCount||subCount<1){alert('请输入有效的子任务数量');return;}
         dates = generateContinuousDates(s, subCount, dailyCount);
     }
     const startIdx = 1;
-    const subs = dates.map((d, i) => ({idx:startIdx+i, date:d, done:false, total:t, correct:0, time:0, subType:st, kind:kind}));
+    const subs = dates.map((d, i) => ({idx:startIdx+i, name:batch[i]?.name||'', date:d, done:false, total:batch.length?batch[i].total:t, correct:0, time:0, subType:st, kind:kind}));
     appData.studyTasks.push({id:Date.now(),module:m,name:n,type:'periodic',subtaskCount:subs.length,startDate:s,defaultTotal:t,subtasks:subs,scheduleMode:mode,startIdx:startIdx,dailyCount:dailyCount,weekdays:selectedWeekdays,subType:st,kind:kind});
     saveData(); renderAll();
-    document.getElementById('fName').value=''; document.getElementById('fCount').value='30'; document.getElementById('fTotal').value='20'; document.getElementById('fStart').value=getToday(); document.getElementById('fDailyCount').value='1';
+    document.getElementById('fName').value=''; document.getElementById('fCount').value='30'; document.getElementById('fTotal').value='20'; document.getElementById('fStart').value=getToday(); document.getElementById('fDailyCount').value='1'; document.getElementById('fSubtaskBatch').value='';
     SELECTED_WEEKDAYS.clear();
     document.querySelectorAll('#weekdaySelector .wd-chip').forEach(el => el.classList.remove('active'));
     onModuleChange('fModule','fSubType','fSubTypeRow');
@@ -1536,21 +1578,30 @@ function addSingleTask() {
     let st = '';
     if (MODULE_SUBTYPES[m]) { st = document.getElementById('fSingleSubType').value; if (!st) { alert('请选择细分题型'); return; } }
     if(!n){alert('请输入任务名称');return;} if(!d){alert('请选择日期');return;}
-    appData.studyTasks.push({id:Date.now(),module:m,name:n,type:'single',subtaskCount:1,startDate:d,defaultTotal:t,subtasks:[{idx:1,date:d,done:false,total:t,correct:0,time:0,subType:st,kind:kind}],subType:st,kind:kind});
+    appData.studyTasks.push({id:Date.now(),module:m,name:n,type:'single',subtaskCount:1,startDate:d,defaultTotal:t,subtasks:[{idx:1,name:n,date:d,done:false,total:t,correct:0,time:0,subType:st,kind:kind}],subType:st,kind:kind});
     saveData(); renderAll();
     document.getElementById('fSingleName').value=''; document.getElementById('fSingleTotal').value='20'; document.getElementById('fSingleDate').value=getToday();
     onModuleChange('fSingleModule','fSingleSubType','fSingleSubTypeRow');
     document.getElementById('fSingleTaskKind').value='quantified'; onTaskKindChange('fSingleTaskKind','fSingleTotal');
 }
 
+const EDIT_WEEKDAYS=new Set();
+function toggleEditWeekday(wd){if(EDIT_WEEKDAYS.has(wd))EDIT_WEEKDAYS.delete(wd);else EDIT_WEEKDAYS.add(wd);document.querySelectorAll('#editWeekdaySelector .wd-chip').forEach(el=>el.classList.toggle('active',EDIT_WEEKDAYS.has(Number(el.dataset.wd))));}
+function onEditTaskFormChange(preferredSubType) {
+    const type=document.getElementById('editType').value,module=document.getElementById('editModule').value,kind=document.getElementById('editKind').value,mode=document.getElementById('editScheduleMode').value,isPeriodic=type==='periodic';
+    document.getElementById('editStartLabel').textContent=isPeriodic?'起始日期':'任务日期';
+    ['editScheduleModeGroup','editCountGroup','editDailyCountGroup'].forEach(id=>document.getElementById(id).classList.toggle('hidden',!isPeriodic));
+    document.getElementById('editWeekdayGroup').classList.toggle('hidden',!isPeriodic||mode!=='weekly');
+    document.getElementById('editTotalGroup').classList.toggle('hidden',kind==='nonQuantified');
+    document.getElementById('editTotalLabel').textContent=module==='申论'?(isPeriodic?'每项总分':'总分'):(isPeriodic?'每项总题数':'总题数');
+    const subtypes=MODULE_SUBTYPES[module]||[],group=document.getElementById('editSubTypeGroup'),select=document.getElementById('editSubType'),keep=preferredSubType===undefined?select.value:preferredSubType;
+    group.classList.toggle('hidden',!subtypes.length);select.innerHTML='<option value="">请选择</option>'+subtypes.map(v=>`<option value="${v}">${v}</option>`).join('');if(subtypes.includes(keep))select.value=keep;
+}
 function openEditModal(id) {
-    const t = appData.studyTasks.find(x => x.id === id); if (!t) return;
-    editingTaskId = id; document.getElementById('editName').value = t.name;
-    document.getElementById('editStartLabel').textContent = t.type === 'periodic' ? '起始日期' : '任务日期';
-    document.getElementById('editStartGroup').style.display = ''; document.getElementById('editStart').value = t.startDate;
-    if (t.type === 'periodic') { document.getElementById('editCountGroup').style.display = ''; document.getElementById('editCount').value = t.subtaskCount; }
-    else document.getElementById('editCountGroup').style.display = 'none';
-    document.getElementById('editModal').classList.add('active');
+    const t=appData.studyTasks.find(x=>x.id===id);if(!t)return;
+    editingTaskId=id;document.getElementById('editName').value=t.name;document.getElementById('editModule').value=normalizeModule(t.module);document.getElementById('editType').value=t.type||'periodic';document.getElementById('editKind').value=t.kind||'quantified';document.getElementById('editScheduleMode').value=t.scheduleMode||'continuous';document.getElementById('editStart').value=t.startDate;document.getElementById('editTotal').value=t.defaultTotal||0;document.getElementById('editCount').value=t.subtaskCount||t.subtasks.length||1;document.getElementById('editDailyCount').value=t.dailyCount||1;document.getElementById('editSubtaskBatch').value=formatSubtaskBatch(t.subtasks);
+    EDIT_WEEKDAYS.clear();(t.weekdays||[]).forEach(w=>EDIT_WEEKDAYS.add(Number(w)));document.querySelectorAll('#editWeekdaySelector .wd-chip').forEach(el=>el.classList.toggle('active',EDIT_WEEKDAYS.has(Number(el.dataset.wd))));
+    onEditTaskFormChange(t.subType||t.subtasks[0]?.subType||'');document.getElementById('editModal').classList.add('active');
 }
 function closeEditModal() { document.getElementById('editModal').classList.remove('active'); editingTaskId = null; }
 function deleteEditingTask() {
@@ -1560,31 +1611,20 @@ function deleteEditingTask() {
     deleteStudyTask(id);
 }
 function saveEditTask() {
-    const t = appData.studyTasks.find(x => x.id === editingTaskId); if (!t) return;
-    const nn = document.getElementById('editName').value.trim(); if (!nn) { alert('名称不能为空'); return; }
-    t.name = nn;
-    if (t.type === 'periodic') {
-        const ns = document.getElementById('editStart').value, nc = parseInt(document.getElementById('editCount').value);
-        const startIdx = t.startIdx || 1;
-        if (ns) {
-            const old = t.subtasks, tl = t.defaultTotal||0;
-            const mode = t.scheduleMode || 'continuous';
-            const gen = mode === 'weekly' ? (sd,c) => generateDatesByWeekday(sd, t.weekdays||[1], c, t.dailyCount||1) : (sd,c) => generateContinuousDates(sd, c, t.dailyCount||1);
-            const dates = gen(ns, nc);
-            const oldSorted = [...old].sort((a,b) => a.idx - b.idx);
-            const nw = [];
-            for (let i = 0; i < nc; i++) {
-                const o = oldSorted[i];
-                if (o) {
-                    nw.push({ ...o, idx: startIdx + i, date: o.done ? o.date : dates[i] });
-                } else {
-                    nw.push({ idx: startIdx + i, date: dates[i], done: false, total: tl, correct: 0, time: 0, subType: t.subType || '', kind: t.kind || 'quantified' });
-                }
-            }
-            t.subtasks = nw; t.subtaskCount = nc; t.startDate = ns;
-        }
-    } else { const nd = document.getElementById('editStart').value; if (nd) { t.startDate = nd; t.subtasks[0].date = nd; } }
-    saveData(); renderAll(); closeEditModal();
+    const t=appData.studyTasks.find(x=>x.id===editingTaskId);if(!t)return;
+    const name=document.getElementById('editName').value.trim(),module=document.getElementById('editModule').value,type=document.getElementById('editType').value,kind=document.getElementById('editKind').value,mode=document.getElementById('editScheduleMode').value,start=document.getElementById('editStart').value,dailyCount=Math.max(1,parseInt(document.getElementById('editDailyCount').value)||1),defaultTotal=kind==='nonQuantified'?0:Math.max(0,parseInt(document.getElementById('editTotal').value)||0),subType=document.getElementById('editSubTypeGroup').classList.contains('hidden')?'':document.getElementById('editSubType').value,batch=parseSubtaskBatch(document.getElementById('editSubtaskBatch').value);
+    if(!name){alert('名称不能为空');return;}if(!start){alert('请选择日期');return;}if(MODULE_SUBTYPES[module]&&!subType){alert('请选择细分题型');return;}
+    const weekdays=Array.from(EDIT_WEEKDAYS).sort((a,b)=>a-b);if(type==='periodic'&&mode==='weekly'&&!weekdays.length){alert('请至少选择一个每周任务日');return;}
+    const old=[...t.subtasks].sort((a,b)=>a.idx-b.idx),startIdx=t.startIdx||1;let next=[];
+    if(type==='single'){
+        const o=old[0]||{};next=[{...o,idx:1,name:batch[0]?.name||o.name||name,date:start,done:o.done||false,total:kind==='nonQuantified'?0:(batch[0]?batch[0].total:defaultTotal),correct:o.correct||0,time:o.time||0,subType,kind}];
+    }else{
+        const count=batch.length||Math.max(1,parseInt(document.getElementById('editCount').value)||1),dates=mode==='weekly'?generateDatesByWeekday(start,weekdays,count,dailyCount):generateContinuousDates(start,count,dailyCount);
+        next=dates.map((date,i)=>{const o=old[i]||{};return {...o,idx:startIdx+i,name:batch[i]?.name||(o.name||''),date:o.done?o.date:date,done:o.done||false,total:kind==='nonQuantified'?0:(batch.length?batch[i].total:defaultTotal),correct:o.correct||0,time:o.time||0,subType,kind};});
+    }
+    Object.assign(t,{name,module,type,kind,subType,startDate:start,defaultTotal,subtasks:next,subtaskCount:next.length,scheduleMode:type==='periodic'?mode:'continuous',dailyCount:type==='periodic'?dailyCount:1,weekdays:type==='periodic'&&mode==='weekly'?weekdays:[],startIdx:type==='periodic'?startIdx:1});
+    appData.completedTasks=appData.completedTasks.filter(c=>c.taskId!==t.id);next.filter(s=>s.done).forEach(s=>appData.completedTasks.push({module:t.module,subType:s.subType||'',name:s.name||t.name,total:s.total||0,correct:s.correct||0,time:s.time||0,date:s.date,taskId:t.id,idx:s.idx,kind:s.kind||t.kind}));
+    saveData();renderAll();closeEditModal();
 }
 function deleteStudyTask(id) {
     if(!confirm('确定删除？')) return;
@@ -1616,7 +1656,7 @@ function toggleSubtaskDone(tid, si) {
         appData.completedTasks.push({
                 module: t.module,
                 subType: s.subType || '',
-                name: t.name,
+                name: s.name || t.name,
                 total: s.total || 0,
                 correct: s.correct || 0,
                 time: s.time || 0,
@@ -1710,9 +1750,16 @@ function switchView(v) {
     document.getElementById('calendarWrap').classList.toggle('hidden', isDay);
     document.getElementById('todaySection').classList.toggle('hidden', isDay);
     document.getElementById('moduleLegend').classList.toggle('hidden', isDay);
+    document.getElementById('dayModeToggle').classList.toggle('hidden', !isDay);
     if (!isDay) { selectedDate = getToday(); syncTimelineDate(selectedDate); }
     renderBoard();
 }
+function switchDayScheduleMode(mode) {
+    dayScheduleMode = mode === 'timeline' ? 'timeline' : 'module';
+    scheduleEditTarget = null;
+    renderBoard();
+}
+function toggleTimelineEmptySlots(){timelineHideEmptySlots=!timelineHideEmptySlots;if(timelineHideEmptySlots)timelineEditMode=false;renderTimeline();renderBoard();}
 function syncTimelineDate(date){timelineSelectedDate=date;timelineShouldFocusNow=date===getToday();renderTimeline();}
 function navigate(d) { if(currentView==='week')currentDate.setDate(currentDate.getDate()+d*7); else if(currentView==='month')currentDate.setMonth(currentDate.getMonth()+d); else currentDate.setDate(currentDate.getDate()+d); selectedDate=formatDate(currentDate); syncTimelineDate(selectedDate); renderBoard(); }
 function goToday() { currentDate = new Date(); selectedDate = getToday(); syncTimelineDate(selectedDate); renderBoard(); }
@@ -1762,20 +1809,27 @@ function getSubtasksOnDate(ds) {
     const r = [];
     appData.studyTasks.forEach(t => {
         if (!passFilter(t, 'board')) return;
-        t.subtasks.forEach((s, i) => { if (s.date === ds) r.push({taskId:t.id,taskName:t.name,module:normalizeModule(t.module),taskType:t.type,taskKind:t.kind||s.kind||'quantified',subIdx:i,sub:s}); });
+        t.subtasks.forEach((s, i) => { if (s.date === ds) r.push({taskId:t.id,taskName:t.name,subName:s.name||'',module:normalizeModule(t.module),taskType:t.type,taskKind:t.kind||s.kind||'quantified',subIdx:i,sub:s}); });
     });
     return r;
 }
 function renderBoard() {
     renderFilterBar('boardFilterBar');
+    renderNavRange();
+    const moduleMode=document.getElementById('btnDayModuleMode'), timelineMode=document.getElementById('btnDayTimelineMode'), timelineEdit=document.getElementById('dayTimelineEditButton'), compactButton=document.getElementById('dayTimelineCompactButton');
+    if(moduleMode)moduleMode.classList.toggle('active',dayScheduleMode==='module');
+    if(timelineMode)timelineMode.classList.toggle('active',dayScheduleMode==='timeline');
+    if(timelineEdit){timelineEdit.classList.toggle('hidden',currentView!=='day'||dayScheduleMode!=='timeline');timelineEdit.classList.toggle('active',timelineEditMode);}
+    if(compactButton){compactButton.classList.toggle('hidden',currentView!=='day'||dayScheduleMode!=='timeline');compactButton.classList.toggle('active',timelineHideEmptySlots);compactButton.title=timelineHideEmptySlots?'显示全部时段':'隐藏空时段';compactButton.setAttribute('aria-label',compactButton.title);}
     if (currentView === 'day') renderDayView();
-    else { renderNavRange(); renderCalendar(); renderLegend(); renderTodaySection(); }
+    else { renderCalendar(); renderLegend(); renderTodaySection(); }
     renderTaskBlocks();
     document.getElementById('boardDate').textContent = selectedDate;
 }
 function renderNavRange() {
     const r = document.getElementById('navRange');
-    if (currentView === 'week') { const d=new Date(currentDate),day=d.getDay()||7; const m=new Date(d); m.setDate(d.getDate()-day+1); const s=new Date(m); s.setDate(m.getDate()+6); r.textContent=`${formatDate(m).slice(5)} ~ ${formatDate(s).slice(5)}`; }
+    if (currentView === 'day') r.textContent=selectedDate.slice(5);
+    else if (currentView === 'week') { const d=new Date(currentDate),day=d.getDay()||7; const m=new Date(d); m.setDate(d.getDate()-day+1); const s=new Date(m); s.setDate(m.getDate()+6); r.textContent=`${formatDate(m).slice(5)} ~ ${formatDate(s).slice(5)}`; }
     else r.textContent = `${currentDate.getFullYear()}年${currentDate.getMonth()+1}月`;
 }
 
@@ -1794,9 +1848,66 @@ function compactScheduleGroups(container) {
     container.replaceChildren(left, right);
 }
 
+function renderScheduleDayCard(item) {
+    const dc=item.sub.done?'done':'', cc=item.sub.done?'done':'';
+    const rate=item.sub.total>0?Math.round(item.sub.correct/item.sub.total*100):0;
+    const ts=item.sub.time>0?`${item.sub.time}分`:'';
+    const nameDisplay=item.subName||(item.taskType==='single'?item.taskName:`${item.taskName} 第${item.sub.idx}项`),moduleColor=MODULE_COLORS[item.module]||'#8aa9c8',moduleShort=MODULE_SHORT[item.module]||item.module;
+    const isNonQ=item.taskKind==='nonQuantified', isEditing=scheduleEditTarget&&scheduleEditTarget.tid===item.taskId&&scheduleEditTarget.idx===item.subIdx;
+    let stats=isNonQ?`<span class="dv-time">${ts||'未填'}</span>`:`<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
+    if(isEditing)stats=isNonQ?`<input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
+    const editButton=isEditing?`<button class="schedule-item-edit icon-edit-done" title="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>`:`<button class="schedule-item-edit icon-edit-button" title="编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('edit')}</button>`;
+    const moveActions=isEditing?`<div class="schedule-move-actions"><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>`:'';
+    return `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="event.stopPropagation();toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><span class="schedule-module-label" style="background:${moduleColor}22;color:${moduleColor};">${moduleShort}</span><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${stats}${moveActions}${editButton}</div></div></div>`;
+}
+
+function renderScheduleTimeline(c, subs) {
+    timelineSelectedDate=selectedDate;
+    const planned=subs.filter(x=>x.sub.planStart&&x.sub.planDuration).map(x=>({...x,key:`${x.taskId}:${x.subIdx}`,start:clockToMinutes(x.sub.planStart),end:clockToMinutes(x.sub.planStart)+(x.sub.planDuration||30)})).sort((a,b)=>a.start-b.start||MODULES.indexOf(a.module)-MODULES.indexOf(b.module)||a.taskName.localeCompare(b.taskName,'zh-CN'));
+    const unplanned=subs.filter(x=>!x.sub.planStart||!x.sub.planDuration);
+    if(timelineHideEmptySlots){
+        const columns=[[],[]];planned.forEach((item,index)=>columns[index%2].push(item));
+        let compact=`<div class="schedule-compact-columns">${columns.map(items=>`<div class="schedule-compact-column">${items.map(item=>`<div class="schedule-compact-row"><div class="schedule-compact-time">${item.sub.planStart||minutesToClock(item.start)}</div><div class="schedule-compact-item" onclick="openTimelineTaskEditor('${item.key}')">${renderScheduleDayCard(item)}</div></div>`).join('')}</div>`).join('')}</div>`;
+        if(!planned.length)compact=`<div class="day-view-empty">暂无已规划任务</div>`;
+        if(unplanned.length)compact+=`<div class="schedule-timeline-unplanned"><div class="schedule-timeline-unplanned-title">无规划时段</div><div class="schedule-timeline-unplanned-list">${unplanned.map(renderScheduleDayCard).join('')}</div></div>`;
+        c.innerHTML=compact;return;
+    }
+    const slotH=58,segments=[[7*60,15*60],[15*60,23*60]],now=new Date(),nowMin=now.getHours()*60+now.getMinutes();
+    let html=`<div class="schedule-timeline"><div class="schedule-timeline-columns">`;
+    segments.forEach(([segmentStart,segmentEnd])=>{
+        const segmentItems=planned.filter(item=>item.start<segmentEnd&&item.end>segmentStart),allSlots=Array.from({length:(segmentEnd-segmentStart)/TIMELINE_SLOT_MIN},(_,i)=>segmentStart+i*TIMELINE_SLOT_MIN);
+        const slotFor=item=>Math.max(segmentStart,Math.min(segmentEnd-TIMELINE_SLOT_MIN,segmentStart+Math.floor((item.start-segmentStart)/TIMELINE_SLOT_MIN)*TIMELINE_SLOT_MIN));
+        const counts=new Map();segmentItems.forEach(item=>{const slot=slotFor(item);counts.set(slot,(counts.get(slot)||0)+1);});
+        const visibleSlots=timelineHideEmptySlots?allSlots.filter(min=>segmentItems.some(item=>item.start<min+TIMELINE_SLOT_MIN&&item.end>min)):allSlots;
+        const slotTops=new Map();let axisHeight=0;visibleSlots.forEach(min=>{slotTops.set(min,axisHeight);axisHeight+=slotH*Math.max(1,counts.get(min)||0);});axisHeight=Math.max(slotH,axisHeight);
+        html+=`<div><div class="schedule-timeline-column-title">${minutesToClock(segmentStart)}–${minutesToClock(segmentEnd)}</div><div class="schedule-timeline-axis" style="height:${axisHeight}px">`;
+        visibleSlots.forEach(min=>{const isHalf=min%60!==0,rowHeight=slotH*Math.max(1,counts.get(min)||0);html+=`<div class="schedule-timeline-slot ${isHalf?'half-hour':''}" style="top:${slotTops.get(min)}px;height:${rowHeight}px" onclick="openTimelineModal(${min})">${isHalf?'':`<span class="schedule-timeline-label">${minutesToClock(min)}</span>`}</div>`;});
+        if(!visibleSlots.length)html+=`<div class="day-view-empty" style="padding:18px 4px;">无已规划任务</div>`;
+        else html+=`<span class="schedule-timeline-label" style="top:${axisHeight-7}px">${minutesToClock(segmentEnd)}</span>`;
+        if(!timelineHideEmptySlots&&selectedDate===getToday()&&nowMin>=segmentStart&&nowMin<=segmentEnd)html+=`<div class="timeline-now" style="top:${(nowMin-segmentStart)/TIMELINE_SLOT_MIN*slotH}px"></div>`;
+        const stackUsed=new Map();segmentItems.forEach(item=>{const slot=slotFor(item);if(!slotTops.has(slot))return;const stackIndex=stackUsed.get(slot)||0;stackUsed.set(slot,stackIndex+1);const quarterOffset=(item.start-slot)/TIMELINE_SLOT_MIN*slotH,top=slotTops.get(slot)+stackIndex*slotH+quarterOffset,height=58;html+=`<div class="schedule-timeline-task ${timelineEditMode?'editing':''}" data-timeline-key="${item.key}" data-segment-start="${segmentStart}" style="top:${top}px;height:${height}px;left:2px;width:calc(100% - 4px)" onclick="event.stopPropagation();openTimelineTaskEditor('${item.key}')">${timelineEditMode?`<div class="timeline-resize top" data-resize="top"></div><div class="timeline-resize bottom" data-resize="bottom"></div><button class="timeline-remove" title="移出时间轴" onclick="event.stopPropagation();clearSubtaskPlan(${item.taskId},${item.subIdx})">×</button>`:''}${renderScheduleDayCard(item)}</div>`;});
+        html+=`</div></div>`;
+    });
+    html+=`</div></div>`;
+    if(unplanned.length)html+=`<div class="schedule-timeline-unplanned"><div class="schedule-timeline-unplanned-title">无规划时段</div><div class="schedule-timeline-unplanned-list">${unplanned.map(renderScheduleDayCard).join('')}</div></div>`;
+    c.innerHTML=html;bindScheduleTimelineDrag();
+}
+
+function bindScheduleTimelineDrag(){
+    if(!timelineEditMode)return;
+    document.querySelectorAll('.schedule-timeline-task').forEach(card=>card.addEventListener('pointerdown',event=>{
+        if(event.target.closest('button,input,.dv-check'))return;
+        const found=findTimelineTask(card.dataset.timelineKey);if(!found)return;
+        const mode=event.target.dataset.resize||'move',start=clockToMinutes(found.sub.planStart),duration=found.sub.planDuration;
+        timelineDragState={card,found,mode,start,duration,startY:event.clientY,lastDelta:0,schedule:true,slotHeight:58};card.classList.add('dragging');card.setPointerCapture(event.pointerId);event.preventDefault();
+    }));
+}
+
 function renderDayView() {
     const c = document.getElementById('dayView'); const subs = getSubtasksOnDate(selectedDate);
+    c.classList.toggle('timeline-mode',dayScheduleMode==='timeline');
     if (!subs.length) { c.innerHTML = `<div class="day-view-empty">${selectedDate.slice(5)} 暂无任务</div>`; return; }
+    if(dayScheduleMode==='timeline'){renderScheduleTimeline(c,subs);return;}
     const groups = {};
     subs.forEach(item => { if (!groups[item.module]) groups[item.module] = []; groups[item.module].push(item); });
     let html = '';
@@ -1808,7 +1919,7 @@ function renderDayView() {
             const dc = item.sub.done ? 'done' : '', cc = item.sub.done ? 'done' : '';
             const rate = item.sub.total > 0 ? Math.round(item.sub.correct/item.sub.total*100) : 0;
             const ts = item.sub.time > 0 ? `${item.sub.time}分` : '';
-            const nameDisplay = item.taskType === 'single' ? item.taskName : `${item.taskName} 第${item.sub.idx}项`;
+            const nameDisplay = item.subName || (item.taskType === 'single' ? item.taskName : `${item.taskName} 第${item.sub.idx}项`);
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
             let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
@@ -1899,7 +2010,7 @@ function renderTodaySection() {
             const dc = item.sub.done ? 'done' : '', cc = item.sub.done ? 'done' : '';
             const rate = item.sub.total > 0 ? Math.round(item.sub.correct/item.sub.total*100) : 0;
             const ts = item.sub.time > 0 ? `${item.sub.time}分` : '';
-            const nameDisplay = item.taskType === 'single' ? item.taskName : `${item.taskName} 第${item.sub.idx}项`;
+            const nameDisplay = item.subName || (item.taskType === 'single' ? item.taskName : `${item.taskName} 第${item.sub.idx}项`);
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
             let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
@@ -1916,7 +2027,7 @@ function renderTodaySection() {
 }
 
 const TIMELINE_START_MIN = 7 * 60, TIMELINE_END_MIN = 23 * 60, TIMELINE_SLOT_MIN = 30, TIMELINE_SETTING_MIN = 15, TIMELINE_SLOT_HEIGHT = 18;
-const TIMELINE_SEGMENTS = [[7*60,13*60],[13*60,18*60],[18*60,23*60]];
+const TIMELINE_SEGMENTS = [[7*60,15*60],[15*60,23*60]];
 const TIMELINE_DURATIONS = [15,30,45,60,75,90,105,120,135,150,165,180];
 let timelineModalState = { mode:'assign', startMin:480, taskKey:'', duration:60 };
 let timelineDragState = null;
@@ -1944,7 +2055,7 @@ function navigateTimeline(days) {
 }
 function goTimelineToday(){timelineSelectedDate=getToday();timelineShouldFocusNow=true;selectedDate=timelineSelectedDate;currentDate=new Date();renderTimeline();renderBoard();}
 function toggleTimelineEdit(){
-    timelineEditMode=!timelineEditMode;timelineDragState=null;renderTimeline();
+    timelineEditMode=!timelineEditMode;if(timelineEditMode&&dayScheduleMode==='timeline')timelineHideEmptySlots=false;timelineDragState=null;renderTimeline();renderBoard();
 }
 function findTimelineTask(key) {
     const [tid, idx] = String(key).split(':').map(Number);
@@ -1997,7 +2108,7 @@ function renderTimeline() {
             const laneWidth=100/item.laneCount, left=item.lane*laneWidth;
             column+=`<div class="timeline-task ${item.sub.done?'done':''} ${item.sub.planDuration<=30?'short':''}" data-timeline-key="${item.key}" data-segment-start="${segmentStart}" onclick="event.stopPropagation();openTimelineTaskEditor('${item.key}')" style="--task-color:${color};top:${top}px;height:${height}px;left:calc(${left}% + 2px);width:calc(${laneWidth}% - 4px);pointer-events:auto;">
                 ${timelineEditMode?`<div class="timeline-resize top" data-resize="top"></div><div class="timeline-resize bottom" data-resize="bottom"></div><button class="timeline-remove" title="移出时间轴" onclick="event.stopPropagation();clearSubtaskPlan(${item.task.id},${item.idx})">×</button>`:''}
-                <div class="timeline-task-main">${item.sub.done?'<span class="timeline-done-mark">✓</span>':''}<span class="timeline-task-name" title="${MODULE_SHORT[normalizeModule(item.task.module)]||normalizeModule(item.task.module)} ${item.task.name}${item.task.type==='single'?'':item.sub.idx}">${MODULE_SHORT[normalizeModule(item.task.module)]||normalizeModule(item.task.module)} ${item.task.name}${item.task.type==='single'?'':item.sub.idx}</span></div></div>`;
+                <div class="timeline-task-main">${item.sub.done?'<span class="timeline-done-mark">✓</span>':''}<span class="timeline-task-name" title="${MODULE_SHORT[normalizeModule(item.task.module)]||normalizeModule(item.task.module)} ${item.sub.name||(item.task.name+(item.task.type==='single'?'':item.sub.idx))}">${MODULE_SHORT[normalizeModule(item.task.module)]||normalizeModule(item.task.module)} ${item.sub.name||(item.task.name+(item.task.type==='single'?'':item.sub.idx))}</span></div></div>`;
         });
         return column+'</div></div></div>';
     }).join('');
@@ -2015,7 +2126,7 @@ function openTimelineModal(startMin) {
     document.getElementById('timelineModalStart').textContent=minutesToClock(startMin);
     document.getElementById('timelineEditStartInput').value=minutesToClock(startMin);
     const tasks=getTimelineTasks(timelineSelectedDate).filter(x=>!x.sub.planStart).sort((a,b)=>MODULES.indexOf(normalizeModule(a.task.module))-MODULES.indexOf(normalizeModule(b.task.module))||a.task.name.localeCompare(b.task.name,'zh-CN')||a.sub.idx-b.sub.idx);
-    document.getElementById('timelineTaskPicker').innerHTML=tasks.length?tasks.map(x=>`<div class="timeline-picker-item" data-key="${x.key}" onclick="selectTimelineTask('${x.key}',this)"><span class="timeline-picker-dot" style="background:${MODULE_COLORS[normalizeModule(x.task.module)]||'#8aa9c8'}"></span><span><strong>${x.task.name}</strong><small style="display:block;color:var(--text-3);">${x.task.module}${x.task.type==='single'?'':` · 第 ${x.sub.idx} 项`}</small></span></div>`).join(''):'<div class="timeline-picker-empty">今日任务均已安排时段</div>';
+    document.getElementById('timelineTaskPicker').innerHTML=tasks.length?tasks.map(x=>`<div class="timeline-picker-item" data-key="${x.key}" onclick="selectTimelineTask('${x.key}',this)"><span class="timeline-picker-dot" style="background:${MODULE_COLORS[normalizeModule(x.task.module)]||'#8aa9c8'}"></span><span><strong>${x.sub.name||x.task.name}</strong><small style="display:block;color:var(--text-3);">${x.task.module}${x.task.type==='single'?'':` · 第 ${x.sub.idx} 项`}</small></span></div>`).join(''):'<div class="timeline-picker-empty">今日任务均已安排时段</div>';
     document.getElementById('timelineDurationPicker').innerHTML=TIMELINE_DURATIONS.map(d=>`<button class="${d===60?'active':''}" onclick="selectTimelineDuration(${d},this)">${d} 分钟</button>`).join('');
     document.getElementById('timelineModal').classList.add('active');
 }
@@ -2049,10 +2160,10 @@ function bindTimelineDrag(){
     }));
 }
 document.addEventListener('pointermove',event=>{
-    const d=timelineDragState;if(!d)return;const slots=Math.round((event.clientY-d.startY)/TIMELINE_SLOT_HEIGHT),delta=slots*30;if(delta===d.lastDelta)return;d.lastDelta=delta;
+    const d=timelineDragState;if(!d)return;const dragSlotHeight=d.schedule?d.slotHeight:TIMELINE_SLOT_HEIGHT,slots=Math.round((event.clientY-d.startY)/dragSlotHeight),delta=slots*TIMELINE_SLOT_MIN;if(delta===d.lastDelta)return;d.lastDelta=delta;
     let start=d.start,duration=d.duration;if(d.mode==='move')start+=delta;else if(d.mode==='top'){start+=delta;duration-=delta;}else duration+=delta;
     duration=Math.max(30,Math.min(TIMELINE_END_MIN-TIMELINE_START_MIN,duration));start=Math.max(TIMELINE_START_MIN,Math.min(TIMELINE_END_MIN-duration,start));
-    const segmentStart=Number(d.card.dataset.segmentStart)||TIMELINE_START_MIN;d.preview={start,duration};d.card.style.top=`${(start-segmentStart)/TIMELINE_SLOT_MIN*TIMELINE_SLOT_HEIGHT}px`;d.card.style.height=`${duration/TIMELINE_SLOT_MIN*TIMELINE_SLOT_HEIGHT}px`;
+    const segmentStart=Number(d.card.dataset.segmentStart)||TIMELINE_START_MIN,renderSlotHeight=d.schedule?d.slotHeight:TIMELINE_SLOT_HEIGHT;d.preview={start,duration};d.card.style.top=`${(start-segmentStart)/TIMELINE_SLOT_MIN*renderSlotHeight}px`;d.card.style.height=d.schedule?'58px':`${duration/TIMELINE_SLOT_MIN*renderSlotHeight}px`;
 });
 document.addEventListener('pointerup',event=>{
     const d=timelineDragState;if(!d)return;d.card.classList.remove('dragging');if(d.preview){timelineSuppressClickUntil=Date.now()+350;setSubtaskPlan(d.found.task,d.found.sub,d.preview.start,d.preview.duration,true);saveData();renderAll();}timelineDragState=null;
@@ -2079,6 +2190,20 @@ function cancelSubEdit() {
     renderTaskBlocks();
     if (tid) { const el = document.querySelector(`[data-task-block="${tid}"]`); if (el) el.classList.add('expanded'); }
 }
+const subtaskAutoSaveTimers = {};
+function queueSubtaskAutoSave(tid, idx) {
+    const key=`${tid}:${idx}`;clearTimeout(subtaskAutoSaveTimers[key]);subtaskAutoSaveTimers[key]=setTimeout(()=>{delete subtaskAutoSaveTimers[key];autoSaveSubEdit(tid,idx);},250);
+}
+function autoSaveSubEdit(tid, idx) {
+    const t=appData.studyTasks.find(x=>x.id===tid);if(!t||!t.subtasks[idx])return;
+    const s=t.subtasks[idx],dateEl=document.getElementById(`se-date-${tid}-${idx}`),nameEl=document.getElementById(`se-name-${tid}-${idx}`),totalEl=document.getElementById(`se-total-${tid}-${idx}`),correctEl=document.getElementById(`se-correct-${tid}-${idx}`),timeEl=document.getElementById(`se-time-${tid}-${idx}`),planEl=document.getElementById(`se-plan-${tid}-${idx}`),stSel=document.getElementById(`se-subtype-${tid}-${idx}`);
+    const isNonQ=(t.kind==='nonQuantified')||(s.kind==='nonQuantified');
+    if(dateEl&&dateEl.value)s.date=dateEl.value;if(nameEl)s.name=nameEl.value.trim();if(totalEl)s.total=Math.max(0,parseInt(totalEl.value)||0);if(correctEl){s.correct=Math.max(0,parseInt(correctEl.value)||0);if(s.total>0&&s.correct>s.total){s.correct=s.total;correctEl.value=s.total;}}if(timeEl)s.time=Math.max(0,parseFloat(timeEl.value)||0);if(stSel)s.subType=stSel.value;
+    if(planEl){const duration=Math.max(0,Math.round((parseFloat(planEl.value)||0)/TIMELINE_SETTING_MIN)*TIMELINE_SETTING_MIN);if(s.planStart&&duration)setSubtaskPlan(t,s,clockToMinutes(s.planStart),duration,true);else if(!duration){s.planDuration=0;s.planEnd='';}}
+    appData.completedTasks=appData.completedTasks.filter(c=>!(c.taskId===tid&&c.idx===s.idx));
+    if(s.done)appData.completedTasks.push({module:t.module,subType:s.subType||'',name:s.name||t.name,total:s.total||0,correct:s.correct||0,time:s.time||0,date:s.date,taskId:tid,idx:s.idx,kind:isNonQ?'nonQuantified':'quantified'});
+    saveData();
+}
 function saveSubEdit(tid, idx) {
     const t = appData.studyTasks.find(x => x.id === tid); if (!t) return;
     const s = t.subtasks[idx];
@@ -2104,7 +2229,7 @@ function saveSubEdit(tid, idx) {
     appData.completedTasks = appData.completedTasks.filter(c => !(c.taskId === tid && c.idx === s.idx));
     if (wasDone) {
         appData.completedTasks.push({
-            module: t.module, subType: newSubType, name: t.name,
+            module: t.module, subType: newSubType, name: s.name || t.name,
             total: newTotal, correct: newCorrect, time: newTime,
             date: newDate, taskId: tid, idx: s.idx, kind: isNonQ ? 'nonQuantified' : 'quantified'
         });
@@ -2179,18 +2304,18 @@ function renderTaskBlocks() {
                 const subNumberHtml = t.type === 'single' ? '' : `<div class="sr-num">${s.idx}</div>`;
                 if (isEditing) {
                     const subTypeOptions = MODULE_SUBTYPES[t.module] || [];
-                    const stHtml = subTypeOptions.length ? `<select id="se-subtype-${t.id}-${idx}" class="se-input se-subtype"><option value="">无</option>${subTypeOptions.map(o=>`<option value="${o}" ${s.subType===o?'selected':''}>${o}</option>`).join('')}</select>` : '';
+                    const stHtml = subTypeOptions.length ? `<select id="se-subtype-${t.id}-${idx}" class="se-input se-subtype" onchange="autoSaveSubEdit(${t.id},${idx})"><option value="">无</option>${subTypeOptions.map(o=>`<option value="${o}" ${s.subType===o?'selected':''}>${o}</option>`).join('')}</select>` : '';
                     const isEssay = normalizeModule(t.module) === '申论';
-                    const quantInputs = (sNonQ ? `<input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="实际用时" value="${s.time||''}" min="0">` : `<input type="number" id="se-total-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'总分':'总题'}" value="${s.total||''}" min="0"><input type="number" id="se-correct-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'得分':'正确'}" value="${s.correct||''}" min="0"><input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="实际用时" value="${s.time||''}" min="0">`)+`<input type="number" id="se-plan-${t.id}-${idx}" class="se-input se-small" placeholder="计划分钟" value="${s.planDuration||''}" min="0" step="30">`;
+                    const quantInputs = (sNonQ ? `<input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="实际用时" value="${s.time||''}" min="0" oninput="queueSubtaskAutoSave(${t.id},${idx})">` : `<input type="number" id="se-total-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'总分':'总题'}" value="${s.total||''}" min="0" oninput="queueSubtaskAutoSave(${t.id},${idx})"><input type="number" id="se-correct-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'得分':'正确'}" value="${s.correct||''}" min="0" oninput="queueSubtaskAutoSave(${t.id},${idx})"><input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="实际用时" value="${s.time||''}" min="0" oninput="queueSubtaskAutoSave(${t.id},${idx})">`)+`<input type="number" id="se-plan-${t.id}-${idx}" class="se-input se-small" placeholder="计划分钟" value="${s.planDuration||''}" min="0" step="15" oninput="queueSubtaskAutoSave(${t.id},${idx})">`;
                     html += `<div class="sub-row editing">
                         ${subNumberHtml}
                         <div class="sr-edit-form">
-                            <input type="date" id="se-date-${t.id}-${idx}" class="se-input" value="${s.date}">
+                            <input type="text" id="se-name-${t.id}-${idx}" class="se-input" value="${s.name||''}" placeholder="子任务名称" oninput="queueSubtaskAutoSave(${t.id},${idx})">
+                            <input type="date" id="se-date-${t.id}-${idx}" class="se-input" value="${s.date}" onchange="autoSaveSubEdit(${t.id},${idx})">
                             ${stHtml}
                             ${quantInputs}
                         </div>
                         <div class="sr-actions">
-                            <button onclick="event.stopPropagation();saveSubEdit(${t.id},${idx})" title="完成编辑" aria-label="完成编辑" class="se-save icon-edit-done">${scheduleOutlineIcon('check')}</button>
                             <button onclick="event.stopPropagation();deleteSubtask(${t.id},${idx})" title="删除" aria-label="删除">${scheduleOutlineIcon('delete')}</button>
                             <button title="提前一天" aria-label="提前一天" onclick="event.stopPropagation();moveTaskForward(${t.id},${idx})">${scheduleOutlineIcon('left')}</button>
                             <button title="顺延一天" aria-label="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${t.id},${idx})">${scheduleOutlineIcon('right')}</button>
@@ -2213,7 +2338,7 @@ function renderTaskBlocks() {
                         const isEssay = normalizeModule(t.module) === '申论';
                         statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}<span class="correct-pill">${s.correct}/${s.total}</span><span class="rate">${rate}%</span><span class="dv-time">${ts}</span>${planTag}</div>`;
                     }
-                    html += `<div class="sub-row ${dc}"><div class="dv-check ${dc}" role="button" tabindex="0" title="${s.done?'取消完成':'标记完成'}" aria-label="${s.done?'取消完成':'标记完成'}" onclick="event.stopPropagation();toggleSubtaskDone(${t.id},${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleSubtaskDone(${t.id},${idx})}"></div>${subNumberHtml}<div class="sr-info"><span class="sr-date">${s.date}</span>${statsHtml}</div></div>`;
+                    html += `<div class="sub-row ${dc}"><div class="dv-check ${dc}" role="button" tabindex="0" title="${s.done?'取消完成':'标记完成'}" aria-label="${s.done?'取消完成':'标记完成'}" onclick="event.stopPropagation();toggleSubtaskDone(${t.id},${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleSubtaskDone(${t.id},${idx})}"></div>${subNumberHtml}<div class="sr-info">${s.name?`<span class="sr-name">${s.name}</span>`:''}<span class="sr-date">${s.date}</span>${statsHtml}</div></div>`;
                 }
             });
             html += `</div></div>`;
@@ -2374,12 +2499,12 @@ function renderStats() {
             const from = cursor / grandTotal * 360;
             cursor += stats[m].total;
             const to = cursor / grandTotal * 360;
-            pieParts.push(`${MODULE_COLORS[m]} ${from}deg ${to}deg`);
+            pieParts.push(`${getSoftModuleColor(m)} ${from}deg ${to}deg`);
         });
         const pieLegend = MODULES.filter(m => stats[m].total > 0).map(m => {
             const value = stats[m].total;
             const percent = Math.round(value / grandTotal * 100);
-            return `<div class="time-legend-row"><span class="sm-dot" style="background:${MODULE_COLORS[m]};width:9px;height:9px;border-radius:50%;"></span><span>${m}</span><span class="tl-value">${value}题 · ${percent}%</span></div>`;
+            return `<div class="time-legend-row"><span class="sm-dot" style="background:${getSoftModuleColor(m)};width:9px;height:9px;border-radius:50%;"></span><span>${m}</span><span class="tl-value">${value}题 · ${percent}%</span></div>`;
         }).join('');
         chartHtml += `<div class="time-pie-wrap stats-pie-wrap"><div class="time-pie stats-pie" style="background:conic-gradient(${pieParts.join(',')});"><div class="time-pie-center"><strong>${grandTotal}</strong><span>总题量</span></div></div><div class="time-legend">${pieLegend}</div></div>`;
     } else {
@@ -2442,8 +2567,8 @@ function renderTimeStats() {
     getValidCompletedTasks().forEach(c=>{ const m=normalizeModule(c.module); if(start&&c.date<start)return; if(end&&c.date>end)return; if(times[m]!==undefined)times[m]+=Number(c.time)||0; });
     const total = MODULES.reduce((n,m)=>n+times[m],0);
     if (!total) { el.innerHTML='<div class="stats-empty">该时段暂无用时数据</div>'; return; }
-    let cursor=0, parts=[]; MODULES.forEach(m=>{ if(!times[m])return; const from=cursor/total*360; cursor+=times[m]; const to=cursor/total*360; parts.push(`${MODULE_COLORS[m]} ${from}deg ${to}deg`); });
-    const legend = MODULES.filter(m=>times[m]>0).map(m=>`<div class="time-legend-row"><span class="sm-dot" style="background:${MODULE_COLORS[m]};width:9px;height:9px;border-radius:50%;"></span><span>${m}</span><span class="tl-value">${times[m]}分 · ${Math.round(times[m]/total*100)}%</span></div>`).join('');
+    let cursor=0, parts=[]; MODULES.forEach(m=>{ if(!times[m])return; const from=cursor/total*360; cursor+=times[m]; const to=cursor/total*360; parts.push(`${getSoftModuleColor(m)} ${from}deg ${to}deg`); });
+    const legend = MODULES.filter(m=>times[m]>0).map(m=>`<div class="time-legend-row"><span class="sm-dot" style="background:${getSoftModuleColor(m)};width:9px;height:9px;border-radius:50%;"></span><span>${m}</span><span class="tl-value">${times[m]}分 · ${Math.round(times[m]/total*100)}%</span></div>`).join('');
     el.innerHTML=`<div class="time-pie-wrap"><div class="time-pie" style="background:conic-gradient(${parts.join(',')});"><div class="time-pie-center"><strong>${total}</strong><span>分钟</span></div></div><div class="time-legend">${legend}</div></div>`;
 }
 
@@ -2770,7 +2895,7 @@ function importBackup(event) {
             appData.exams = data.exams || [];
             appData.studyTasks = (data.studyTasks || []).map(t => {
                 if (!t.subtasks) t.subtasks = [];
-                t.subtasks.forEach(s => { if (s.done===undefined) s.done=false; if (s.total===undefined) s.total=0; if (s.correct===undefined) s.correct=0; if (s.time===undefined) s.time=0; if (s.subType===undefined) s.subType=''; if (s.kind===undefined) s.kind='quantified'; });
+                t.subtasks.forEach(s => { if (s.name===undefined) s.name=''; if (s.done===undefined) s.done=false; if (s.total===undefined) s.total=0; if (s.correct===undefined) s.correct=0; if (s.time===undefined) s.time=0; if (s.subType===undefined) s.subType=''; if (s.kind===undefined) s.kind='quantified'; });
                 return t;
             });
             appData.examRecords = data.examRecords || [];
