@@ -79,6 +79,7 @@
         .form-row { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
         .add-form-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
         .add-form-row.two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        .add-form-row.four { grid-template-columns:repeat(4,minmax(0,1fr)); }
         .add-form-row .form-group { min-width:0; }
         .form-group { flex:1 1 150px; display:flex; flex-direction:column; gap:4px; }
         .form-group label { font-size:13px; font-weight:500; color:#b47a84; }
@@ -364,6 +365,12 @@
         .stats-module-row .sm-name { font-size:13px; font-weight:600; color:#3d2c2c; min-width:80px; }
         .stats-module-row .sm-stat { font-size:12px; color:#7a4b55; }
         .stats-module-row .sm-rate { font-size:12px; font-weight:700; padding:2px 8px; border-radius:10px; }
+        .card-stats .stats-module-row { display:grid; grid-template-columns:10px minmax(125px,1fr) 72px 118px 54px 12px; gap:8px; align-items:center; }
+        .card-stats .stats-module-row .sm-name { min-width:0; }
+        .card-stats .stats-module-row .sm-stat,.card-stats .stats-module-row .sm-rate { white-space:nowrap; text-align:right; font-variant-numeric:tabular-nums; }
+        .card-stats .stats-module-row .sm-rate { justify-self:end; }
+        .card-stats .stats-module-row .sm-expand { justify-self:end; margin-left:0; }
+        @media (max-width:520px) { .card-stats .stats-module-row { grid-template-columns:9px minmax(88px,1fr) 58px 98px 46px 10px; gap:5px; padding:8px; }.card-stats .stats-module-row .sm-name,.card-stats .stats-module-row .sm-stat,.card-stats .stats-module-row .sm-rate{font-size:10px}.card-stats .stats-module-row .sm-rate{padding:2px 5px} }
         .stats-empty { text-align:center; color:#bda0a6; padding:20px; font-size:14px; }
         .task-list-toolbar { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin:8px 0 10px; }
         .task-list-toolbar select { padding:6px 10px; border:1px solid #f0d6da; border-radius:10px; background:#fcf8f5; color:#7a4b55; }
@@ -395,6 +402,8 @@
         .time-legend { min-width:190px; }
         .time-legend-row { display:flex; align-items:center; gap:7px; font-size:12px; margin:5px 0; color:#7a4b55; }
         .time-legend-row .tl-value { margin-left:auto; font-weight:700; color:#3d2c2c; }
+        .time-legend-row.duration-legend-row { display:grid; grid-template-columns:9px minmax(110px,1fr) minmax(105px,auto); min-width:270px; column-gap:7px; align-items:center; }
+        .time-legend-row.duration-legend-row .tl-value { margin-left:0; justify-self:start; text-align:left; }
 
         .exam-trend-wrap { background:#fcf8f5; border-radius:14px; padding:12px; margin-bottom:12px; overflow-x:auto; }
         .exam-trend-svg { display:block; }
@@ -544,6 +553,7 @@
         @media (max-width:720px) {
             .add-form-row { grid-template-columns:repeat(3,minmax(132px,1fr)); overflow-x:auto; padding-bottom:2px; }
             .add-form-row.two { grid-template-columns:repeat(2,minmax(160px,1fr)); }
+            .add-form-row.four { grid-template-columns:repeat(4,minmax(132px,1fr)); }
             .main { padding-bottom:105px; }
             .study-hero { padding:20px; min-height:135px; border-radius:22px; }
             .hero-copy strong { font-size:18px; }.hero-copy small { max-width:220px; }.hero-art { width:150px; max-width:40%; }
@@ -806,7 +816,7 @@
         .schedule-timeline-label { position:absolute; left:-42px; top:-7px; width:38px; color:var(--text-3); font-size:10px; text-align:right; pointer-events:none; }
         .schedule-timeline-task { position:absolute; z-index:5; padding:1px 3px; min-height:0; overflow:hidden; pointer-events:auto; touch-action:auto; }
         .schedule-timeline-task.editing { touch-action:none; cursor:grab; }
-        .schedule-timeline-task .day-view-item { height:100%; min-height:0; margin:0; box-sizing:border-box; align-content:center; }
+        .schedule-timeline-task .day-view-item { height:100%; min-height:0; margin:0; box-sizing:border-box; align-items:center; }
         .schedule-timeline-task .timeline-resize { display:none; }
         .schedule-timeline-task.editing .timeline-resize { display:block; }
         .schedule-timeline-task.dragging { opacity:.72; z-index:30; }
@@ -978,7 +988,7 @@
             <button id="tabExam" onclick="switchTaskTab('exam')">模考记录</button>
         </div>
         <div class="tab-panel active" id="panelPeriodic">
-            <div class="form-row add-form-row">
+            <div class="form-row add-form-row four">
                 <div class="form-group"><label>所属模块</label>
                     <select id="fModule" onchange="onModuleChange('fModule','fSubType','fSubTypeRow')">
                         <option value="资料分析">资料分析</option>
@@ -999,21 +1009,20 @@
                         <option value="nonQuantified">非量化</option>
                     </select>
                 </div>
+                <div class="form-group"><label>任务单位</label><input type="text" id="fUnit" value="项" maxlength="8" placeholder="如 项、页、章、套" oninput="onModuleChange('fModule','fSubType','fSubTypeRow')"></div>
             </div>
             <div class="form-row hidden" id="fSubTypeRow"><div class="form-group"><label>细分题型</label><select id="fSubType"></select></div></div>
-            <div class="form-row add-form-row two" id="fQuantRow">
+            <div class="form-row add-form-row four" id="fQuantRow">
                 <div class="form-group"><label>排期模式</label>
                     <select id="fScheduleMode" onchange="onScheduleModeChange()">
-                        <option value="continuous">连续日期（含周日）</option>
-                        <option value="weekly">按周星期自定义</option>
+                        <option value="mon_sat">周一到周六</option>
+                        <option value="all_week">周一到周日</option>
+                        <option value="custom">自定义</option>
                     </select>
                 </div>
                 <div class="form-group"><label>起始日期</label><input type="date" id="fStart"></div>
-            </div>
-            <div class="form-row add-form-row" id="fCountRow">
-                <div class="form-group"><label id="fTotalLabel">每项总题数</label><input type="number" id="fTotal" min="0" value="20"></div>
                 <div class="form-group"><label>子任务数量</label><input type="number" id="fCount" min="1" max="365" value="30"></div>
-                <div class="form-group"><label>每天完成子任务数量</label><input type="number" id="fDailyCount" min="1" max="20" value="1"></div>
+                <div class="form-group"><label id="fTotalLabel">每项总题数</label><input type="number" id="fTotal" min="0" value="20"></div>
             </div>
             <div class="form-group"><label>批量子任务（可选，每行：子任务名称｜题量）</label><textarea id="fSubtaskBatch" rows="5" placeholder="基础讲义1｜20&#10;基础讲义2｜30&#10;错题复盘｜0"></textarea><small style="color:var(--text-3);">填写后将按行生成子任务，并覆盖上方“子任务数量”和默认题量。</small></div>
             <div class="form-row hidden" id="fWeekdayRow">
@@ -1033,7 +1042,7 @@
             <button class="btn-primary" onclick="addStudyTask()">生成周期任务</button>
         </div>
         <div class="tab-panel" id="panelSingle">
-            <div class="form-row add-form-row">
+            <div class="form-row add-form-row four">
                 <div class="form-group"><label>所属模块</label>
                     <select id="fSingleModule" onchange="onModuleChange('fSingleModule','fSingleSubType','fSingleSubTypeRow')">
                         <option value="资料分析">资料分析</option>
@@ -1054,6 +1063,7 @@
                         <option value="nonQuantified">非量化</option>
                     </select>
                 </div>
+                <div class="form-group"><label>任务单位</label><input type="text" id="fSingleUnit" value="项" maxlength="8" placeholder="如 项、页、章、套" oninput="onModuleChange('fSingleModule','fSingleSubType','fSingleSubTypeRow')"></div>
             </div>
             <div class="form-row hidden" id="fSingleSubTypeRow"><div class="form-group"><label>细分题型</label><select id="fSingleSubType"></select></div></div>
             <div class="form-row add-form-row two" id="fSingleQuantRow">
@@ -1189,13 +1199,14 @@
             <div class="form-group"><label>所属模块</label><select id="editModule" onchange="onEditTaskFormChange()"><option value="资料分析">资料分析</option><option value="数量关系">数量关系</option><option value="言语理解与表达">言语理解与表达</option><option value="判断推理">判断推理</option><option value="政治理论">政治理论</option><option value="常识">常识</option><option value="公共基础知识">公共基础知识</option><option value="申论">申论</option><option value="清单">清单</option></select></div>
             <div class="form-group"><label>任务类型</label><select id="editType" onchange="onEditTaskFormChange()"><option value="periodic">周期任务</option><option value="single">单次任务</option></select></div>
             <div class="form-group"><label>内容类型</label><select id="editKind" onchange="onEditTaskFormChange()"><option value="quantified">量化</option><option value="nonQuantified">非量化</option></select></div>
+            <div class="form-group"><label>任务单位</label><input type="text" id="editUnit" maxlength="8" placeholder="如 项、页、章、套" oninput="onEditTaskFormChange()"></div>
         </div>
         <div class="form-group hidden" id="editSubTypeGroup"><label>细分题型</label><select id="editSubType"></select></div>
-        <div class="form-group" id="editScheduleModeGroup"><label>排期模式</label><select id="editScheduleMode" onchange="onEditTaskFormChange()"><option value="continuous">连续日期（含周日）</option><option value="weekly">按周星期自定义</option></select></div>
+        <div class="form-group" id="editScheduleModeGroup"><label>排期模式</label><select id="editScheduleMode" onchange="onEditTaskFormChange()"><option value="mon_sat">周一到周六</option><option value="all_week">周一到周日</option><option value="custom">自定义</option></select></div>
         <div class="form-group" id="editStartGroup"><label id="editStartLabel">起始日期</label><input type="date" id="editStart"></div>
         <div class="form-group" id="editTotalGroup"><label id="editTotalLabel">每项总题数</label><input type="number" id="editTotal" min="0"></div>
         <div class="form-group" id="editCountGroup"><label>子任务数量</label><input type="number" id="editCount" min="1"></div>
-        <div class="form-group" id="editDailyCountGroup"><label>每天完成子任务数量</label><input type="number" id="editDailyCount" min="1" max="20"></div>
+        <div class="form-group" id="editDailyCountGroup"><label>每天完成量</label><input type="number" id="editDailyCount" min="1" max="20"></div>
         <div class="form-group hidden" id="editWeekdayGroup"><label>每周任务日</label><div class="weekday-selector" id="editWeekdaySelector"><span class="wd-chip" data-wd="1" onclick="toggleEditWeekday(1)">周一</span><span class="wd-chip" data-wd="2" onclick="toggleEditWeekday(2)">周二</span><span class="wd-chip" data-wd="3" onclick="toggleEditWeekday(3)">周三</span><span class="wd-chip" data-wd="4" onclick="toggleEditWeekday(4)">周四</span><span class="wd-chip" data-wd="5" onclick="toggleEditWeekday(5)">周五</span><span class="wd-chip" data-wd="6" onclick="toggleEditWeekday(6)">周六</span><span class="wd-chip" data-wd="0" onclick="toggleEditWeekday(0)">周日</span></div></div>
         <div class="form-group" id="editSubtaskBatchGroup"><label>批量编辑子任务（每行：子任务名称｜题量）</label><textarea id="editSubtaskBatch" rows="7" placeholder="子任务名称｜题量"></textarea><small style="color:var(--text-3);">增删行可同步增减子任务；留空名称则继续使用任务名称和编号。</small></div>
         <div class="modal-actions">
@@ -1203,6 +1214,16 @@
             <button class="btn-cancel" onclick="closeEditModal()">取消</button>
             <button class="btn-save" onclick="saveEditTask()">保存</button>
         </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="splitSubtaskModal">
+    <div class="modal-box" style="max-width:420px;">
+        <h3>拆分子任务</h3>
+        <div id="splitSubtaskSummary" style="margin-bottom:12px;color:var(--text-2);font-size:13px;"></div>
+        <div class="form-group"><label>拆分份数</label><input type="number" id="splitSubtaskCount" min="2" max="50" value="2" inputmode="numeric"></div>
+        <small style="display:block;color:var(--text-3);line-height:1.5;">题量将尽可能平均分配；第一份沿用原日期，其余每份依次顺延一天。</small>
+        <div class="modal-actions"><button class="btn-cancel" onclick="closeSplitSubtaskModal()">取消</button><button class="btn-save" onclick="confirmSplitSubtask()">确认拆分</button></div>
     </div>
 </div>
 
@@ -1214,7 +1235,25 @@ const SUPABASE_URL = 'https://dcictnmmhhrjsomfeues.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_3Qk37-jA-cMhLa8DrprA-w_yBjTNOOp';
 let cloudClient=null, cloudUser=null, cloudReady=false, cloudApplying=false, cloudSaveTimer=null, cloudRevision=0, cloudChannel=null, cloudHandling=false;
 let cloudLocalDirty=false, cloudLastMutationAt=0, cloudPushInFlight=false;
+let localSaveErrorShown=false;
 try { cloudLocalDirty=localStorage.getItem('ning_cloud_dirty')==='1'; } catch(e) {}
+
+function normalizeStudyTask(t) {
+    t=t&&typeof t==='object'?t:{};t.subtasks=Array.isArray(t.subtasks)?t.subtasks:[];
+    if(!t.unit)t.unit='项';
+    if(!t.scheduleMode||t.scheduleMode==='continuous')t.scheduleMode='all_week';else if(t.scheduleMode==='weekly')t.scheduleMode='custom';
+    t.dailyCount=Math.max(1,parseInt(t.dailyCount)||1);t.weekdays=Array.isArray(t.weekdays)?t.weekdays:[];
+    t.subtasks.forEach((s,i)=>{if(s.idx===undefined)s.idx=i+1;if(s.name===undefined)s.name='';if(s.done===undefined)s.done=false;if(s.total===undefined)s.total=0;if(s.correct===undefined)s.correct=0;if(s.time===undefined)s.time=0;if(s.subType===undefined)s.subType='';if(s.kind===undefined)s.kind=t.kind||'quantified';if(s.planStart===undefined)s.planStart='';if(s.planDuration===undefined)s.planDuration=0;if(s.planEnd===undefined)s.planEnd='';});
+    return t;
+}
+function normalizeAppData(source) {
+    const p=source&&typeof source==='object'?source:{};
+    return {exams:Array.isArray(p.exams)?p.exams:[],studyTasks:(Array.isArray(p.studyTasks)?p.studyTasks:[]).map(normalizeStudyTask),examRecords:Array.isArray(p.examRecords)?p.examRecords:[],completedTasks:Array.isArray(p.completedTasks)?p.completedTasks:[]};
+}
+function writeLocalData() {
+    try{localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));localSaveErrorShown=false;return true;}
+    catch(e){console.error('本地保存失败',e);if(!localSaveErrorShown){localSaveErrorShown=true;alert('本地保存失败，可能是浏览器存储空间不足。请立即导出备份，避免数据丢失。');}return false;}
+}
 
 function setCloudStatus(text,state='') {
     const label=document.getElementById('cloudStatusText'), dot=document.getElementById('cloudStatusDot');
@@ -1231,10 +1270,8 @@ function clearCloudDirty() { cloudLocalDirty=false;try{localStorage.removeItem('
 function applyCloudPayload(payload) {
     if(!payload?.appData)return;
     cloudApplying=true;
-    const incoming=payload.appData;
-    appData.exams=incoming.exams||[]; appData.studyTasks=incoming.studyTasks||[]; appData.examRecords=incoming.examRecords||[]; appData.completedTasks=incoming.completedTasks||[];
-    appData.studyTasks.forEach(t=>{t.subtasks=t.subtasks||[];t.subtasks.forEach(s=>{if(s.done===undefined)s.done=false;if(s.total===undefined)s.total=0;if(s.correct===undefined)s.correct=0;if(s.time===undefined)s.time=0;if(s.subType===undefined)s.subType='';if(s.kind===undefined)s.kind='quantified';});});
-    try{localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));}catch(e){}
+    appData=normalizeAppData(payload.appData);
+    writeLocalData();
     if(payload.theme)setTheme(payload.theme);
     renderAll(); clearCloudDirty(); cloudApplying=false;
 }
@@ -1247,6 +1284,12 @@ async function pushCloudData(manual=false) {
     if(cloudPushInFlight){scheduleCloudSave();return;}
     cloudPushInFlight=true;
     setCloudStatus('正在同步…','syncing');
+    const {data:remote,error:checkError}=await cloudClient.from('user_app_data').select('revision').eq('user_id',cloudUser.id).maybeSingle();
+    if(checkError){cloudPushInFlight=false;setCloudStatus('同步检查失败：'+checkError.message,'error');return;}
+    const remoteRevision=Number(remote?.revision)||0;
+    if(remoteRevision>cloudRevision){
+        if(!manual||!confirm('云端存在另一台设备的新修改。继续会以本机数据覆盖云端，确定继续吗？')){cloudPushInFlight=false;setCloudStatus('检测到云端新修改，请先从云端拉取或手动确认覆盖','error');return;}
+    }
     const pushStartedAt=Date.now();
     const revision=Date.now();
     const payloadSnapshot=JSON.parse(JSON.stringify(getCloudPayload()));
@@ -1329,15 +1372,7 @@ function loadData() {
     try { raw = localStorage.getItem(STORAGE_KEY); } catch(e) { raw = null; }
     if (raw) {
         try {
-            const p = JSON.parse(raw);
-            appData.exams = p.exams || [];
-            appData.studyTasks = (p.studyTasks || []).map(t => {
-                if (!t.subtasks) t.subtasks = [];
-                t.subtasks.forEach(s => { if (s.name===undefined) s.name=''; if (s.done===undefined) s.done=false; if (s.total===undefined) s.total=0; if (s.correct===undefined) s.correct=0; if (s.time===undefined) s.time=0; if (s.subType===undefined) s.subType=''; if (s.kind===undefined) s.kind='quantified'; if (s.planStart===undefined) s.planStart=''; if (s.planDuration===undefined) s.planDuration=0; if (s.planEnd===undefined) s.planEnd=''; });
-                return t;
-            });
-            appData.examRecords = p.examRecords || [];
-            appData.completedTasks = p.completedTasks || [];
+            appData=normalizeAppData(JSON.parse(raw));
         } catch(e) { appData = { exams:[], studyTasks:[], examRecords:[], completedTasks:[] }; }
     }
     if (!appData.exams || appData.exams.length === 0) {
@@ -1347,7 +1382,7 @@ function loadData() {
 }
 
 function saveData() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); } catch(e) {}
+    writeLocalData();
     markCloudDirty();
     scheduleCloudSave();
 }
@@ -1398,6 +1433,7 @@ function scheduleOutlineIcon(kind) {
     if (kind === 'check') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4L19 6"/></svg>';
     if (kind === 'save') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h12l2 2v14H5z"/><path d="M8 4v6h8V4M8 20v-6h8v6"/></svg>';
     if (kind === 'delete') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg>';
+    if (kind === 'split') return '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="m8.7 8.7 3.3 3.3M8.7 15.3 19 5M12 12l7 7"/></svg>';
     if (kind === 'left') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/><path d="M20 12H9"/></svg>';
     if (kind === 'right') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/><path d="M4 12h11"/></svg>';
     if (kind === 'all-left') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 6l-6 6 6 6M19 6l-6 6 6 6"/></svg>';
@@ -1485,7 +1521,7 @@ function switchTaskTab(t) {
 }
 function onScheduleModeChange() {
     const mode = document.getElementById('fScheduleMode').value;
-    document.getElementById('fWeekdayRow').classList.toggle('hidden', mode !== 'weekly');
+    document.getElementById('fWeekdayRow').classList.toggle('hidden', mode !== 'custom');
 }
 function onModuleChange(moduleSelId, subTypeSelId, rowId) {
     const m = document.getElementById(moduleSelId).value;
@@ -1501,7 +1537,8 @@ function onModuleChange(moduleSelId, subTypeSelId, rowId) {
     }
     const isSingle = moduleSelId === 'fSingleModule';
     const label = document.getElementById(isSingle ? 'fSingleTotalLabel' : 'fTotalLabel');
-    if (label) label.textContent = m === '申论' ? (isSingle ? '总分' : '每项总分') : (isSingle ? '总题数' : '每项总题数');
+    const unit=document.getElementById(isSingle?'fSingleUnit':'fUnit')?.value.trim()||'项';
+    if (label) label.textContent = m === '申论' ? (isSingle ? '总分' : `每${unit}总分`) : (isSingle ? '总题数' : `每${unit}总题数`);
 }
 function onTaskKindChange(kindSelId, totalInputId) {
     const kind = document.getElementById(kindSelId).value;
@@ -1544,16 +1581,17 @@ function formatSubtaskBatch(subtasks) {
 
 function addStudyTask() {
     const m=document.getElementById('fModule').value, n=document.getElementById('fName').value.trim(), s=document.getElementById('fStart').value;
+    const unit=document.getElementById('fUnit').value.trim()||'项';
     const mode = document.getElementById('fScheduleMode').value;
     const kind = document.getElementById('fTaskKind').value;
-    const dailyCount = Math.max(1, parseInt(document.getElementById('fDailyCount').value) || 1);
+    const dailyCount = 1;
     const t = (kind === 'nonQuantified') ? 0 : (parseInt(document.getElementById('fTotal').value)||0);
     let st = '';
     if (MODULE_SUBTYPES[m]) { st = document.getElementById('fSubType').value; if (!st) { alert('请选择细分题型'); return; } }
     if(!n){alert('请输入任务名称');return;} if(!s){alert('请选择起始日期');return;}
     const batch=parseSubtaskBatch(document.getElementById('fSubtaskBatch').value);
     let dates, subCount, selectedWeekdays = [];
-    if (mode === 'weekly') {
+    if (mode === 'custom') {
         const weekdays = getSelectedWeekdays();
         selectedWeekdays = weekdays;
         if (!weekdays.length) { alert('请至少选择一个日期'); return; }
@@ -1563,13 +1601,13 @@ function addStudyTask() {
     } else {
         subCount = batch.length || parseInt(document.getElementById('fCount').value);
         if(!subCount||subCount<1){alert('请输入有效的子任务数量');return;}
-        dates = generateContinuousDates(s, subCount, dailyCount);
+        dates = mode==='mon_sat'?generateDatesByWeekday(s,[1,2,3,4,5,6],subCount,dailyCount):generateContinuousDates(s,subCount,dailyCount);
     }
     const startIdx = 1;
     const subs = dates.map((d, i) => ({idx:startIdx+i, name:batch[i]?.name||'', date:d, done:false, total:batch.length?batch[i].total:t, correct:0, time:0, subType:st, kind:kind}));
-    appData.studyTasks.push({id:Date.now(),module:m,name:n,type:'periodic',subtaskCount:subs.length,startDate:s,defaultTotal:t,subtasks:subs,scheduleMode:mode,startIdx:startIdx,dailyCount:dailyCount,weekdays:selectedWeekdays,subType:st,kind:kind});
+    appData.studyTasks.push({id:Date.now(),module:m,name:n,unit,type:'periodic',subtaskCount:subs.length,startDate:s,defaultTotal:t,subtasks:subs,scheduleMode:mode,startIdx:startIdx,dailyCount:dailyCount,weekdays:selectedWeekdays,subType:st,kind:kind});
     saveData(); renderAll();
-    document.getElementById('fName').value=''; document.getElementById('fCount').value='30'; document.getElementById('fTotal').value='20'; document.getElementById('fStart').value=getToday(); document.getElementById('fDailyCount').value='1'; document.getElementById('fSubtaskBatch').value='';
+    document.getElementById('fName').value=''; document.getElementById('fCount').value='30'; document.getElementById('fTotal').value='20'; document.getElementById('fStart').value=getToday(); document.getElementById('fSubtaskBatch').value='';
     SELECTED_WEEKDAYS.clear();
     document.querySelectorAll('#weekdaySelector .wd-chip').forEach(el => el.classList.remove('active'));
     onModuleChange('fModule','fSubType','fSubTypeRow');
@@ -1577,12 +1615,13 @@ function addStudyTask() {
 }
 function addSingleTask() {
     const m=document.getElementById('fSingleModule').value, n=document.getElementById('fSingleName').value.trim(), d=document.getElementById('fSingleDate').value;
+    const unit=document.getElementById('fSingleUnit').value.trim()||'项';
     const kind = document.getElementById('fSingleTaskKind').value;
     const t = (kind === 'nonQuantified') ? 0 : (parseInt(document.getElementById('fSingleTotal').value)||0);
     let st = '';
     if (MODULE_SUBTYPES[m]) { st = document.getElementById('fSingleSubType').value; if (!st) { alert('请选择细分题型'); return; } }
     if(!n){alert('请输入任务名称');return;} if(!d){alert('请选择日期');return;}
-    appData.studyTasks.push({id:Date.now(),module:m,name:n,type:'single',subtaskCount:1,startDate:d,defaultTotal:t,subtasks:[{idx:1,name:n,date:d,done:false,total:t,correct:0,time:0,subType:st,kind:kind}],subType:st,kind:kind});
+    appData.studyTasks.push({id:Date.now(),module:m,name:n,unit,type:'single',subtaskCount:1,startDate:d,defaultTotal:t,subtasks:[{idx:1,name:n,date:d,done:false,total:t,correct:0,time:0,subType:st,kind:kind}],subType:st,kind:kind});
     saveData(); renderAll();
     document.getElementById('fSingleName').value=''; document.getElementById('fSingleTotal').value='20'; document.getElementById('fSingleDate').value=getToday();
     onModuleChange('fSingleModule','fSingleSubType','fSingleSubTypeRow');
@@ -1595,15 +1634,15 @@ function onEditTaskFormChange(preferredSubType) {
     const type=document.getElementById('editType').value,module=document.getElementById('editModule').value,kind=document.getElementById('editKind').value,mode=document.getElementById('editScheduleMode').value,isPeriodic=type==='periodic';
     document.getElementById('editStartLabel').textContent=isPeriodic?'起始日期':'任务日期';
     ['editScheduleModeGroup','editCountGroup','editDailyCountGroup'].forEach(id=>document.getElementById(id).classList.toggle('hidden',!isPeriodic));
-    document.getElementById('editWeekdayGroup').classList.toggle('hidden',!isPeriodic||mode!=='weekly');
+    document.getElementById('editWeekdayGroup').classList.toggle('hidden',!isPeriodic||mode!=='custom');
     document.getElementById('editTotalGroup').classList.toggle('hidden',kind==='nonQuantified');
-    document.getElementById('editTotalLabel').textContent=module==='申论'?(isPeriodic?'每项总分':'总分'):(isPeriodic?'每项总题数':'总题数');
+    const unit=document.getElementById('editUnit').value.trim()||'项';document.getElementById('editTotalLabel').textContent=module==='申论'?(isPeriodic?`每${unit}总分`:'总分'):(isPeriodic?`每${unit}总题数`:'总题数');
     const subtypes=MODULE_SUBTYPES[module]||[],group=document.getElementById('editSubTypeGroup'),select=document.getElementById('editSubType'),keep=preferredSubType===undefined?select.value:preferredSubType;
     group.classList.toggle('hidden',!subtypes.length);select.innerHTML='<option value="">请选择</option>'+subtypes.map(v=>`<option value="${v}">${v}</option>`).join('');if(subtypes.includes(keep))select.value=keep;
 }
 function openEditModal(id) {
     const t=appData.studyTasks.find(x=>x.id===id);if(!t)return;
-    editingTaskId=id;document.getElementById('editName').value=t.name;document.getElementById('editModule').value=normalizeModule(t.module);document.getElementById('editType').value=t.type||'periodic';document.getElementById('editKind').value=t.kind||'quantified';document.getElementById('editScheduleMode').value=t.scheduleMode||'continuous';document.getElementById('editStart').value=t.startDate;document.getElementById('editTotal').value=t.defaultTotal||0;document.getElementById('editCount').value=t.subtaskCount||t.subtasks.length||1;document.getElementById('editDailyCount').value=t.dailyCount||1;document.getElementById('editSubtaskBatch').value=formatSubtaskBatch(t.subtasks);
+    editingTaskId=id;document.getElementById('editName').value=t.name;document.getElementById('editUnit').value=t.unit||'项';document.getElementById('editModule').value=normalizeModule(t.module);document.getElementById('editType').value=t.type||'periodic';document.getElementById('editKind').value=t.kind||'quantified';document.getElementById('editScheduleMode').value=t.scheduleMode||'all_week';document.getElementById('editStart').value=t.startDate;document.getElementById('editTotal').value=t.defaultTotal||0;document.getElementById('editCount').value=t.subtaskCount||t.subtasks.length||1;document.getElementById('editDailyCount').value=t.dailyCount||1;document.getElementById('editSubtaskBatch').value=formatSubtaskBatch(t.subtasks);
     EDIT_WEEKDAYS.clear();(t.weekdays||[]).forEach(w=>EDIT_WEEKDAYS.add(Number(w)));document.querySelectorAll('#editWeekdaySelector .wd-chip').forEach(el=>el.classList.toggle('active',EDIT_WEEKDAYS.has(Number(el.dataset.wd))));
     onEditTaskFormChange(t.subType||t.subtasks[0]?.subType||'');document.getElementById('editModal').classList.add('active');
 }
@@ -1616,18 +1655,18 @@ function deleteEditingTask() {
 }
 function saveEditTask() {
     const t=appData.studyTasks.find(x=>x.id===editingTaskId);if(!t)return;
-    const name=document.getElementById('editName').value.trim(),module=document.getElementById('editModule').value,type=document.getElementById('editType').value,kind=document.getElementById('editKind').value,mode=document.getElementById('editScheduleMode').value,start=document.getElementById('editStart').value,dailyCount=Math.max(1,parseInt(document.getElementById('editDailyCount').value)||1),defaultTotal=kind==='nonQuantified'?0:Math.max(0,parseInt(document.getElementById('editTotal').value)||0),subType=document.getElementById('editSubTypeGroup').classList.contains('hidden')?'':document.getElementById('editSubType').value,batch=parseSubtaskBatch(document.getElementById('editSubtaskBatch').value);
+    const name=document.getElementById('editName').value.trim(),unit=document.getElementById('editUnit').value.trim()||'项',module=document.getElementById('editModule').value,type=document.getElementById('editType').value,kind=document.getElementById('editKind').value,mode=document.getElementById('editScheduleMode').value,start=document.getElementById('editStart').value,dailyCount=Math.max(1,parseInt(document.getElementById('editDailyCount').value)||1),defaultTotal=kind==='nonQuantified'?0:Math.max(0,parseInt(document.getElementById('editTotal').value)||0),subType=document.getElementById('editSubTypeGroup').classList.contains('hidden')?'':document.getElementById('editSubType').value,batch=parseSubtaskBatch(document.getElementById('editSubtaskBatch').value);
     if(!name){alert('名称不能为空');return;}if(!start){alert('请选择日期');return;}if(MODULE_SUBTYPES[module]&&!subType){alert('请选择细分题型');return;}
-    const weekdays=Array.from(EDIT_WEEKDAYS).sort((a,b)=>a-b);if(type==='periodic'&&mode==='weekly'&&!weekdays.length){alert('请至少选择一个每周任务日');return;}
+    const weekdays=Array.from(EDIT_WEEKDAYS).sort((a,b)=>a-b);if(type==='periodic'&&mode==='custom'&&!weekdays.length){alert('请至少选择一个每周任务日');return;}
     const old=[...t.subtasks].sort((a,b)=>a.idx-b.idx),startIdx=t.startIdx||1;let next=[];
     if(type==='single'){
         const o=old[0]||{};next=[{...o,idx:1,name:batch[0]?.name||o.name||name,date:start,done:o.done||false,total:kind==='nonQuantified'?0:(batch[0]?batch[0].total:defaultTotal),correct:o.correct||0,time:o.time||0,subType,kind}];
     }else{
-        const count=batch.length||Math.max(1,parseInt(document.getElementById('editCount').value)||1),dates=mode==='weekly'?generateDatesByWeekday(start,weekdays,count,dailyCount):generateContinuousDates(start,count,dailyCount);
+        const count=batch.length||Math.max(1,parseInt(document.getElementById('editCount').value)||1),dates=mode==='custom'?generateDatesByWeekday(start,weekdays,count,dailyCount):mode==='mon_sat'?generateDatesByWeekday(start,[1,2,3,4,5,6],count,dailyCount):generateContinuousDates(start,count,dailyCount);
         next=dates.map((date,i)=>{const o=old[i]||{};return {...o,idx:startIdx+i,name:batch[i]?.name||(o.name||''),date:o.done?o.date:date,done:o.done||false,total:kind==='nonQuantified'?0:(batch.length?batch[i].total:defaultTotal),correct:o.correct||0,time:o.time||0,subType,kind};});
     }
-    Object.assign(t,{name,module,type,kind,subType,startDate:start,defaultTotal,subtasks:next,subtaskCount:next.length,scheduleMode:type==='periodic'?mode:'continuous',dailyCount:type==='periodic'?dailyCount:1,weekdays:type==='periodic'&&mode==='weekly'?weekdays:[],startIdx:type==='periodic'?startIdx:1});
-    appData.completedTasks=appData.completedTasks.filter(c=>c.taskId!==t.id);next.filter(s=>s.done).forEach(s=>appData.completedTasks.push({module:t.module,subType:s.subType||'',name:s.name||t.name,total:s.total||0,correct:s.correct||0,time:s.time||0,date:s.date,taskId:t.id,idx:s.idx,kind:s.kind||t.kind}));
+    Object.assign(t,{name,unit,module,type,kind,subType,startDate:start,defaultTotal,subtasks:next,subtaskCount:next.length,scheduleMode:type==='periodic'?mode:'all_week',dailyCount:type==='periodic'?dailyCount:1,weekdays:type==='periodic'&&mode==='custom'?weekdays:[],startIdx:type==='periodic'?startIdx:1});
+    appData.completedTasks=appData.completedTasks.filter(c=>c.taskId!==t.id);next.filter(s=>s.done).forEach(s=>appData.completedTasks.push({module:t.module,subType:s.subType||'',name:s.name||t.name,unit:t.unit||'项',total:s.total||0,correct:s.correct||0,time:s.time||0,date:s.date,taskId:t.id,idx:s.idx,kind:s.kind||t.kind}));
     saveData();renderAll();closeEditModal();
 }
 function deleteStudyTask(id) {
@@ -1643,11 +1682,19 @@ function deleteStudyTask(id) {
 }
 
 function getTaskDatesGenerator(t) {
-    const mode = t.scheduleMode || 'continuous';
-    if (mode === 'weekly' && t.weekdays) {
+    const mode = t.scheduleMode || 'all_week';
+    if (mode === 'custom' && t.weekdays) {
         return (startDate, count) => generateDatesByWeekday(startDate, t.weekdays, count, t.dailyCount||1);
     }
+    if (mode === 'mon_sat') return (startDate,count)=>generateDatesByWeekday(startDate,[1,2,3,4,5,6],count,t.dailyCount||1);
     return (startDate, count) => generateContinuousDates(startDate, count, t.dailyCount||1);
+}
+
+function syncCompletedTaskRecord(t,s) {
+    appData.completedTasks=(appData.completedTasks||[]).filter(c=>!(c.taskId===t.id&&c.idx===s.idx));
+    if(!s.done)return;
+    const isNonQuantified=(t.kind==='nonQuantified')||(s.kind==='nonQuantified');
+    appData.completedTasks.push({module:t.module,subType:s.subType||'',name:s.name||t.name,unit:t.unit||'项',total:s.total||0,correct:s.correct||0,time:s.time||0,date:s.date,taskId:t.id,idx:s.idx,kind:isNonQuantified?'nonQuantified':'quantified'});
 }
 
 function toggleSubtaskDone(tid, si) {
@@ -1657,18 +1704,7 @@ function toggleSubtaskDone(tid, si) {
     if (!s.done) {
         if (!s.time && s.planDuration) s.time = s.planDuration;
         s.done = true;
-        appData.completedTasks.push({
-                module: t.module,
-                subType: s.subType || '',
-                name: s.name || t.name,
-                total: s.total || 0,
-                correct: s.correct || 0,
-                time: s.time || 0,
-                date: s.date,
-                taskId: t.id,
-                idx: s.idx,
-                kind: isNonQuantified ? 'nonQuantified' : 'quantified'
-            });
+        syncCompletedTaskRecord(t,s);
         t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
     } else {
         appData.completedTasks = appData.completedTasks.filter(c => !(c.taskId === t.id && c.idx === s.idx));
@@ -1681,6 +1717,9 @@ function toggleSubtaskDone(tid, si) {
     if (wasExpanded) { const el = document.querySelector(`[data-task-block="${tid}"]`); if (el) el.classList.add('expanded'); }
 }
 
+function syncCompletedTaskDate(tid, subtask) {
+    (appData.completedTasks||[]).forEach(c=>{if(c.taskId===tid&&c.idx===subtask.idx)c.date=subtask.date;});
+}
 function moveTaskForward(tid, si) {
     const t = appData.studyTasks.find(x => x.id === tid); if (!t) return;
     if (t.type === 'single') { alert('单次任务不支持移动'); return; }
@@ -1688,6 +1727,7 @@ function moveTaskForward(tid, si) {
     const d = parseDate(s.date);
     d.setDate(d.getDate() - 1);
     s.date = formatDate(d);
+    syncCompletedTaskDate(tid,s);
     t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
     saveData();
     const _el = document.querySelector(`[data-task-block="${tid}"]`); const wasExpanded = _el ? _el.classList.contains('expanded') : false;
@@ -1701,6 +1741,7 @@ function moveTaskBackward(tid, si) {
     const d = parseDate(s.date);
     d.setDate(d.getDate() + 1);
     s.date = formatDate(d);
+    syncCompletedTaskDate(tid,s);
     t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
     saveData();
     const _el = document.querySelector(`[data-task-block="${tid}"]`); const wasExpanded = _el ? _el.classList.contains('expanded') : false;
@@ -1710,11 +1751,13 @@ function moveTaskBackward(tid, si) {
 function moveTaskForwardAll(tid, si) {
     const t = appData.studyTasks.find(x => x.id === tid); if (!t) return;
     if (t.type === 'single') { alert('单次任务不支持移动'); return; }
-    const toMove = t.subtasks.filter((ss, i) => i >= si);
+    const target=t.subtasks[si];if(!target)return;const targetIdx=Number(target.idx)||0;
+    const toMove = t.subtasks.filter(ss => (Number(ss.idx)||0) >= targetIdx);
     toMove.forEach(ss => {
         const d = parseDate(ss.date);
         d.setDate(d.getDate() - 1);
         ss.date = formatDate(d);
+        syncCompletedTaskDate(tid,ss);
     });
     t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
     saveData();
@@ -1725,11 +1768,13 @@ function moveTaskForwardAll(tid, si) {
 function moveTaskBackwardAll(tid, si) {
     const t = appData.studyTasks.find(x => x.id === tid); if (!t) return;
     if (t.type === 'single') { alert('单次任务不支持移动'); return; }
-    const toMove = t.subtasks.filter((ss, i) => i >= si);
+    const target=t.subtasks[si];if(!target)return;const targetIdx=Number(target.idx)||0;
+    const toMove = t.subtasks.filter(ss => (Number(ss.idx)||0) >= targetIdx);
     toMove.forEach(ss => {
         const d = parseDate(ss.date);
         d.setDate(d.getDate() + 1);
         ss.date = formatDate(d);
+        syncCompletedTaskDate(tid,ss);
     });
     t.subtasks.sort((a, b) => a.date.localeCompare(b.date) || a.idx - b.idx);
     saveData();
@@ -1737,7 +1782,7 @@ function moveTaskBackwardAll(tid, si) {
     renderAll();
     if (wasExpanded) { const el = document.querySelector(`[data-task-block="${tid}"]`); if (el) el.classList.add('expanded'); }
 }
-function updateSubtaskStat(tid, si, f, v) { const t = appData.studyTasks.find(x => x.id === tid); if (!t) return; const s = t.subtasks[si]; if (f === 'total') s.total = parseInt(v)||0; else if (f === 'correct') s.correct = parseInt(v)||0; else if (f === 'time') s.time = parseFloat(v)||0; if (s.total > 0 && s.correct > s.total) s.correct = s.total; saveData(); }
+function updateSubtaskStat(tid, si, f, v) { const t = appData.studyTasks.find(x => x.id === tid); if (!t) return; const s = t.subtasks[si]; if (f === 'total') s.total = parseInt(v)||0; else if (f === 'correct') s.correct = parseInt(v)||0; else if (f === 'time') s.time = parseFloat(v)||0; if (s.total > 0 && s.correct > s.total) s.correct = s.total; syncCompletedTaskRecord(t,s); saveData(); }
 
 function toggleExpand(taskId) {
     const el = document.querySelector(`[data-task-block="${taskId}"]`);
@@ -1813,7 +1858,7 @@ function getSubtasksOnDate(ds) {
     const r = [];
     appData.studyTasks.forEach(t => {
         if (!passFilter(t, 'board')) return;
-        t.subtasks.forEach((s, i) => { if (s.date === ds) r.push({taskId:t.id,taskName:t.name,subName:s.name||'',module:normalizeModule(t.module),taskType:t.type,taskKind:t.kind||s.kind||'quantified',subIdx:i,sub:s}); });
+        t.subtasks.forEach((s, i) => { if (s.date === ds) r.push({taskId:t.id,taskName:t.name,taskUnit:t.unit||'项',subName:s.name||'',module:normalizeModule(t.module),taskType:t.type,taskKind:t.kind||s.kind||'quantified',subIdx:i,sub:s}); });
     });
     return r;
 }
@@ -1855,13 +1900,13 @@ function compactScheduleGroups(container) {
 function renderScheduleDayCard(item) {
     const dc=item.sub.done?'done':'', cc=item.sub.done?'done':'';
     const rate=item.sub.total>0?Math.round(item.sub.correct/item.sub.total*100):0;
-    const ts=item.sub.time>0?`${item.sub.time}分`:'';
-    const nameDisplay=item.subName||(item.taskType==='single'?item.taskName:`${item.taskName} 第${item.sub.idx}项`),moduleColor=MODULE_COLORS[item.module]||'#8aa9c8',moduleShort=MODULE_SHORT[item.module]||item.module;
+    const ts=item.sub.time>0?`${item.sub.time}分钟`:'';
+    const nameDisplay=escapeHtml(item.subName||(item.taskType==='single'?item.taskName:`${item.taskName} 第${item.sub.idx}${item.taskUnit||'项'}`)),moduleColor=MODULE_COLORS[item.module]||'#8aa9c8',moduleShort=MODULE_SHORT[item.module]||item.module;
     const isNonQ=item.taskKind==='nonQuantified', isEditing=scheduleEditTarget&&scheduleEditTarget.tid===item.taskId&&scheduleEditTarget.idx===item.subIdx;
     let stats=isNonQ?`<span class="dv-time">${ts||'未填'}</span>`:`<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
     if(isEditing)stats=isNonQ?`<input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
     const editButton=isEditing?`<button class="schedule-item-edit icon-edit-done" title="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>`:`<button class="schedule-item-edit icon-edit-button" title="编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('edit')}</button>`;
-    const moveActions=isEditing?`<div class="schedule-move-actions"><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>`:'';
+    const moveActions=isEditing?`<div class="schedule-move-actions"><button title="拆分子任务" aria-label="拆分子任务" onclick="event.stopPropagation();openSplitSubtaskModal(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('split')}</button><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>`:'';
     return `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="event.stopPropagation();toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><span class="schedule-module-label" style="background:${moduleColor}22;color:${moduleColor};">${moduleShort}</span><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${stats}${moveActions}${editButton}</div></div></div>`;
 }
 
@@ -1876,7 +1921,7 @@ function renderScheduleTimeline(c, subs) {
         if(unplanned.length)compact+=`<div class="schedule-timeline-unplanned"><div class="schedule-timeline-unplanned-title">无规划时段</div><div class="schedule-timeline-unplanned-list">${unplanned.map(renderScheduleDayCard).join('')}</div></div>`;
         c.innerHTML=compact;return;
     }
-    const slotH=35,segments=[[7*60,15*60],[15*60,23*60]],now=new Date(),nowMin=now.getHours()*60+now.getMinutes();
+    const slotH=45,segments=[[7*60,15*60],[15*60,23*60]],now=new Date(),nowMin=now.getHours()*60+now.getMinutes();
     let html=`<div class="schedule-timeline"><div class="schedule-timeline-columns">`;
     segments.forEach(([segmentStart,segmentEnd])=>{
         const displaySlot=60,segmentItems=planned.filter(item=>item.start<segmentEnd&&item.end>segmentStart),visibleSlots=Array.from({length:(segmentEnd-segmentStart)/displaySlot},(_,i)=>segmentStart+i*displaySlot);
@@ -1901,7 +1946,7 @@ function bindScheduleTimelineDrag(){
         if(event.target.closest('button,input,.dv-check'))return;
         const found=findTimelineTask(card.dataset.timelineKey);if(!found)return;
         const mode=event.target.dataset.resize||'move',start=clockToMinutes(found.sub.planStart),duration=found.sub.planDuration;
-        timelineDragState={card,found,mode,start,duration,startY:event.clientY,lastDelta:0,schedule:true,slotHeight:35};card.classList.add('dragging');card.setPointerCapture(event.pointerId);event.preventDefault();
+        timelineDragState={card,found,mode,start,duration,startY:event.clientY,lastDelta:0,schedule:true,slotHeight:45};card.classList.add('dragging');card.setPointerCapture(event.pointerId);event.preventDefault();
     }));
 }
 
@@ -1920,15 +1965,15 @@ function renderDayView() {
         groups[mod].forEach(item => {
             const dc = item.sub.done ? 'done' : '', cc = item.sub.done ? 'done' : '';
             const rate = item.sub.total > 0 ? Math.round(item.sub.correct/item.sub.total*100) : 0;
-            const ts = item.sub.time > 0 ? `${item.sub.time}分` : '';
-            const nameDisplay = item.subName || (item.taskType === 'single' ? item.taskName : `${item.taskName} 第${item.sub.idx}项`);
+            const ts = item.sub.time > 0 ? `${item.sub.time}分钟` : '';
+            const nameDisplay = escapeHtml(item.subName || (item.taskType === 'single' ? item.taskName : `${item.taskName} 第${item.sub.idx}${item.taskUnit||'项'}`));
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
             let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
             const isEditing = scheduleEditTarget && scheduleEditTarget.tid===item.taskId && scheduleEditTarget.idx===item.subIdx;
             if(isEditing) sh=isNonQ?`<input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
             const editButton = isEditing ? `<button class="schedule-item-edit icon-edit-done" title="完成编辑" aria-label="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>` : `<button class="schedule-item-edit icon-edit-button" title="编辑" aria-label="编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('edit')}</button>`;
-            const moveActions = isEditing ? `<div class="schedule-move-actions"><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>` : '';
+            const moveActions = isEditing ? `<div class="schedule-move-actions"><button title="拆分子任务" aria-label="拆分子任务" onclick="event.stopPropagation();openSplitSubtaskModal(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('split')}</button><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>` : '';
             html += `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${sh}${moveActions}${editButton}</div></div></div>`;
         });
         html += `</div></div></div>`;
@@ -2011,15 +2056,15 @@ function renderTodaySection() {
         groups[mod].forEach(item => {
             const dc = item.sub.done ? 'done' : '', cc = item.sub.done ? 'done' : '';
             const rate = item.sub.total > 0 ? Math.round(item.sub.correct/item.sub.total*100) : 0;
-            const ts = item.sub.time > 0 ? `${item.sub.time}分` : '';
-            const nameDisplay = item.subName || (item.taskType === 'single' ? item.taskName : `${item.taskName} 第${item.sub.idx}项`);
+            const ts = item.sub.time > 0 ? `${item.sub.time}分钟` : '';
+            const nameDisplay = escapeHtml(item.subName || (item.taskType === 'single' ? item.taskName : `${item.taskName} 第${item.sub.idx}${item.taskUnit||'项'}`));
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
             let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
             const isEditing = scheduleEditTarget && scheduleEditTarget.tid===item.taskId && scheduleEditTarget.idx===item.subIdx;
             if(isEditing) sh=isNonQ?`<input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
             const editButton = isEditing ? `<button class="schedule-item-edit icon-edit-done" title="完成编辑" aria-label="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>` : `<button class="schedule-item-edit icon-edit-button" title="编辑" aria-label="编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('edit')}</button>`;
-            const moveActions = isEditing ? `<div class="schedule-move-actions"><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>` : '';
+            const moveActions = isEditing ? `<div class="schedule-move-actions"><button title="拆分子任务" aria-label="拆分子任务" onclick="event.stopPropagation();openSplitSubtaskModal(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('split')}</button><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>` : '';
             html += `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${sh}${moveActions}${editButton}</div></div></div>`;
         });
         html += `</div></div></div>`;
@@ -2108,9 +2153,10 @@ function renderTimeline() {
             const visibleStart=Math.max(item.start,segmentStart), visibleEnd=Math.min(item.end,segmentEnd);
             const color=MODULE_COLORS[normalizeModule(item.task.module)]||'#8aa9c8', top=(visibleStart-segmentStart)/TIMELINE_SLOT_MIN*TIMELINE_SLOT_HEIGHT, height=(visibleEnd-visibleStart)/TIMELINE_SLOT_MIN*TIMELINE_SLOT_HEIGHT;
             const laneWidth=100/item.laneCount, left=item.lane*laneWidth;
+            const timelineName=escapeHtml(`${MODULE_SHORT[normalizeModule(item.task.module)]||normalizeModule(item.task.module)} ${item.sub.name||(item.task.name+(item.task.type==='single'?'':item.sub.idx))}`);
             column+=`<div class="timeline-task ${item.sub.done?'done':''} ${item.sub.planDuration<=30?'short':''}" data-timeline-key="${item.key}" data-segment-start="${segmentStart}" onclick="event.stopPropagation();openTimelineTaskEditor('${item.key}')" style="--task-color:${color};top:${top}px;height:${height}px;left:calc(${left}% + 2px);width:calc(${laneWidth}% - 4px);pointer-events:auto;">
                 ${timelineEditMode?`<div class="timeline-resize top" data-resize="top"></div><div class="timeline-resize bottom" data-resize="bottom"></div><button class="timeline-remove" title="移出时间轴" onclick="event.stopPropagation();clearSubtaskPlan(${item.task.id},${item.idx})">×</button>`:''}
-                <div class="timeline-task-main">${item.sub.done?'<span class="timeline-done-mark">✓</span>':''}<span class="timeline-task-name" title="${MODULE_SHORT[normalizeModule(item.task.module)]||normalizeModule(item.task.module)} ${item.sub.name||(item.task.name+(item.task.type==='single'?'':item.sub.idx))}">${MODULE_SHORT[normalizeModule(item.task.module)]||normalizeModule(item.task.module)} ${item.sub.name||(item.task.name+(item.task.type==='single'?'':item.sub.idx))}</span></div></div>`;
+                <div class="timeline-task-main">${item.sub.done?'<span class="timeline-done-mark">✓</span>':''}<span class="timeline-task-name" title="${timelineName}">${timelineName}</span></div></div>`;
         });
         return column+'</div></div></div>';
     }).join('');
@@ -2128,7 +2174,7 @@ function openTimelineModal(startMin) {
     document.getElementById('timelineModalStart').textContent=minutesToClock(startMin);
     document.getElementById('timelineEditStartInput').value=minutesToClock(startMin);
     const tasks=getTimelineTasks(timelineSelectedDate).filter(x=>!x.sub.planStart).sort((a,b)=>MODULES.indexOf(normalizeModule(a.task.module))-MODULES.indexOf(normalizeModule(b.task.module))||a.task.name.localeCompare(b.task.name,'zh-CN')||a.sub.idx-b.sub.idx);
-    document.getElementById('timelineTaskPicker').innerHTML=tasks.length?tasks.map(x=>`<div class="timeline-picker-item" data-key="${x.key}" onclick="selectTimelineTask('${x.key}',this)"><span class="timeline-picker-dot" style="background:${MODULE_COLORS[normalizeModule(x.task.module)]||'#8aa9c8'}"></span><span><strong>${x.sub.name||x.task.name}</strong><small style="display:block;color:var(--text-3);">${x.task.module}${x.task.type==='single'?'':` · 第 ${x.sub.idx} 项`}</small></span></div>`).join(''):'<div class="timeline-picker-empty">今日任务均已安排时段</div>';
+    document.getElementById('timelineTaskPicker').innerHTML=tasks.length?tasks.map(x=>`<div class="timeline-picker-item" data-key="${x.key}" onclick="selectTimelineTask('${x.key}',this)"><span class="timeline-picker-dot" style="background:${MODULE_COLORS[normalizeModule(x.task.module)]||'#8aa9c8'}"></span><span><strong>${escapeHtml(x.sub.name||x.task.name)}</strong><small style="display:block;color:var(--text-3);">${escapeHtml(x.task.module)}${x.task.type==='single'?'':` · 第 ${x.sub.idx} ${escapeHtml(x.task.unit||'项')}`}</small></span></div>`).join(''):'<div class="timeline-picker-empty">今日任务均已安排时段</div>';
     document.getElementById('timelineDurationPicker').innerHTML=TIMELINE_DURATIONS.map(d=>`<button class="${d===60?'active':''}" onclick="selectTimelineDuration(${d},this)">${d} 分钟</button>`).join('');
     document.getElementById('timelineModal').classList.add('active');
 }
@@ -2203,7 +2249,7 @@ function autoSaveSubEdit(tid, idx) {
     if(dateEl&&dateEl.value)s.date=dateEl.value;if(nameEl)s.name=nameEl.value.trim();if(totalEl)s.total=Math.max(0,parseInt(totalEl.value)||0);if(correctEl){s.correct=Math.max(0,parseInt(correctEl.value)||0);if(s.total>0&&s.correct>s.total){s.correct=s.total;correctEl.value=s.total;}}if(timeEl)s.time=Math.max(0,parseFloat(timeEl.value)||0);if(stSel)s.subType=stSel.value;
     if(planEl){const duration=Math.max(0,Math.round((parseFloat(planEl.value)||0)/TIMELINE_SETTING_MIN)*TIMELINE_SETTING_MIN);if(s.planStart&&duration)setSubtaskPlan(t,s,clockToMinutes(s.planStart),duration,true);else if(!duration){s.planDuration=0;s.planEnd='';}}
     appData.completedTasks=appData.completedTasks.filter(c=>!(c.taskId===tid&&c.idx===s.idx));
-    if(s.done)appData.completedTasks.push({module:t.module,subType:s.subType||'',name:s.name||t.name,total:s.total||0,correct:s.correct||0,time:s.time||0,date:s.date,taskId:tid,idx:s.idx,kind:isNonQ?'nonQuantified':'quantified'});
+    if(s.done)appData.completedTasks.push({module:t.module,subType:s.subType||'',name:s.name||t.name,unit:t.unit||'项',total:s.total||0,correct:s.correct||0,time:s.time||0,date:s.date,taskId:tid,idx:s.idx,kind:isNonQ?'nonQuantified':'quantified'});
     saveData();
 }
 function saveSubEdit(tid, idx) {
@@ -2231,7 +2277,7 @@ function saveSubEdit(tid, idx) {
     appData.completedTasks = appData.completedTasks.filter(c => !(c.taskId === tid && c.idx === s.idx));
     if (wasDone) {
         appData.completedTasks.push({
-            module: t.module, subType: newSubType, name: s.name || t.name,
+            module: t.module, subType: newSubType, name: s.name || t.name, unit: t.unit || '项',
             total: newTotal, correct: newCorrect, time: newTime,
             date: newDate, taskId: tid, idx: s.idx, kind: isNonQ ? 'nonQuantified' : 'quantified'
         });
@@ -2244,10 +2290,32 @@ function saveSubEdit(tid, idx) {
     saveData(); renderAll();
     if (wasExpanded) { const el = document.querySelector(`[data-task-block="${tid}"]`); if (el) el.classList.add('expanded'); }
 }
+let splitSubtaskTarget=null;
+function openSplitSubtaskModal(tid,idx){
+    const t=appData.studyTasks.find(x=>x.id===tid),s=t?.subtasks?.[idx];if(!t||!s)return;
+    splitSubtaskTarget={tid,idx};const displayName=s.name||(t.type==='single'?t.name:`${t.name} 第${s.idx}${t.unit||'项'}`);
+    document.getElementById('splitSubtaskSummary').textContent=`${displayName}｜${s.total||0} 题｜${s.date}`;
+    document.getElementById('splitSubtaskCount').value=2;document.getElementById('splitSubtaskModal').classList.add('active');setTimeout(()=>document.getElementById('splitSubtaskCount').select(),0);
+}
+function closeSplitSubtaskModal(){document.getElementById('splitSubtaskModal').classList.remove('active');splitSubtaskTarget=null;}
+function rebuildCompletedRecordsForTask(t){
+    appData.completedTasks=(appData.completedTasks||[]).filter(c=>c.taskId!==t.id);
+    t.subtasks.filter(s=>s.done).forEach(s=>appData.completedTasks.push({module:t.module,subType:s.subType||'',name:s.name||t.name,unit:t.unit||'项',total:s.total||0,correct:s.correct||0,time:s.time||0,date:s.date,taskId:t.id,idx:s.idx,kind:s.kind||t.kind||'quantified'}));
+}
+function confirmSplitSubtask(){
+    if(!splitSubtaskTarget)return;const {tid,idx}=splitSubtaskTarget,t=appData.studyTasks.find(x=>x.id===tid),source=t?.subtasks?.[idx],parts=parseInt(document.getElementById('splitSubtaskCount').value);
+    if(!t||!source){closeSplitSubtaskModal();return;}if(!parts||parts<2||parts>50){alert('拆分份数请输入 2 至 50');return;}
+    const baseName=source.name||(t.type==='single'?t.name:`${t.name}-${source.idx}`),total=Math.max(0,parseInt(source.total)||0),base=Math.floor(total/parts),remainder=total%parts;
+    const pieces=Array.from({length:parts},(_,i)=>({...source,idx:source.idx+i,name:`${baseName}-${i+1}`,date:addDays(source.date,i),done:false,total:base+(i<remainder?1:0),correct:0,time:0}));
+    const timerKey=`${tid}:${idx}`;if(typeof subtaskAutoSaveTimers!=='undefined'&&subtaskAutoSaveTimers[timerKey]){clearTimeout(subtaskAutoSaveTimers[timerKey]);delete subtaskAutoSaveTimers[timerKey];}
+    t.subtasks.splice(idx,1,...pieces);t.subtasks.sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.idx||0)-(b.idx||0));t.subtasks.forEach((s,i)=>s.idx=i+1);
+    t.subtaskCount=t.subtasks.length;t.startIdx=1;t.startDate=t.subtasks[0]?.date||t.startDate;if(t.subtasks.length>1&&t.type==='single'){t.type='periodic';t.scheduleMode='all_week';t.dailyCount=1;}
+    rebuildCompletedRecordsForTask(t);scheduleEditTarget=null;subEditMode=null;saveData();closeSplitSubtaskModal();renderAll();
+}
 function deleteSubtask(tid, idx) {
     const t = appData.studyTasks.find(x => x.id === tid); if (!t) return;
     const s = t.subtasks[idx];
-    if (!confirm(`确定删除第 ${s.idx} 项子任务？`)) return;
+    if (!confirm(`确定删除第 ${s.idx} ${t.unit||'项'}子任务？`)) return;
     appData.completedTasks = appData.completedTasks.filter(c => !(c.taskId === tid && c.idx === s.idx));
     t.subtasks.splice(idx, 1);
     if (t.subtasks.length === 0) {
@@ -2278,7 +2346,7 @@ function renderTaskBlocks() {
             const color = MODULE_COLORS[t.module];
             const completed = isTaskCompleted(t);
             const isNonQuantified = t.kind === 'nonQuantified';
-            const nameDisplay = t.name;
+            const nameDisplay = escapeHtml(t.name);
             const tagDone = completed ? '<span class="tag-done">已完成</span>' : '';
             const endDate = t.subtasks.length > 0 ? t.subtasks[t.subtasks.length - 1].date : t.startDate;
             const dateRange = t.type === 'single' ? t.startDate : `${t.startDate} ~ ${endDate}`;
@@ -2287,7 +2355,7 @@ function renderTaskBlocks() {
                 <div class="task-block-header" onclick="toggleExpand(${t.id})">
                     <span class="module-dot" style="background:${color};"></span><span class="tag-mod">${t.module}</span>${tagDone}
                     <span class="task-name-date"><strong>${nameDisplay}</strong><span class="task-inline-date task-meta-inline"><svg class="task-meta-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M8 3.5v4M16 3.5v4M3.5 10h17"/></svg>${dateRange}</span></span>
-                    <span class="task-header-summary"><span class="task-meta-inline"><svg class="task-meta-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M5 12h9M5 18h7"/><path d="M16 16l2 2 3-4"/></svg>${doneCount}/${total}项</span>${metaStats}</span>
+                    <span class="task-header-summary"><span class="task-meta-inline"><svg class="task-meta-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M5 12h9M5 18h7"/><path d="M16 16l2 2 3-4"/></svg>${doneCount}/${total}${escapeHtml(t.unit||'项')}</span>${metaStats}</span>
                     <span class="toggle-icon"></span>
                 </div>
                 <div class="task-block-progress"><div class="bar" style="width:${pct}%;"></div></div>
@@ -2308,16 +2376,17 @@ function renderTaskBlocks() {
                     const subTypeOptions = MODULE_SUBTYPES[t.module] || [];
                     const stHtml = subTypeOptions.length ? `<select id="se-subtype-${t.id}-${idx}" class="se-input se-subtype" onchange="autoSaveSubEdit(${t.id},${idx})"><option value="">无</option>${subTypeOptions.map(o=>`<option value="${o}" ${s.subType===o?'selected':''}>${o}</option>`).join('')}</select>` : '';
                     const isEssay = normalizeModule(t.module) === '申论';
-                    const quantInputs = (sNonQ ? `<input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="实际用时" value="${s.time||''}" min="0" oninput="queueSubtaskAutoSave(${t.id},${idx})">` : `<input type="number" id="se-total-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'总分':'总题'}" value="${s.total||''}" min="0" oninput="queueSubtaskAutoSave(${t.id},${idx})"><input type="number" id="se-correct-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'得分':'正确'}" value="${s.correct||''}" min="0" oninput="queueSubtaskAutoSave(${t.id},${idx})"><input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="实际用时" value="${s.time||''}" min="0" oninput="queueSubtaskAutoSave(${t.id},${idx})">`)+`<input type="number" id="se-plan-${t.id}-${idx}" class="se-input se-small" placeholder="计划分钟" value="${s.planDuration||''}" min="0" step="15" oninput="queueSubtaskAutoSave(${t.id},${idx})">`;
+                    const quantInputs = (sNonQ ? `<input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="实际分钟" value="${s.time||''}" min="0" oninput="queueSubtaskAutoSave(${t.id},${idx})">` : `<input type="number" id="se-correct-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'得分':'正确'}" value="${s.correct||''}" min="0" oninput="queueSubtaskAutoSave(${t.id},${idx})"><input type="number" id="se-total-${t.id}-${idx}" class="se-input se-small" placeholder="${isEssay?'总分':'总题'}" value="${s.total||''}" min="0" oninput="queueSubtaskAutoSave(${t.id},${idx})"><input type="number" id="se-time-${t.id}-${idx}" class="se-input se-small" placeholder="实际分钟" value="${s.time||''}" min="0" oninput="queueSubtaskAutoSave(${t.id},${idx})">`)+`<input type="number" id="se-plan-${t.id}-${idx}" class="se-input se-small" placeholder="计划分钟" value="${s.planDuration||''}" min="0" step="15" oninput="queueSubtaskAutoSave(${t.id},${idx})">`;
                     html += `<div class="sub-row editing">
                         ${subNumberHtml}
                         <div class="sr-edit-form">
-                            <input type="text" id="se-name-${t.id}-${idx}" class="se-input" value="${s.name||''}" placeholder="子任务名称" oninput="queueSubtaskAutoSave(${t.id},${idx})">
+                            <input type="text" id="se-name-${t.id}-${idx}" class="se-input" value="${escapeHtml(s.name||'')}" placeholder="子任务名称" oninput="queueSubtaskAutoSave(${t.id},${idx})">
                             <input type="date" id="se-date-${t.id}-${idx}" class="se-input" value="${s.date}" onchange="autoSaveSubEdit(${t.id},${idx})">
                             ${stHtml}
                             ${quantInputs}
                         </div>
                         <div class="sr-actions">
+                            <button onclick="event.stopPropagation();openSplitSubtaskModal(${t.id},${idx})" title="拆分子任务" aria-label="拆分子任务">${scheduleOutlineIcon('split')}</button>
                             <button onclick="event.stopPropagation();deleteSubtask(${t.id},${idx})" title="删除" aria-label="删除">${scheduleOutlineIcon('delete')}</button>
                             <button title="提前一天" aria-label="提前一天" onclick="event.stopPropagation();moveTaskForward(${t.id},${idx})">${scheduleOutlineIcon('left')}</button>
                             <button title="顺延一天" aria-label="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${t.id},${idx})">${scheduleOutlineIcon('right')}</button>
@@ -2329,18 +2398,18 @@ function renderTaskBlocks() {
                     const dc = s.done ? 'done' : '';
                     const statusText = s.done ? '已完成' : (s.date < getToday() ? '已逾期' : '待完成');
                     const sc2 = s.done ? '#a8d5a2' : (s.date < getToday() ? '#e87878' : '#bda0a6');
-                    const stTag = s.subType ? `<span class="stat-item" style="color:#6ab7d6;">${s.subType}</span>` : '';
-                    const planTag = s.planDuration ? `<span class="planned-time-pill">计划 ${s.planStart||''} · ${s.planDuration}分</span>` : '';
+                    const stTag = s.subType ? `<span class="stat-item" style="color:#6ab7d6;">${escapeHtml(s.subType)}</span>` : '';
+                    const planTag = s.planDuration ? `<span class="planned-time-pill">计划 ${s.planStart||''} · ${s.planDuration}分钟</span>` : '';
                     let statsHtml;
                     if (sNonQ) {
                         statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}${planTag}</div>`;
                     } else {
                         const rate = s.total > 0 ? Math.round(s.correct/s.total*100) : 0;
-                        const ts = s.time > 0 ? `${s.time}分` : '未填';
+                        const ts = s.time > 0 ? `${s.time}分钟` : '未填';
                         const isEssay = normalizeModule(t.module) === '申论';
                         statsHtml = `<div class="sr-stats"><span class="stat-item" style="color:${sc2};">${statusText}</span>${stTag}<span class="correct-pill">${s.correct}/${s.total}</span><span class="rate">${rate}%</span><span class="dv-time">${ts}</span>${planTag}</div>`;
                     }
-                    html += `<div class="sub-row ${dc}"><div class="dv-check ${dc}" role="button" tabindex="0" title="${s.done?'取消完成':'标记完成'}" aria-label="${s.done?'取消完成':'标记完成'}" onclick="event.stopPropagation();toggleSubtaskDone(${t.id},${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleSubtaskDone(${t.id},${idx})}"></div>${subNumberHtml}<div class="sr-info">${s.name?`<span class="sr-name">${s.name}</span>`:''}<span class="sr-date">${s.date}</span>${statsHtml}</div></div>`;
+                    html += `<div class="sub-row ${dc}"><div class="dv-check ${dc}" role="button" tabindex="0" title="${s.done?'取消完成':'标记完成'}" aria-label="${s.done?'取消完成':'标记完成'}" onclick="event.stopPropagation();toggleSubtaskDone(${t.id},${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleSubtaskDone(${t.id},${idx})}"></div>${subNumberHtml}<div class="sr-info">${s.name?`<span class="sr-name">${escapeHtml(s.name)}</span>`:''}<span class="sr-date">${s.date}</span>${statsHtml}</div></div>`;
                 }
             });
             html += `</div></div>`;
@@ -2476,7 +2545,7 @@ function toggleStatsTask(key, event) { if (event) event.stopPropagation(); if (e
 function statDetail(total, correct, time) {
     const avg = total > 0 ? (time/total).toFixed(1) : '0.0';
     const rate = total > 0 ? Math.round(correct/total*100) : 0;
-    return `总题数 ${total} · 正确题数 ${correct} · 平均每题 ${avg}分 · 总正确率 ${rate}%`;
+    return `总题数 ${total} · 正确题数 ${correct} · 平均每题 ${avg}分钟 · 总正确率 ${rate}%`;
 }
 function renderStats() {
     const { stats, taskStats } = collectStats();
@@ -2491,7 +2560,7 @@ function renderStats() {
     const grandAvgTime = grandTotal > 0 ? (grandTime/grandTotal).toFixed(1) : '0.0';
     let chartHtml = `<div class="stats-summary" style="display:flex; gap:12px; margin-bottom:12px; padding:10px 14px; background:#fcf8f5; border-radius:12px; flex-wrap:wrap; align-items:center;">
         <span style="font-size:13px; font-weight:600; color:#7a4b55;">总题量 <strong style="color:#3d2c2c;">${grandTotal}</strong></span>
-        <span style="font-size:13px; font-weight:600; color:#7a4b55;">平均每题用时 <strong style="color:#3d2c2c;">${grandAvgTime}分</strong></span>
+        <span style="font-size:13px; font-weight:600; color:#7a4b55;">平均每题用时 <strong style="color:#3d2c2c;">${grandAvgTime}分钟</strong></span>
         <span style="font-size:13px; font-weight:700; padding:3px 12px; border-radius:10px; color:${grandRateColor}; background:${grandRateColor}22;">总正确率 ${grandRate}%</span>
     </div>`;
     if (grandTotal > 0) {
@@ -2527,7 +2596,7 @@ function renderStats() {
             <span class="sm-dot" style="background:${color};"></span>
             <span class="sm-name">${m}</span>
             <span class="sm-stat">题量${s.total}</span>
-            <span class="sm-stat">均每题${avgTime}分</span>
+            <span class="sm-stat">均每题${avgTime}分钟</span>
             <span class="sm-rate" style="color:${rateColor};background:${rateColor}22;">${rate}%</span>
             ${hasSubs?`<span class="sm-expand"></span>`:''}
         </div>`;
@@ -2535,10 +2604,10 @@ function renderStats() {
             listHtml += '<div class="stats-detail-group">';
             Object.entries(taskStats).filter(([,v])=>v.module===m).forEach(([key, ts]) => {
                 const open = expandedStatsTasks.has(key);
-                listHtml += `<div class="stats-task-row" onclick="toggleStatsTask('${key}',event)"><span class="detail-chevron ${open?'open':''}"></span><span class="detail-name">${ts.name}</span><span>${statDetail(ts.total,ts.correct,ts.time)}</span></div>`;
+                listHtml += `<div class="stats-task-row" onclick="toggleStatsTask('${key}',event)"><span class="detail-chevron ${open?'open':''}"></span><span class="detail-name">${escapeHtml(ts.name)}</span><span>${statDetail(ts.total,ts.correct,ts.time)}</span></div>`;
                 if (open) ts.entries.slice().sort((a,b)=>(a.date||'').localeCompare(b.date||'')).forEach((entry, i) => {
-                    const subtype = entry.subType ? ` · ${entry.subType}` : '';
-                    listHtml += `<div class="stats-sub-row"><span class="detail-name">${entry.date||''}${subtype} · 第${entry.idx||i+1}项</span><span>${statDetail(entry.total||0,entry.correct||0,entry.time||0)}</span></div>`;
+                    const subtype = entry.subType ? ` · ${escapeHtml(entry.subType)}` : '';
+                    listHtml += `<div class="stats-sub-row"><span class="detail-name">${entry.date||''}${subtype} · 第${entry.idx||i+1}${escapeHtml(entry.unit||'项')}</span><span>${statDetail(entry.total||0,entry.correct||0,entry.time||0)}</span></div>`;
                 });
             });
             listHtml += '</div>';
@@ -2570,7 +2639,7 @@ function renderTimeStats() {
     const total = MODULES.reduce((n,m)=>n+times[m],0);
     if (!total) { el.innerHTML='<div class="stats-empty">该时段暂无用时数据</div>'; return; }
     let cursor=0, parts=[]; MODULES.forEach(m=>{ if(!times[m])return; const from=cursor/total*360; cursor+=times[m]; const to=cursor/total*360; parts.push(`${getSoftModuleColor(m)} ${from}deg ${to}deg`); });
-    const legend = MODULES.filter(m=>times[m]>0).map(m=>`<div class="time-legend-row"><span class="sm-dot" style="background:${getSoftModuleColor(m)};width:9px;height:9px;border-radius:50%;"></span><span>${m}</span><span class="tl-value">${times[m]}分 · ${Math.round(times[m]/total*100)}%</span></div>`).join('');
+    const legend = MODULES.filter(m=>times[m]>0).map(m=>`<div class="time-legend-row duration-legend-row"><span class="sm-dot" style="background:${getSoftModuleColor(m)};width:9px;height:9px;border-radius:50%;"></span><span>${m}</span><span class="tl-value">${times[m]}分钟 · ${Math.round(times[m]/total*100)}%</span></div>`).join('');
     el.innerHTML=`<div class="time-pie-wrap"><div class="time-pie" style="background:conic-gradient(${parts.join(',')});"><div class="time-pie-center"><strong>${total}</strong><span>分钟</span></div></div><div class="time-legend">${legend}</div></div>`;
 }
 
@@ -2849,11 +2918,11 @@ function renderExamRecords() {
                 detailHtml += `<div class="exam-detail-row"><span class="ed-mod" style="color:${color};">${sec.module}</span><div class="ed-bar"><div class="ed-bar-fill" style="width:${modRate}%;background:${color};"></div></div><span class="ed-val">${modS}/${Math.round(modMax*10)/10} (${modRate}%)</span></div>`;
             }
         });
-            if (e.remark) detailHtml += `<div class="exam-remark">${e.remark}</div>`;
+            if (e.remark) detailHtml += `<div class="exam-remark">${escapeHtml(e.remark)}</div>`;
             detailHtml += `<div class="exam-actions"><button class="btn-edit icon-edit-button" title="编辑模考" aria-label="编辑模考" onclick="event.stopPropagation();openExamModal(${e.id})">${scheduleOutlineIcon('edit')}</button><button class="btn-del" onclick="event.stopPropagation();deleteExamRecord(${e.id})">删除</button></div>`;
         html += `<div class="exam-card" onclick="this.classList.toggle('expanded')">
             <div class="exam-card-header">
-                <span class="ec-name">${e.name}</span>
+                <span class="ec-name">${escapeHtml(e.name)}</span>
                 <span class="ec-type">${et.name}</span>
                 <span class="ec-score">${score}/${maxScore}</span>
             </div>
@@ -2894,14 +2963,7 @@ function importBackup(event) {
                 return;
             }
             if (!confirm(`导入将覆盖当前所有数据，确定继续吗？`)) return;
-            appData.exams = data.exams || [];
-            appData.studyTasks = (data.studyTasks || []).map(t => {
-                if (!t.subtasks) t.subtasks = [];
-                t.subtasks.forEach(s => { if (s.name===undefined) s.name=''; if (s.done===undefined) s.done=false; if (s.total===undefined) s.total=0; if (s.correct===undefined) s.correct=0; if (s.time===undefined) s.time=0; if (s.subType===undefined) s.subType=''; if (s.kind===undefined) s.kind='quantified'; });
-                return t;
-            });
-            appData.examRecords = data.examRecords || [];
-            appData.completedTasks = data.completedTasks || [];
+            appData=normalizeAppData(data);
             saveData();
             renderAll();
             alert('备份导入成功');
