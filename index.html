@@ -797,12 +797,16 @@
         .schedule-timeline-columns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; min-width:680px; padding:12px 12px 12px 0; }
         .schedule-timeline-column-title { margin:0 0 7px 42px; color:var(--text-3); font-size:10px; font-weight:650; text-align:center; }
         .schedule-timeline-axis { --schedule-slot-h:58px; position:relative; min-width:280px; margin-left:42px; }
-        .schedule-timeline-slot { position:absolute; left:0; right:0; height:var(--schedule-slot-h); border-top:1px solid var(--line); cursor:pointer; }
+        .schedule-timeline-slot { position:absolute; left:0; right:0; height:var(--schedule-slot-h); border-top:1px solid var(--line); cursor:default; }
         .schedule-timeline-slot.half-hour { border-top-style:dashed; opacity:.75; }
+        .schedule-timeline-slot-hit { position:absolute; left:0; right:0; height:50%; z-index:1; cursor:pointer; }
+        .schedule-timeline-slot-hit.first { top:0; }
+        .schedule-timeline-slot-hit.second { bottom:0; }
+        .schedule-timeline-slot-hit:hover { background:var(--accent-soft); }
         .schedule-timeline-label { position:absolute; left:-42px; top:-7px; width:38px; color:var(--text-3); font-size:10px; text-align:right; pointer-events:none; }
-        .schedule-timeline-task { position:absolute; z-index:5; padding:1px 3px; min-height:56px; pointer-events:auto; touch-action:auto; }
+        .schedule-timeline-task { position:absolute; z-index:5; padding:1px 3px; min-height:0; overflow:hidden; pointer-events:auto; touch-action:auto; }
         .schedule-timeline-task.editing { touch-action:none; cursor:grab; }
-        .schedule-timeline-task .day-view-item { height:100%; min-height:54px; margin:0; box-sizing:border-box; align-content:center; }
+        .schedule-timeline-task .day-view-item { height:100%; min-height:0; margin:0; box-sizing:border-box; align-content:center; }
         .schedule-timeline-task .timeline-resize { display:none; }
         .schedule-timeline-task.editing .timeline-resize { display:block; }
         .schedule-timeline-task.dragging { opacity:.72; z-index:30; }
@@ -1866,26 +1870,24 @@ function renderScheduleTimeline(c, subs) {
     const planned=subs.filter(x=>x.sub.planStart&&x.sub.planDuration).map(x=>({...x,key:`${x.taskId}:${x.subIdx}`,start:clockToMinutes(x.sub.planStart),end:clockToMinutes(x.sub.planStart)+(x.sub.planDuration||30)})).sort((a,b)=>a.start-b.start||MODULES.indexOf(a.module)-MODULES.indexOf(b.module)||a.taskName.localeCompare(b.taskName,'zh-CN'));
     const unplanned=subs.filter(x=>!x.sub.planStart||!x.sub.planDuration);
     if(timelineHideEmptySlots){
-        const columns=[[],[]];planned.forEach((item,index)=>columns[index%2].push(item));
-        let compact=`<div class="schedule-compact-columns">${columns.map(items=>`<div class="schedule-compact-column">${items.map(item=>`<div class="schedule-compact-row"><div class="schedule-compact-time">${item.sub.planStart||minutesToClock(item.start)}</div><div class="schedule-compact-item" onclick="openTimelineTaskEditor('${item.key}')">${renderScheduleDayCard(item)}</div></div>`).join('')}</div>`).join('')}</div>`;
+        const split=Math.ceil(planned.length/2),columns=[planned.slice(0,split),planned.slice(split)];
+        let compact=`<div class="schedule-compact-columns">${columns.map(items=>`<div class="schedule-compact-column">${items.map(item=>`<div class="schedule-compact-row"><div class="schedule-compact-time">${item.sub.planStart||minutesToClock(item.start)}</div><div class="schedule-compact-item">${renderScheduleDayCard(item)}</div></div>`).join('')}</div>`).join('')}</div>`;
         if(!planned.length)compact=`<div class="day-view-empty">暂无已规划任务</div>`;
         if(unplanned.length)compact+=`<div class="schedule-timeline-unplanned"><div class="schedule-timeline-unplanned-title">无规划时段</div><div class="schedule-timeline-unplanned-list">${unplanned.map(renderScheduleDayCard).join('')}</div></div>`;
         c.innerHTML=compact;return;
     }
-    const slotH=58,segments=[[7*60,15*60],[15*60,23*60]],now=new Date(),nowMin=now.getHours()*60+now.getMinutes();
+    const slotH=35,segments=[[7*60,15*60],[15*60,23*60]],now=new Date(),nowMin=now.getHours()*60+now.getMinutes();
     let html=`<div class="schedule-timeline"><div class="schedule-timeline-columns">`;
     segments.forEach(([segmentStart,segmentEnd])=>{
-        const segmentItems=planned.filter(item=>item.start<segmentEnd&&item.end>segmentStart),allSlots=Array.from({length:(segmentEnd-segmentStart)/TIMELINE_SLOT_MIN},(_,i)=>segmentStart+i*TIMELINE_SLOT_MIN);
-        const slotFor=item=>Math.max(segmentStart,Math.min(segmentEnd-TIMELINE_SLOT_MIN,segmentStart+Math.floor((item.start-segmentStart)/TIMELINE_SLOT_MIN)*TIMELINE_SLOT_MIN));
-        const counts=new Map();segmentItems.forEach(item=>{const slot=slotFor(item);counts.set(slot,(counts.get(slot)||0)+1);});
-        const visibleSlots=timelineHideEmptySlots?allSlots.filter(min=>segmentItems.some(item=>item.start<min+TIMELINE_SLOT_MIN&&item.end>min)):allSlots;
-        const slotTops=new Map();let axisHeight=0;visibleSlots.forEach(min=>{slotTops.set(min,axisHeight);axisHeight+=slotH*Math.max(1,counts.get(min)||0);});axisHeight=Math.max(slotH,axisHeight);
+        const displaySlot=60,segmentItems=planned.filter(item=>item.start<segmentEnd&&item.end>segmentStart),visibleSlots=Array.from({length:(segmentEnd-segmentStart)/displaySlot},(_,i)=>segmentStart+i*displaySlot);
+        const slotFor=item=>Math.max(segmentStart,Math.min(segmentEnd-displaySlot,Math.floor(item.start/displaySlot)*displaySlot));
+        const counts=new Map();segmentItems.forEach(item=>{const slot=slotFor(item),half=item.start-slot>=30?'second':'first',entry=counts.get(slot)||{first:0,second:0};entry[half]++;counts.set(slot,entry);});
+        const slotTops=new Map(),slotRows=new Map();let axisHeight=0;visibleSlots.forEach(min=>{const count=counts.get(min)||{first:0,second:0},rows={first:Math.max(1,count.first),second:Math.max(1,count.second)};slotTops.set(min,axisHeight);slotRows.set(min,rows);axisHeight+=slotH*(rows.first+rows.second);});
         html+=`<div><div class="schedule-timeline-column-title">${minutesToClock(segmentStart)}–${minutesToClock(segmentEnd)}</div><div class="schedule-timeline-axis" style="height:${axisHeight}px">`;
-        visibleSlots.forEach(min=>{const isHalf=min%60!==0,rowHeight=slotH*Math.max(1,counts.get(min)||0);html+=`<div class="schedule-timeline-slot ${isHalf?'half-hour':''}" style="top:${slotTops.get(min)}px;height:${rowHeight}px" onclick="openTimelineModal(${min})">${isHalf?'':`<span class="schedule-timeline-label">${minutesToClock(min)}</span>`}</div>`;});
-        if(!visibleSlots.length)html+=`<div class="day-view-empty" style="padding:18px 4px;">无已规划任务</div>`;
-        else html+=`<span class="schedule-timeline-label" style="top:${axisHeight-7}px">${minutesToClock(segmentEnd)}</span>`;
-        if(!timelineHideEmptySlots&&selectedDate===getToday()&&nowMin>=segmentStart&&nowMin<=segmentEnd)html+=`<div class="timeline-now" style="top:${(nowMin-segmentStart)/TIMELINE_SLOT_MIN*slotH}px"></div>`;
-        const stackUsed=new Map();segmentItems.forEach(item=>{const slot=slotFor(item);if(!slotTops.has(slot))return;const stackIndex=stackUsed.get(slot)||0;stackUsed.set(slot,stackIndex+1);const quarterOffset=(item.start-slot)/TIMELINE_SLOT_MIN*slotH,top=slotTops.get(slot)+stackIndex*slotH+quarterOffset,height=58;html+=`<div class="schedule-timeline-task ${timelineEditMode?'editing':''}" data-timeline-key="${item.key}" data-segment-start="${segmentStart}" style="top:${top}px;height:${height}px;left:2px;width:calc(100% - 4px)" onclick="event.stopPropagation();openTimelineTaskEditor('${item.key}')">${timelineEditMode?`<div class="timeline-resize top" data-resize="top"></div><div class="timeline-resize bottom" data-resize="bottom"></div><button class="timeline-remove" title="移出时间轴" onclick="event.stopPropagation();clearSubtaskPlan(${item.taskId},${item.subIdx})">×</button>`:''}${renderScheduleDayCard(item)}</div>`;});
+        visibleSlots.forEach(min=>{const rows=slotRows.get(min),rowHeight=slotH*(rows.first+rows.second);html+=`<div class="schedule-timeline-slot" style="top:${slotTops.get(min)}px;height:${rowHeight}px"><span class="schedule-timeline-label">${minutesToClock(min)}</span>${timelineEditMode?`<span class="schedule-timeline-slot-hit first" style="height:${rows.first*slotH}px" onclick="openTimelineModal(${min})"></span><span class="schedule-timeline-slot-hit second" style="height:${rows.second*slotH}px" onclick="openTimelineModal(${min+30})"></span>`:''}</div>`;});
+        html+=`<span class="schedule-timeline-label" style="top:${axisHeight-7}px">${minutesToClock(segmentEnd)}</span>`;
+        if(selectedDate===getToday()&&nowMin>=segmentStart&&nowMin<segmentEnd){const hour=Math.floor(nowMin/60)*60,rows=slotRows.get(hour),half=nowMin-hour>=30?'second':'first',within=(nowMin-hour-(half==='second'?30:0))/30,top=slotTops.get(hour)+(half==='second'?rows.first*slotH:0)+within*slotH;html+=`<div class="timeline-now" style="top:${top}px"></div>`;}
+        const stackUsed=new Map();segmentItems.forEach(item=>{const slot=slotFor(item);if(!slotTops.has(slot))return;const half=item.start-slot>=30?'second':'first',key=`${slot}:${half}`,stackIndex=stackUsed.get(key)||0;stackUsed.set(key,stackIndex+1);const rows=slotRows.get(slot),withinHalf=(item.start-slot-(half==='second'?30:0))/30*slotH,top=slotTops.get(slot)+(half==='second'?rows.first*slotH:0)+stackIndex*slotH+withinHalf,height=Math.max(7,(Math.min(item.end,segmentEnd)-Math.max(item.start,segmentStart))/30*slotH),editClick=timelineEditMode?`onclick="event.stopPropagation();openTimelineTaskEditor('${item.key}')"`:'';html+=`<div class="schedule-timeline-task ${timelineEditMode?'editing':''}" data-timeline-key="${item.key}" data-segment-start="${segmentStart}" style="top:${top}px;height:${height}px;left:2px;width:calc(100% - 4px)" ${editClick}>${timelineEditMode?`<div class="timeline-resize top" data-resize="top"></div><div class="timeline-resize bottom" data-resize="bottom"></div><button class="timeline-remove" title="移出时间轴" onclick="event.stopPropagation();clearSubtaskPlan(${item.taskId},${item.subIdx})">×</button>`:''}${renderScheduleDayCard(item)}</div>`;});
         html+=`</div></div>`;
     });
     html+=`</div></div>`;
@@ -1899,7 +1901,7 @@ function bindScheduleTimelineDrag(){
         if(event.target.closest('button,input,.dv-check'))return;
         const found=findTimelineTask(card.dataset.timelineKey);if(!found)return;
         const mode=event.target.dataset.resize||'move',start=clockToMinutes(found.sub.planStart),duration=found.sub.planDuration;
-        timelineDragState={card,found,mode,start,duration,startY:event.clientY,lastDelta:0,schedule:true,slotHeight:58};card.classList.add('dragging');card.setPointerCapture(event.pointerId);event.preventDefault();
+        timelineDragState={card,found,mode,start,duration,startY:event.clientY,lastDelta:0,schedule:true,slotHeight:35};card.classList.add('dragging');card.setPointerCapture(event.pointerId);event.preventDefault();
     }));
 }
 
@@ -2163,7 +2165,7 @@ document.addEventListener('pointermove',event=>{
     const d=timelineDragState;if(!d)return;const dragSlotHeight=d.schedule?d.slotHeight:TIMELINE_SLOT_HEIGHT,slots=Math.round((event.clientY-d.startY)/dragSlotHeight),delta=slots*TIMELINE_SLOT_MIN;if(delta===d.lastDelta)return;d.lastDelta=delta;
     let start=d.start,duration=d.duration;if(d.mode==='move')start+=delta;else if(d.mode==='top'){start+=delta;duration-=delta;}else duration+=delta;
     duration=Math.max(30,Math.min(TIMELINE_END_MIN-TIMELINE_START_MIN,duration));start=Math.max(TIMELINE_START_MIN,Math.min(TIMELINE_END_MIN-duration,start));
-    const segmentStart=Number(d.card.dataset.segmentStart)||TIMELINE_START_MIN,renderSlotHeight=d.schedule?d.slotHeight:TIMELINE_SLOT_HEIGHT;d.preview={start,duration};d.card.style.top=`${(start-segmentStart)/TIMELINE_SLOT_MIN*renderSlotHeight}px`;d.card.style.height=d.schedule?'58px':`${duration/TIMELINE_SLOT_MIN*renderSlotHeight}px`;
+    const segmentStart=Number(d.card.dataset.segmentStart)||TIMELINE_START_MIN,renderSlotHeight=d.schedule?d.slotHeight:TIMELINE_SLOT_HEIGHT;d.preview={start,duration};d.card.style.top=`${(start-segmentStart)/TIMELINE_SLOT_MIN*renderSlotHeight}px`;d.card.style.height=`${duration/TIMELINE_SLOT_MIN*renderSlotHeight}px`;
 });
 document.addEventListener('pointerup',event=>{
     const d=timelineDragState;if(!d)return;d.card.classList.remove('dragging');if(d.preview){timelineSuppressClickUntil=Date.now()+350;setSubtaskPlan(d.found.task,d.found.sub,d.preview.start,d.preview.duration,true);saveData();renderAll();}timelineDragState=null;
