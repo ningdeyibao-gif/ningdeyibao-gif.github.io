@@ -800,8 +800,6 @@
         .day-mode-toggle { display:flex; flex:0 0 auto; padding:2px; border:1px solid var(--line); border-radius:9px; background:var(--surface); }
         .day-mode-toggle button { border:0; border-radius:7px; padding:5px 9px; background:transparent; color:var(--text-3); font-size:10px; cursor:pointer; white-space:nowrap; }
         .day-mode-toggle button.active { background:var(--surface-strong); color:var(--accent); box-shadow:0 1px 4px rgba(40,45,55,.08); }
-        #dayTimelineCompactButton { width:28px; padding:0; align-items:center; justify-content:center; }
-        #dayTimelineCompactButton svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
         .schedule-module-label { flex:0 0 auto; min-width:42px; padding:6px; display:flex; align-items:center; justify-content:center; border-radius:12px; font-size:10px; font-weight:700; text-align:center; }
         .schedule-timeline { border:1px solid var(--line); border-radius:14px; overflow:auto; background:var(--surface); }
         .schedule-timeline-columns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; min-width:680px; padding:12px 12px 12px 0; }
@@ -817,6 +815,11 @@
         .schedule-timeline-task { position:absolute; z-index:5; padding:1px 3px; min-height:0; overflow:hidden; pointer-events:auto; touch-action:auto; }
         .schedule-timeline-task.editing { touch-action:none; cursor:grab; }
         .schedule-timeline-task .day-view-item { height:100%; min-height:0; margin:0; box-sizing:border-box; align-items:center; }
+        .schedule-planning-card { height:100%; min-width:0; display:flex; align-items:center; gap:6px; padding:4px 8px; box-sizing:border-box; border:1px solid var(--line); border-radius:10px; background:var(--surface-strong); color:var(--text); overflow:hidden; }
+        .schedule-planning-card .schedule-module-label { min-width:38px; padding:4px 5px; border-radius:8px; }
+        .schedule-planning-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; font-weight:650; }
+        .schedule-timeline-task.editing .schedule-planning-card { padding-right:31px; }
+        .schedule-timeline-task .timeline-remove { right:3px; top:50%; transform:translateY(-50%); width:27px; height:27px; font-size:24px; line-height:25px; font-weight:500; z-index:12; }
         .schedule-timeline-task .timeline-resize { display:none; }
         .schedule-timeline-task.editing .timeline-resize { display:block; }
         .schedule-timeline-task.dragging { opacity:.72; z-index:30; }
@@ -828,8 +831,8 @@
         .schedule-compact-row { display:grid; grid-template-columns:40px minmax(0,1fr); align-items:stretch; min-width:0; }
         .schedule-compact-time { position:relative; display:flex; align-items:flex-start; justify-content:flex-end; padding:3px 5px 0 0; color:var(--text-3); font-size:9px; line-height:1; }
         .schedule-compact-time::before { content:""; position:absolute; right:-2px; top:14px; width:5px; height:5px; border-radius:50%; background:var(--line-strong); z-index:1; }
-        .schedule-compact-item { position:relative; height:58px; min-height:58px; cursor:pointer; border-left:1px solid var(--line); padding-left:5px; }
-        .schedule-compact-item .day-view-item { height:100%; min-height:58px; box-sizing:border-box; margin:0; }
+        .schedule-compact-item { position:relative; min-height:0; cursor:pointer; border-left:1px solid var(--line); padding-left:5px; }
+        .schedule-compact-item .day-view-item { height:auto; min-height:0; box-sizing:border-box; margin:0; }
         #dayView.timeline-mode { display:block; width:100%; }
         @media (max-width:700px) { .schedule-timeline-unplanned-list { grid-template-columns:1fr; } }
         .timeline-edit-button { align-self:flex-end; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:7px; background:var(--surface); color:var(--text-3); cursor:pointer; padding:0; }
@@ -955,7 +958,7 @@
                 <button id="btnWeekView" onclick="switchView('week')">周</button>
                 <button id="btnMonthView" onclick="switchView('month')">月</button>
             </div>
-            <div class="day-mode-toggle" id="dayModeToggle"><button id="btnDayModuleMode" class="active" onclick="switchDayScheduleMode('module')">按模块</button><button id="btnDayTimelineMode" onclick="switchDayScheduleMode('timeline')">按时间</button><button id="dayTimelineCompactButton" class="hidden" onclick="toggleTimelineEmptySlots()" title="隐藏空时段" aria-label="隐藏空时段"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M8 12h8M10 17h4"/></svg></button><button id="dayTimelineEditButton" class="hidden" onclick="toggleTimelineEdit()" title="编辑排期" aria-label="编辑排期">✎</button></div>
+            <div class="day-mode-toggle" id="dayModeToggle"><button id="btnDayModuleMode" class="active" onclick="switchDayScheduleMode('module')">按模块</button><button id="btnDayTimelineMode" onclick="switchDayScheduleMode('timeline')">按时间</button><button id="dayTimelineEditButton" class="hidden" onclick="toggleTimelineEdit()" title="设置时间段" aria-label="设置时间段">✎</button></div>
             <div class="filter-bar" id="boardFilterBar"></div>
             <div class="nav-week"><button onclick="navigate(-1)" aria-label="上一时间段">&lt;</button><button onclick="goToday()">今</button><button onclick="navigate(1)" aria-label="下一时间段">&gt;</button><span class="range hidden" id="navRange"></span></div>
         </div>
@@ -1662,8 +1665,10 @@ function saveEditTask() {
     if(type==='single'){
         const o=old[0]||{};next=[{...o,idx:1,name:batch[0]?.name||o.name||name,date:start,done:o.done||false,total:kind==='nonQuantified'?0:(batch[0]?batch[0].total:defaultTotal),correct:o.correct||0,time:o.time||0,subType,kind}];
     }else{
-        const count=batch.length||Math.max(1,parseInt(document.getElementById('editCount').value)||1),dates=mode==='custom'?generateDatesByWeekday(start,weekdays,count,dailyCount):mode==='mon_sat'?generateDatesByWeekday(start,[1,2,3,4,5,6],count,dailyCount):generateContinuousDates(start,count,dailyCount);
-        next=dates.map((date,i)=>{const o=old[i]||{};return {...o,idx:startIdx+i,name:batch[i]?.name||(o.name||''),date:o.done?o.date:date,done:o.done||false,total:kind==='nonQuantified'?0:(batch.length?batch[i].total:defaultTotal),correct:o.correct||0,time:o.time||0,subType,kind};});
+        const enteredCount=Math.max(1,parseInt(document.getElementById('editCount').value)||1);
+        const count=enteredCount!==old.length?enteredCount:(batch.length||enteredCount);
+        const dates=mode==='custom'?generateDatesByWeekday(start,weekdays,count,dailyCount):mode==='mon_sat'?generateDatesByWeekday(start,[1,2,3,4,5,6],count,dailyCount):generateContinuousDates(start,count,dailyCount);
+        next=dates.map((date,i)=>{const o=old[i]||{};return {...o,idx:startIdx+i,name:batch[i]?.name||(o.name||''),date:o.done?o.date:date,done:o.done||false,total:kind==='nonQuantified'?0:(batch[i]?batch[i].total:(o.total??defaultTotal)),correct:o.correct||0,time:o.time||0,subType,kind};});
     }
     Object.assign(t,{name,unit,module,type,kind,subType,startDate:start,defaultTotal,subtasks:next,subtaskCount:next.length,scheduleMode:type==='periodic'?mode:'all_week',dailyCount:type==='periodic'?dailyCount:1,weekdays:type==='periodic'&&mode==='custom'?weekdays:[],startIdx:type==='periodic'?startIdx:1});
     appData.completedTasks=appData.completedTasks.filter(c=>c.taskId!==t.id);next.filter(s=>s.done).forEach(s=>appData.completedTasks.push({module:t.module,subType:s.subType||'',name:s.name||t.name,unit:t.unit||'项',total:s.total||0,correct:s.correct||0,time:s.time||0,date:s.date,taskId:t.id,idx:s.idx,kind:s.kind||t.kind}));
@@ -1800,15 +1805,16 @@ function switchView(v) {
     document.getElementById('todaySection').classList.toggle('hidden', isDay);
     document.getElementById('moduleLegend').classList.toggle('hidden', isDay);
     document.getElementById('dayModeToggle').classList.toggle('hidden', !isDay);
-    if (!isDay) { selectedDate = getToday(); syncTimelineDate(selectedDate); }
+    if (!isDay) { timelineEditMode=false;timelineHideEmptySlots=true;selectedDate = getToday(); syncTimelineDate(selectedDate); }
     renderBoard();
 }
 function switchDayScheduleMode(mode) {
     dayScheduleMode = mode === 'timeline' ? 'timeline' : 'module';
+    timelineEditMode=false;
+    timelineHideEmptySlots=true;
     scheduleEditTarget = null;
     renderBoard();
 }
-function toggleTimelineEmptySlots(){timelineHideEmptySlots=!timelineHideEmptySlots;if(timelineHideEmptySlots)timelineEditMode=false;renderTimeline();renderBoard();}
 function syncTimelineDate(date){timelineSelectedDate=date;timelineShouldFocusNow=date===getToday();renderTimeline();}
 function navigate(d) { if(currentView==='week')currentDate.setDate(currentDate.getDate()+d*7); else if(currentView==='month')currentDate.setMonth(currentDate.getMonth()+d); else currentDate.setDate(currentDate.getDate()+d); selectedDate=formatDate(currentDate); syncTimelineDate(selectedDate); renderBoard(); }
 function goToday() { currentDate = new Date(); selectedDate = getToday(); syncTimelineDate(selectedDate); renderBoard(); }
@@ -1865,11 +1871,10 @@ function getSubtasksOnDate(ds) {
 function renderBoard() {
     renderFilterBar('boardFilterBar');
     renderNavRange();
-    const moduleMode=document.getElementById('btnDayModuleMode'), timelineMode=document.getElementById('btnDayTimelineMode'), timelineEdit=document.getElementById('dayTimelineEditButton'), compactButton=document.getElementById('dayTimelineCompactButton');
+    const moduleMode=document.getElementById('btnDayModuleMode'), timelineMode=document.getElementById('btnDayTimelineMode'), timelineEdit=document.getElementById('dayTimelineEditButton');
     if(moduleMode)moduleMode.classList.toggle('active',dayScheduleMode==='module');
     if(timelineMode)timelineMode.classList.toggle('active',dayScheduleMode==='timeline');
-    if(timelineEdit){timelineEdit.classList.toggle('hidden',currentView!=='day'||dayScheduleMode!=='timeline');timelineEdit.classList.toggle('active',timelineEditMode);}
-    if(compactButton){compactButton.classList.toggle('hidden',currentView!=='day'||dayScheduleMode!=='timeline');compactButton.classList.toggle('active',timelineHideEmptySlots);compactButton.title=timelineHideEmptySlots?'显示全部时段':'隐藏空时段';compactButton.setAttribute('aria-label',compactButton.title);}
+    if(timelineEdit){const editTitle=timelineEditMode?'完成时间段设置':'设置时间段';timelineEdit.classList.toggle('hidden',currentView!=='day'||dayScheduleMode!=='timeline');timelineEdit.classList.toggle('active',timelineEditMode);timelineEdit.title=editTitle;timelineEdit.setAttribute('aria-label',editTitle);}
     if (currentView === 'day') renderDayView();
     else { renderCalendar(); renderLegend(); renderTodaySection(); }
     renderTaskBlocks();
@@ -1897,17 +1902,27 @@ function compactScheduleGroups(container) {
     container.replaceChildren(left, right);
 }
 
+function getScheduleTaskDisplayName(item) {
+    if(item.taskType==='single')return item.subName||item.taskName;
+    if(item.subName)return `${item.taskName} ${item.sub.idx}.${item.subName}`;
+    return `${item.taskName} 第${item.sub.idx}${item.taskUnit||'项'}`;
+}
+
 function renderScheduleDayCard(item) {
     const dc=item.sub.done?'done':'', cc=item.sub.done?'done':'';
     const rate=item.sub.total>0?Math.round(item.sub.correct/item.sub.total*100):0;
     const ts=item.sub.time>0?`${item.sub.time}分钟`:'';
-    const nameDisplay=escapeHtml(item.subName||(item.taskType==='single'?item.taskName:`${item.taskName} 第${item.sub.idx}${item.taskUnit||'项'}`)),moduleColor=MODULE_COLORS[item.module]||'#8aa9c8',moduleShort=MODULE_SHORT[item.module]||item.module;
+    const nameDisplay=escapeHtml(getScheduleTaskDisplayName(item)),moduleColor=MODULE_COLORS[item.module]||'#8aa9c8',moduleShort=MODULE_SHORT[item.module]||item.module;
     const isNonQ=item.taskKind==='nonQuantified', isEditing=scheduleEditTarget&&scheduleEditTarget.tid===item.taskId&&scheduleEditTarget.idx===item.subIdx;
     let stats=isNonQ?`<span class="dv-time">${ts||'未填'}</span>`:`<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
     if(isEditing)stats=isNonQ?`<input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
     const editButton=isEditing?`<button class="schedule-item-edit icon-edit-done" title="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>`:`<button class="schedule-item-edit icon-edit-button" title="编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('edit')}</button>`;
     const moveActions=isEditing?`<div class="schedule-move-actions"><button title="拆分子任务" aria-label="拆分子任务" onclick="event.stopPropagation();openSplitSubtaskModal(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('split')}</button><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>`:'';
     return `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="event.stopPropagation();toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><span class="schedule-module-label" style="background:${moduleColor}22;color:${moduleColor};">${moduleShort}</span><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${stats}${moveActions}${editButton}</div></div></div>`;
+}
+function renderSchedulePlanningCard(item) {
+    const moduleColor=MODULE_COLORS[item.module]||'#8aa9c8',moduleShort=MODULE_SHORT[item.module]||item.module;
+    return `<div class="schedule-planning-card"><span class="schedule-module-label" style="background:${moduleColor}22;color:${moduleColor};">${escapeHtml(moduleShort)}</span><span class="schedule-planning-name" title="${escapeHtml(getScheduleTaskDisplayName(item))}">${escapeHtml(getScheduleTaskDisplayName(item))}</span></div>`;
 }
 
 function renderScheduleTimeline(c, subs) {
@@ -1924,19 +1939,16 @@ function renderScheduleTimeline(c, subs) {
     const slotH=45,segments=[[7*60,15*60],[15*60,23*60]],now=new Date(),nowMin=now.getHours()*60+now.getMinutes();
     let html=`<div class="schedule-timeline"><div class="schedule-timeline-columns">`;
     segments.forEach(([segmentStart,segmentEnd])=>{
-        const displaySlot=60,segmentItems=planned.filter(item=>item.start<segmentEnd&&item.end>segmentStart),visibleSlots=Array.from({length:(segmentEnd-segmentStart)/displaySlot},(_,i)=>segmentStart+i*displaySlot);
-        const slotFor=item=>Math.max(segmentStart,Math.min(segmentEnd-displaySlot,Math.floor(item.start/displaySlot)*displaySlot));
-        const counts=new Map();segmentItems.forEach(item=>{const slot=slotFor(item),half=item.start-slot>=30?'second':'first',entry=counts.get(slot)||{first:0,second:0};entry[half]++;counts.set(slot,entry);});
-        const slotTops=new Map(),slotRows=new Map();let axisHeight=0;visibleSlots.forEach(min=>{const count=counts.get(min)||{first:0,second:0},rows={first:Math.max(1,count.first),second:Math.max(1,count.second)};slotTops.set(min,axisHeight);slotRows.set(min,rows);axisHeight+=slotH*(rows.first+rows.second);});
+        const displaySlot=60,segmentItems=getTimelineLanes(planned.filter(item=>item.start<segmentEnd&&item.end>segmentStart).map(item=>({...item}))),visibleSlots=Array.from({length:(segmentEnd-segmentStart)/displaySlot},(_,i)=>segmentStart+i*displaySlot),axisHeight=(segmentEnd-segmentStart)/30*slotH;
         html+=`<div><div class="schedule-timeline-column-title">${minutesToClock(segmentStart)}–${minutesToClock(segmentEnd)}</div><div class="schedule-timeline-axis" style="height:${axisHeight}px">`;
-        visibleSlots.forEach(min=>{const rows=slotRows.get(min),rowHeight=slotH*(rows.first+rows.second);html+=`<div class="schedule-timeline-slot" style="top:${slotTops.get(min)}px;height:${rowHeight}px"><span class="schedule-timeline-label">${minutesToClock(min)}</span>${timelineEditMode?`<span class="schedule-timeline-slot-hit first" style="height:${rows.first*slotH}px" onclick="openTimelineModal(${min})"></span><span class="schedule-timeline-slot-hit second" style="height:${rows.second*slotH}px" onclick="openTimelineModal(${min+30})"></span>`:''}</div>`;});
+        visibleSlots.forEach(min=>{html+=`<div class="schedule-timeline-slot" style="top:${(min-segmentStart)/30*slotH}px;height:${slotH*2}px"><span class="schedule-timeline-label">${minutesToClock(min)}</span>${timelineEditMode?`<span class="schedule-timeline-slot-hit first" onclick="openTimelineModal(${min})"></span><span class="schedule-timeline-slot-hit second" onclick="openTimelineModal(${min+30})"></span>`:''}</div>`;});
         html+=`<span class="schedule-timeline-label" style="top:${axisHeight-7}px">${minutesToClock(segmentEnd)}</span>`;
-        if(selectedDate===getToday()&&nowMin>=segmentStart&&nowMin<segmentEnd){const hour=Math.floor(nowMin/60)*60,rows=slotRows.get(hour),half=nowMin-hour>=30?'second':'first',within=(nowMin-hour-(half==='second'?30:0))/30,top=slotTops.get(hour)+(half==='second'?rows.first*slotH:0)+within*slotH;html+=`<div class="timeline-now" style="top:${top}px"></div>`;}
-        const stackUsed=new Map();segmentItems.forEach(item=>{const slot=slotFor(item);if(!slotTops.has(slot))return;const half=item.start-slot>=30?'second':'first',key=`${slot}:${half}`,stackIndex=stackUsed.get(key)||0;stackUsed.set(key,stackIndex+1);const rows=slotRows.get(slot),withinHalf=(item.start-slot-(half==='second'?30:0))/30*slotH,top=slotTops.get(slot)+(half==='second'?rows.first*slotH:0)+stackIndex*slotH+withinHalf,height=Math.max(7,(Math.min(item.end,segmentEnd)-Math.max(item.start,segmentStart))/30*slotH),editClick=timelineEditMode?`onclick="event.stopPropagation();openTimelineTaskEditor('${item.key}')"`:'';html+=`<div class="schedule-timeline-task ${timelineEditMode?'editing':''}" data-timeline-key="${item.key}" data-segment-start="${segmentStart}" style="top:${top}px;height:${height}px;left:2px;width:calc(100% - 4px)" ${editClick}>${timelineEditMode?`<div class="timeline-resize top" data-resize="top"></div><div class="timeline-resize bottom" data-resize="bottom"></div><button class="timeline-remove" title="移出时间轴" onclick="event.stopPropagation();clearSubtaskPlan(${item.taskId},${item.subIdx})">×</button>`:''}${renderScheduleDayCard(item)}</div>`;});
+        if(selectedDate===getToday()&&nowMin>=segmentStart&&nowMin<segmentEnd)html+=`<div class="timeline-now" style="top:${(nowMin-segmentStart)/30*slotH}px"></div>`;
+        segmentItems.forEach(item=>{const visibleStart=Math.max(item.start,segmentStart),visibleEnd=Math.min(item.end,segmentEnd),top=(visibleStart-segmentStart)/30*slotH,height=Math.max(7,(visibleEnd-visibleStart)/30*slotH),laneWidth=100/item.laneCount,left=item.lane*laneWidth,editClick=timelineEditMode?`onclick="event.stopPropagation();openTimelineTaskEditor('${item.key}')"`:'';html+=`<div class="schedule-timeline-task ${timelineEditMode?'editing':''}" data-timeline-key="${item.key}" data-segment-start="${segmentStart}" style="top:${top}px;height:${height}px;left:calc(${left}% + 2px);width:calc(${laneWidth}% - 4px)" ${editClick}>${timelineEditMode?`<div class="timeline-resize top" data-resize="top"></div><div class="timeline-resize bottom" data-resize="bottom"></div><button class="timeline-remove" title="移出时间轴" aria-label="移出时间轴" onclick="event.stopPropagation();clearSubtaskPlan(${item.taskId},${item.subIdx})">×</button>`:''}${renderSchedulePlanningCard(item)}</div>`;});
         html+=`</div></div>`;
     });
     html+=`</div></div>`;
-    if(unplanned.length)html+=`<div class="schedule-timeline-unplanned"><div class="schedule-timeline-unplanned-title">无规划时段</div><div class="schedule-timeline-unplanned-list">${unplanned.map(renderScheduleDayCard).join('')}</div></div>`;
+    if(unplanned.length)html+=`<div class="schedule-timeline-unplanned"><div class="schedule-timeline-unplanned-title">无规划时段</div><div class="schedule-timeline-unplanned-list">${unplanned.map(item=>`<div style="height:46px">${renderSchedulePlanningCard(item)}</div>`).join('')}</div></div>`;
     c.innerHTML=html;bindScheduleTimelineDrag();
 }
 
@@ -1966,7 +1978,7 @@ function renderDayView() {
             const dc = item.sub.done ? 'done' : '', cc = item.sub.done ? 'done' : '';
             const rate = item.sub.total > 0 ? Math.round(item.sub.correct/item.sub.total*100) : 0;
             const ts = item.sub.time > 0 ? `${item.sub.time}分钟` : '';
-            const nameDisplay = escapeHtml(item.subName || (item.taskType === 'single' ? item.taskName : `${item.taskName} 第${item.sub.idx}${item.taskUnit||'项'}`));
+            const nameDisplay = escapeHtml(getScheduleTaskDisplayName(item));
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
             let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
@@ -2057,7 +2069,7 @@ function renderTodaySection() {
             const dc = item.sub.done ? 'done' : '', cc = item.sub.done ? 'done' : '';
             const rate = item.sub.total > 0 ? Math.round(item.sub.correct/item.sub.total*100) : 0;
             const ts = item.sub.time > 0 ? `${item.sub.time}分钟` : '';
-            const nameDisplay = escapeHtml(item.subName || (item.taskType === 'single' ? item.taskName : `${item.taskName} 第${item.sub.idx}${item.taskUnit||'项'}`));
+            const nameDisplay = escapeHtml(getScheduleTaskDisplayName(item));
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
             let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
@@ -2102,7 +2114,10 @@ function navigateTimeline(days) {
 }
 function goTimelineToday(){timelineSelectedDate=getToday();timelineShouldFocusNow=true;selectedDate=timelineSelectedDate;currentDate=new Date();renderTimeline();renderBoard();}
 function toggleTimelineEdit(){
-    timelineEditMode=!timelineEditMode;if(timelineEditMode&&dayScheduleMode==='timeline')timelineHideEmptySlots=false;timelineDragState=null;renderTimeline();renderBoard();
+    if(dayScheduleMode!=='timeline')return;
+    timelineEditMode=!timelineEditMode;
+    timelineHideEmptySlots=!timelineEditMode;
+    timelineDragState=null;renderTimeline();renderBoard();
 }
 function findTimelineTask(key) {
     const [tid, idx] = String(key).split(':').map(Number);
@@ -2130,9 +2145,14 @@ function updateSubtaskPlanDuration(tid, idx, value) {
     saveData();
 }
 function getTimelineLanes(items) {
-    const sorted=[...items].sort((a,b)=>a.start-b.start||a.end-b.end), laneEnds=[];
-    sorted.forEach(item=>{ let lane=laneEnds.findIndex(end=>end<=item.start); if(lane<0)lane=laneEnds.length; laneEnds[lane]=item.end; item.lane=lane; });
-    sorted.forEach(item=>item.laneCount=Math.max(1,laneEnds.length));
+    const sorted=[...items].sort((a,b)=>a.start-b.start||a.end-b.end);let group=[],laneEnds=[],groupEnd=-Infinity;
+    const finishGroup=()=>{const count=Math.max(1,laneEnds.length);group.forEach(item=>item.laneCount=count);group=[];laneEnds=[];groupEnd=-Infinity;};
+    sorted.forEach(item=>{
+        if(group.length&&item.start>=groupEnd)finishGroup();
+        let lane=laneEnds.findIndex(end=>end<=item.start);if(lane<0)lane=laneEnds.length;
+        laneEnds[lane]=item.end;item.lane=lane;group.push(item);groupEnd=Math.max(groupEnd,item.end);
+    });
+    if(group.length)finishGroup();
     return sorted;
 }
 function renderTimeline() {
