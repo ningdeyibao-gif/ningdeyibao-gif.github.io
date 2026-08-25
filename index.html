@@ -22,7 +22,7 @@
             try {
                 const saved = localStorage.getItem('ning_ui_theme_v2');
                 const legacy = localStorage.getItem('ning_ui_theme');
-                document.documentElement.dataset.theme = saved || (legacy === 'pink' ? 'pink' : legacy === 'white' ? 'yellow' : 'white');
+                document.documentElement.dataset.theme = saved === 'dark' ? 'green' : (saved || (legacy === 'pink' ? 'pink' : legacy === 'white' ? 'yellow' : 'white'));
             }
             catch(e) { document.documentElement.dataset.theme = 'white'; }
         })();
@@ -431,28 +431,28 @@
         :root {
             --page-bg:#ffffff; --card-bg:rgba(247,248,250,.62); --surface:rgba(235,237,240,.55); --surface-strong:rgba(255,255,255,.58); --surface-soft:rgba(246,247,249,.50);
             --text:#292a2d; --text-2:#64676d; --text-3:#9a9da4; --line:rgba(80,84,92,.12); --line-strong:rgba(80,84,92,.18);
-            --accent:#78aee7; --accent-soft:rgba(120,174,231,.15); --accent-shadow:rgba(86,143,204,.14); --nature:#6f8eaf; --nature-soft:rgba(111,142,175,.12);
+            --accent:#78aee7; --accent-deep:#3f78b6; --accent-soft:rgba(120,174,231,.15); --accent-shadow:rgba(86,143,204,.14); --nature:#6f8eaf; --nature-soft:rgba(111,142,175,.12);
             --danger:#c47277; --success:#7aa884; --shadow:0 10px 36px rgba(38,45,56,.055); --glass-blur:28px; --glass-sat:135%; --glass-highlight:rgba(255,255,255,.72);
         }
         :root[data-theme="yellow"] {
             --page-bg:#fbf8ee; --card-bg:rgba(255,253,247,.62); --surface:rgba(238,234,222,.55); --surface-strong:rgba(255,253,248,.60); --surface-soft:rgba(248,245,235,.52);
             --text:#2f332e; --text-2:#687067; --text-3:#9ba097; --line:rgba(83,93,79,.13); --line-strong:rgba(83,93,79,.19);
-            --accent:#dba44e; --accent-soft:rgba(219,164,78,.15); --accent-shadow:rgba(190,133,44,.14); --nature:#789b7e; --nature-soft:rgba(120,155,126,.13);
+            --accent:#d39a3f; --accent-deep:#7f4d0d; --accent-soft:rgba(211,154,63,.16); --accent-shadow:rgba(154,96,24,.15); --nature:#789b7e; --nature-soft:rgba(120,155,126,.13);
             --danger:#c47578; --success:#78a783; --shadow:0 10px 36px rgba(77,82,68,.055); --glass-highlight:rgba(255,255,250,.70);
         }
         :root[data-theme="pink"] {
-            --page-bg:#fff9f8; --card-bg:rgba(255,246,247,.62); --surface:rgba(246,232,235,.55); --surface-strong:rgba(255,250,251,.60); --surface-soft:rgba(252,243,244,.52);
-            --text:#312d2e; --text-2:#6f6265; --text-3:#a39296;
-            --line:rgba(142,103,112,.14); --line-strong:rgba(142,103,112,.21);
-            --accent:#b98590; --accent-soft:rgba(185,133,144,.16); --accent-shadow:rgba(162,108,120,.18);
-            --nature:#9c7f85; --nature-soft:rgba(156,127,133,.14);
-            --danger:#bd7377; --success:#82a78a; --shadow:0 10px 36px rgba(112,73,83,.06); --glass-highlight:rgba(255,250,252,.68);
+            --page-bg:#FBF7F8; --card-bg:rgba(255,252,253,.78); --surface:rgba(241,226,231,.61); --surface-strong:rgba(255,253,253,.82); --surface-soft:rgba(247,235,239,.76);
+            --text:#342E30; --text-2:#6D5F63; --text-3:#9B8B90;
+            --line:rgba(130,91,103,.14); --line-strong:rgba(119,78,91,.21);
+            --accent:#B98594; --accent-deep:#7F5260; --accent-soft:#F3E5E9; --accent-shadow:rgba(112,73,85,.13);
+            --nature:#B4949D; --nature-soft:rgba(180,148,157,.17);
+            --danger:#B86F74; --success:#7FA189; --shadow:0 14px 36px rgba(91,60,70,.07); --glass-highlight:rgba(255,255,255,.91);
         }
-        :root[data-theme="dark"] {
-            --page-bg:#1d1f22; --card-bg:rgba(49,52,57,.60); --surface:rgba(72,75,81,.48); --surface-strong:rgba(57,60,65,.58); --surface-soft:rgba(43,46,51,.52);
-            --text:#f0f1f2; --text-2:#c2c5ca; --text-3:#8f939a; --line:rgba(230,235,242,.10); --line-strong:rgba(230,235,242,.16);
-            --accent:#79a9d8; --accent-soft:rgba(121,169,216,.16); --accent-shadow:rgba(50,100,155,.12); --nature:#8cacbd; --nature-soft:rgba(140,172,189,.12);
-            --danger:#cf8588; --success:#82aa8b; --shadow:0 12px 38px rgba(0,0,0,.16); --glass-blur:30px; --glass-sat:115%; --glass-highlight:rgba(255,255,255,.08);
+        :root[data-theme="green"] {
+            --page-bg:#F6F9F7; --card-bg:rgba(252,255,253,.76); --surface:rgba(226,240,232,.62); --surface-strong:rgba(255,255,255,.80); --surface-soft:rgba(232,244,237,.78);
+            --text:#29352F; --text-2:#5F7167; --text-3:#8D9E95; --line:rgba(74,126,98,.14); --line-strong:rgba(58,111,81,.22);
+            --accent:#70B58D; --accent-deep:#356C50; --accent-soft:#E4F2E9; --accent-shadow:rgba(53,108,80,.13); --nature:#86B99B; --nature-soft:rgba(134,185,155,.17);
+            --danger:#B97979; --success:#70B58D; --shadow:0 14px 36px rgba(48,82,63,.075); --glass-blur:30px; --glass-sat:112%; --glass-highlight:rgba(255,255,255,.92);
         }
         html, body, .sidebar, .card, .task-block, .day-view-item, .stats-module-row, .stats-bar-chart,
         .time-card, .exam-card, .exam-trend-wrap, input, select, textarea, button, .modal-box {
@@ -488,6 +488,7 @@
         .cal-cell,.day-view-item,.task-block,.stats-bar-chart,.stats-module-row,.time-card,.exam-card,.exam-trend-wrap { background:var(--surface-strong); border-color:var(--line); }
         .cal-cell.selected { background:var(--surface-strong); border:2px solid var(--accent); box-shadow:none!important; }
         .cal-cell .cc-day,.day-view-item .dv-name,.task-block-header strong,.sub-row .sr-date,.stats-module-row .sm-name,.time-pie-center strong,.exam-card-header .ec-name { color:var(--text); }
+        .task-block-header .task-name-date > strong { color:var(--accent-deep,var(--accent)); }
         .day-view-item.done { background:color-mix(in srgb,var(--success) 10%,var(--surface-strong)); }
         .day-view-item .dv-check { background:var(--surface-strong); border-color:var(--line-strong); }
         .task-block-header .tag-mod,.btn-edit { background:var(--surface); color:var(--text-2); }
@@ -521,9 +522,9 @@
         .theme-option strong { font-size:13px; align-self:end; }
         .theme-option small { font-size:10px; color:var(--text-3); align-self:start; }
         .theme-preview { grid-row:1/3; width:52px; height:42px; border-radius:11px; padding:7px; display:flex; flex-direction:column; gap:4px; border:1px solid rgba(0,0,0,.05); }
-        .theme-preview.natural { background:#fbf8ee; }.theme-preview.pink { background:#fff2f3; }
+        .theme-preview.natural { background:#fbf8ee; }.theme-preview.pink { background:#FBF1F4; }.theme-preview.mint { background:#F6F9F7; }
         .theme-preview i { display:block; height:5px; border-radius:4px; background:#789b7e; opacity:.72; }
-        .theme-preview i:nth-child(2) { width:70%; background:#e3a43f; }.theme-preview.pink i { background:#b98590; }.theme-preview.pink i:nth-child(2) { background:#d4a0aa; }
+        .theme-preview i:nth-child(2) { width:70%; background:#e3a43f; }.theme-preview.pink i { background:#B98594; }.theme-preview.pink i:nth-child(2) { background:#D8B7C0; }.theme-preview.mint i { background:#70B58D; }.theme-preview.mint i:nth-child(2) { background:#ACD4BC; }
         .theme-check { display:none; position:absolute; right:8px; top:7px; width:18px; height:18px; border-radius:50%; background:var(--accent); color:white; font-size:11px; align-items:center; justify-content:center; }
         .theme-option.active .theme-check { display:flex; }
         .settings-divider { height:1px; background:var(--line); margin:22px 0; }
@@ -624,16 +625,30 @@
         .task-block.expanded .subtask-expand,.exam-card.expanded .exam-card-detail { animation:glassReveal .34s cubic-bezier(.2,.8,.2,1); }
         @keyframes glassReveal { from{opacity:0;transform:translateY(-5px)} to{opacity:1;transform:none} }
         .modal-overlay { backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); }
-        .theme-preview.white { background:#f7f8fa; }.theme-preview.dark { background:#292c30; }
-        .theme-preview.white i { background:#7eace0; }.theme-preview.white i:nth-child(2){background:#a7b5c6;}
-        .theme-preview.dark i { background:#91aec8; }.theme-preview.dark i:nth-child(2){background:#686f78;}
+        .theme-preview.white { background:#f7f8fa; }
+        .theme-preview.white i { background:#72A9DC; }.theme-preview.white i:nth-child(2){background:#B6D5F1;}
         .inline-exam-form { border-radius:20px; padding:18px; }
         .inline-exam-form textarea { min-height:88px; resize:vertical; }
         .exam-total-display { width:100%; margin-top:12px; padding:11px 13px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; background:var(--surface); border:1px solid var(--line); color:var(--text-2); font-size:14px; font-weight:650; }
         .inline-exam-actions { display:flex; gap:10px; margin-top:14px; }.inline-exam-actions button { flex:1; margin:0; }
-        :root[data-theme="dark"] .hero-art { opacity:.72; filter:saturate(.72) brightness(.82); }
-        :root[data-theme="dark"] .stats-bar-chart,:root[data-theme="dark"] .time-pie::after { background:var(--surface-strong); }
-        :root[data-theme="dark"] .stats-bar,:root[data-theme="dark"] .sm-dot,:root[data-theme="dark"] .time-pie,:root[data-theme="dark"] .ed-bar-fill { filter:saturate(.72) brightness(.86); }
+        :root[data-theme="green"] .dv-check.done,:root[data-theme="green"] .sub-row .dv-check.done { background:var(--accent)!important; border-color:var(--accent)!important; }
+        :root[data-theme="green"] .card,
+        :root[data-theme="green"] .time-card,
+        :root[data-theme="green"] .task-block,
+        :root[data-theme="green"] .day-group,
+        :root[data-theme="green"] .schedule-compact-columns,
+        :root[data-theme="green"] .schedule-timeline,
+        :root[data-theme="green"] .exam-card,
+        :root[data-theme="green"] .stats-module-row {
+            background:linear-gradient(145deg,rgba(255,255,255,.84),rgba(242,249,245,.72))!important;
+            border-color:var(--line)!important;
+            box-shadow:inset 0 1px 0 var(--glass-highlight),0 2px 5px rgba(49,88,67,.035),0 14px 34px rgba(49,88,67,.065)!important;
+        }
+        :root[data-theme="green"] .surface-layer,
+        :root[data-theme="green"] .schedule-planning-card,
+        :root[data-theme="green"] .sub-row,
+        :root[data-theme="green"] .stats-task-row,
+        :root[data-theme="green"] .stats-sub-row { background:color-mix(in srgb,var(--surface-strong) 88%,var(--accent-soft)); }
         .exam-trend-svg text { fill:var(--text-3)!important; }.exam-trend-svg path { stroke:var(--accent)!important; }.exam-trend-svg circle { fill:var(--accent)!important; }
         /* Liquid Glass Tab Bar */
         .bottom-nav { height:76px; padding:9px 12px 7px; column-gap:4px; border-color:var(--line); background:color-mix(in srgb,var(--card-bg) 88%,transparent); box-shadow:inset 0 1px 0 var(--glass-highlight),0 12px 34px rgba(35,40,48,.13); overflow:visible; }
@@ -650,7 +665,6 @@
         .bottom-nav .bottom-main.active span { background:var(--accent-soft)!important; border-color:color-mix(in srgb,var(--accent) 32%,transparent)!important; }
         .bottom-nav .bottom-main.active small { color:var(--accent); }
         .bottom-nav .bottom-main:active span { transform:scale(.94); }
-        :root[data-theme="dark"] .bottom-nav { box-shadow:inset 0 1px 0 var(--glass-highlight),0 14px 38px rgba(0,0,0,.28); }
         /* 等高五栏导航 */
         .bottom-nav .bottom-main { height:56px; transform:none!important; justify-content:center; gap:3px; border-radius:17px; color:var(--text-3)!important; }
         .bottom-nav .bottom-main span { width:23px; height:23px; border:0!important; border-radius:0; background:transparent!important; color:currentColor!important; box-shadow:none!important; backdrop-filter:none; -webkit-backdrop-filter:none; }
@@ -817,7 +831,10 @@
         .schedule-timeline-task .day-view-item { height:100%; min-height:0; margin:0; box-sizing:border-box; align-items:center; }
         .schedule-planning-card { height:100%; min-width:0; display:flex; align-items:center; gap:6px; padding:4px 8px; box-sizing:border-box; border:1px solid var(--line); border-radius:10px; background:var(--surface-strong); color:var(--text); overflow:hidden; }
         .schedule-planning-card .schedule-module-label { min-width:38px; padding:4px 5px; border-radius:8px; }
-        .schedule-planning-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; font-weight:650; }
+        .schedule-planning-name { min-width:0; display:flex; align-items:center; gap:5px; overflow:hidden; white-space:nowrap; font-size:12px; font-weight:650; }
+        .schedule-task-base { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--accent-deep,var(--accent)); font-weight:700; }
+        .schedule-subtask-pill { flex:0 0 auto; align-self:center; max-width:48%; min-height:22px; padding:2px 9px; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; border:1px solid color-mix(in srgb,var(--accent) 28%,var(--line)); border-radius:999px; background:var(--accent-soft); color:var(--accent); font-size:12px; font-weight:700; line-height:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .day-view-item .dv-name.schedule-name-with-pill { display:flex; align-items:center; gap:6px; }
         .schedule-timeline-task.editing .schedule-planning-card { padding-right:31px; }
         .schedule-timeline-task .timeline-remove { right:3px; top:50%; transform:translateY(-50%); width:27px; height:27px; font-size:24px; line-height:25px; font-weight:500; z-index:12; }
         .schedule-timeline-task .timeline-resize { display:none; }
@@ -879,65 +896,31 @@
         @keyframes timelinePanelIn { from { transform:translateX(-14px); opacity:0; } to { transform:translateX(0); opacity:1; } }
         @media (max-width:900px) { .timeline-columns { min-width:510px; }.timeline-grid { min-width:130px; }.timeline-duration-grid { grid-template-columns:repeat(3,1fr); } }
 
-        /* 纯白主题：白底、浅灰线，蓝色只作为文字与描边强调 */
+        /* 淡蓝主题：清透低饱和蓝与轻盈分层卡片 */
         :root[data-theme="white"] {
-            --page-bg:#fff; --card-bg:#fff; --surface:#fff; --surface-strong:#fff; --surface-soft:#fafafa;
-            --text:#26282c; --text-2:#60656d; --text-3:#969ba3;
-            --line:#e7e9ed; --line-strong:#d9dde3;
-            --accent:#5b94cf; --accent-soft:#fff; --accent-shadow:transparent;
-            --nature:#5b94cf; --nature-soft:#fff; --shadow:none; --glass-highlight:transparent;
+            --page-bg:#F6FAFE; --card-bg:rgba(252,254,255,.82); --surface:rgba(222,238,252,.66); --surface-strong:rgba(255,255,255,.86); --surface-soft:rgba(234,245,254,.82);
+            --text:#293744; --text-2:#5D7081; --text-3:#8EA2B4;
+            --line:rgba(73,126,174,.14); --line-strong:rgba(55,111,161,.21);
+            --accent:#72A9DC; --accent-deep:#3E75A8; --accent-soft:#E4F2FD; --accent-shadow:rgba(54,107,156,.13);
+            --nature:#8CB5D8; --nature-soft:rgba(140,181,216,.18); --shadow:0 14px 36px rgba(48,91,129,.07); --glass-highlight:rgba(255,255,255,.95);
         }
-        :root[data-theme="white"] body { background:#fff!important; }
-        :root[data-theme="white"] .card,
-        :root[data-theme="white"] .study-hero,
-        :root[data-theme="white"] .time-card,
-        :root[data-theme="white"] .bottom-nav,
-        :root[data-theme="white"] .modal-box,
-        :root[data-theme="white"] .task-block,
-        :root[data-theme="white"] .day-view-item,
-        :root[data-theme="white"] .stats-module-row,
-        :root[data-theme="white"] .stats-bar-chart,
-        :root[data-theme="white"] .exam-card,
-        :root[data-theme="white"] .exam-trend-wrap,
-        :root[data-theme="white"] .cal-cell,
-        :root[data-theme="white"] .stats-task-row,
-        :root[data-theme="white"] .stats-sub-row,
-        :root[data-theme="white"] .countdown-panel .sb-countdown-item,
-        :root[data-theme="white"] .inline-exam-form,
-        :root[data-theme="white"] .cloud-sync-panel,
-        :root[data-theme="white"] .timeline-scroll,
-        :root[data-theme="white"] .timeline-picker-item,
-        :root[data-theme="white"] .task-module-group,
-        :root[data-theme="white"] .sub-row.editing { background:#fff!important; box-shadow:none!important; backdrop-filter:none!important; -webkit-backdrop-filter:none!important; }
-        :root[data-theme="white"] button,
-        :root[data-theme="white"] input,
-        :root[data-theme="white"] select,
-        :root[data-theme="white"] textarea,
-        :root[data-theme="white"] .filter-chip,
-        :root[data-theme="white"] .wd-chip,
-        :root[data-theme="white"] .triangle-filter select,
-        :root[data-theme="white"] .view-toggle,
-        :root[data-theme="white"] .tab-bar { background:#fff!important; box-shadow:none!important; }
-        :root[data-theme="white"] .btn-primary,
-        :root[data-theme="white"] .view-toggle button.active,
-        :root[data-theme="white"] .filter-chip.active,
-        :root[data-theme="white"] .wd-chip.active,
-        :root[data-theme="white"] .tab-bar button.active,
-        :root[data-theme="white"] .modal-box .btn-save,
-        :root[data-theme="white"] .bottom-nav .bottom-tab.active,
-        :root[data-theme="white"] .bottom-nav .bottom-main.active { background:#fff!important; color:var(--accent)!important; border-color:var(--accent)!important; box-shadow:none!important; }
+        :is(:root[data-theme="white"],:root[data-theme="pink"]) .card,
+        :is(:root[data-theme="white"],:root[data-theme="pink"]) .time-card,
+        :is(:root[data-theme="white"],:root[data-theme="pink"]) .task-block,
+        :is(:root[data-theme="white"],:root[data-theme="pink"]) .day-group,
+        :is(:root[data-theme="white"],:root[data-theme="pink"]) .schedule-compact-columns,
+        :is(:root[data-theme="white"],:root[data-theme="pink"]) .schedule-timeline,
+        :is(:root[data-theme="white"],:root[data-theme="pink"]) .exam-card,
+        :is(:root[data-theme="white"],:root[data-theme="pink"]) .stats-module-row {
+            background:linear-gradient(145deg,color-mix(in srgb,var(--surface-strong) 94%,white),color-mix(in srgb,var(--surface-soft) 78%,white))!important;
+            border-color:var(--line)!important;
+            box-shadow:inset 0 1px 0 var(--glass-highlight),0 2px 5px color-mix(in srgb,var(--accent-shadow) 28%,transparent),0 14px 34px var(--accent-shadow)!important;
+        }
+        :is(:root[data-theme="white"],:root[data-theme="pink"]) .schedule-planning-card,
+        :is(:root[data-theme="white"],:root[data-theme="pink"]) .sub-row,
+        :is(:root[data-theme="white"],:root[data-theme="pink"]) .stats-task-row,
+        :is(:root[data-theme="white"],:root[data-theme="pink"]) .stats-sub-row { background:color-mix(in srgb,var(--surface-strong) 88%,var(--accent-soft)); }
         .card-stats .time-card,.card-stats .stats-summary,.card-stats .stats-bar-chart,.card-stats .stats-module-row,.card-stats .stats-task-row,.card-stats .stats-sub-row,.card-stats .exam-card,.card-stats .exam-trend-wrap { background:var(--surface-strong)!important; border-color:var(--line)!important; box-shadow:inset 0 1px 0 var(--glass-highlight)!important; }
-        :root[data-theme="white"] button:hover,
-        :root[data-theme="white"] .sidebar-item:hover,
-        :root[data-theme="white"] .timeline-slot:hover { background:#f8f9fb!important; }
-        :root[data-theme="white"] .study-hero { background:#fff!important; }
-        :root[data-theme="white"] .day-view-item.done { background:#fff!important; }
-        :root[data-theme="white"] .task-block-header .tag-type,
-        :root[data-theme="white"] .correct-pill,
-        :root[data-theme="white"] .exam-card-header .ec-type,
-        :root[data-theme="white"] .dv-time,
-        :root[data-theme="white"] .planned-time-pill { background:#fff!important; border:1px solid var(--line)!important; }
-        :root[data-theme="white"] .theme-option.active { box-shadow:none!important; }
     </style>
 </head>
 <body class="timeline-panel-open">
@@ -1131,10 +1114,10 @@
         <div class="settings-section">
             <div class="settings-copy"><strong><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1.7 1-2.7-.8-.8-.2-2.3 1-2.3h2a5 5 0 0 0 5-5c0-4.4-4-8-9-8Z"/><circle cx="7.5" cy="10" r=".8"/><circle cx="10" cy="6.8" r=".8"/><circle cx="15" cy="7.5" r=".8"/></svg>界面主题</strong><span>选择更适合当下心情的页面氛围，设置会自动保存。</span></div>
             <div class="theme-options" aria-label="主题设置">
-                <button id="themeWhite" class="theme-option" onclick="setTheme('white')"><span class="theme-preview white"><i></i><i></i><i></i></span><strong>纯白</strong><small>浅灰玻璃 · 淡蓝高亮</small><span class="theme-check">✓</span></button>
+                <button id="themeWhite" class="theme-option" onclick="setTheme('white')"><span class="theme-preview white"><i></i><i></i><i></i></span><strong>淡蓝</strong><small>清透蓝白 · 柔和分层</small><span class="theme-check">✓</span></button>
                 <button id="themeYellow" class="theme-option" onclick="setTheme('yellow')"><span class="theme-preview natural"><i></i><i></i><i></i></span><strong>柔黄</strong><small>自然米白 · 温暖轻盈</small><span class="theme-check">✓</span></button>
-                <button id="themePink" class="theme-option" onclick="setTheme('pink')"><span class="theme-preview pink"><i></i><i></i><i></i></span><strong>柔粉</strong><small>低饱和 · 柔和豆沙</small><span class="theme-check">✓</span></button>
-                <button id="themeDark" class="theme-option" onclick="setTheme('dark')"><span class="theme-preview dark"><i></i><i></i><i></i></span><strong>暗色</strong><small>深灰玻璃 · 柔和低亮</small><span class="theme-check">✓</span></button>
+                <button id="themePink" class="theme-option" onclick="setTheme('pink')"><span class="theme-preview pink"><i></i><i></i><i></i></span><strong>柔粉</strong><small>灰调豆沙 · 粉彩分层</small><span class="theme-check">✓</span></button>
+                <button id="themeGreen" class="theme-option" onclick="setTheme('green')"><span class="theme-preview mint"><i></i><i></i><i></i></span><strong>清新绿</strong><small>薄荷柔光 · 白色磨砂</small><span class="theme-check">✓</span></button>
             </div>
         </div>
         <div class="settings-divider"></div>
@@ -1360,11 +1343,12 @@ const MODULE_SUBTYPES = {
 };
 function normalizeModule(m) { return MODULE_ALIAS[m] || m; }
 function setTheme(theme) {
-    const next = ['white','yellow','pink','dark'].includes(theme) ? theme : 'white';
+    const requested=theme==='dark'?'green':theme;
+    const next = ['white','yellow','pink','green'].includes(requested) ? requested : 'white';
     const changed=document.documentElement.dataset.theme!==next;
     document.documentElement.dataset.theme = next;
     try { localStorage.setItem('ning_ui_theme_v2', next); } catch(e) {}
-    ['White','Yellow','Pink','Dark'].forEach(name => { const btn=document.getElementById('theme'+name); if(btn) btn.classList.toggle('active',next===name.toLowerCase()); });
+    ['White','Yellow','Pink','Green'].forEach(name => { const btn=document.getElementById('theme'+name); if(btn) btn.classList.toggle('active',next===name.toLowerCase()); });
     if(changed){markCloudDirty();scheduleCloudSave();}
 }
 
@@ -1907,22 +1891,27 @@ function getScheduleTaskDisplayName(item) {
     if(item.subName)return `${item.taskName} ${item.sub.idx}.${item.subName}`;
     return `${item.taskName} 第${item.sub.idx}${item.taskUnit||'项'}`;
 }
+function renderScheduleTaskName(item) {
+    if(item.taskType==='single')return `<span class="schedule-task-base">${escapeHtml(item.subName||item.taskName)}</span>`;
+    const suffix=item.subName?`${item.sub.idx}.${item.subName}`:`第${item.sub.idx}${item.taskUnit||'项'}`;
+    return `<span class="schedule-task-base">${escapeHtml(item.taskName)}</span><span class="schedule-subtask-pill" title="${escapeHtml(suffix)}">${escapeHtml(suffix)}</span>`;
+}
 
 function renderScheduleDayCard(item) {
     const dc=item.sub.done?'done':'', cc=item.sub.done?'done':'';
     const rate=item.sub.total>0?Math.round(item.sub.correct/item.sub.total*100):0;
     const ts=item.sub.time>0?`${item.sub.time}分钟`:'';
-    const nameDisplay=escapeHtml(getScheduleTaskDisplayName(item)),moduleColor=MODULE_COLORS[item.module]||'#8aa9c8',moduleShort=MODULE_SHORT[item.module]||item.module;
+    const nameDisplay=renderScheduleTaskName(item),moduleColor=MODULE_COLORS[item.module]||'#8aa9c8',moduleShort=MODULE_SHORT[item.module]||item.module;
     const isNonQ=item.taskKind==='nonQuantified', isEditing=scheduleEditTarget&&scheduleEditTarget.tid===item.taskId&&scheduleEditTarget.idx===item.subIdx;
     let stats=isNonQ?`<span class="dv-time">${ts||'未填'}</span>`:`<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
     if(isEditing)stats=isNonQ?`<input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
     const editButton=isEditing?`<button class="schedule-item-edit icon-edit-done" title="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>`:`<button class="schedule-item-edit icon-edit-button" title="编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('edit')}</button>`;
     const moveActions=isEditing?`<div class="schedule-move-actions"><button title="拆分子任务" aria-label="拆分子任务" onclick="event.stopPropagation();openSplitSubtaskModal(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('split')}</button><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>`:'';
-    return `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="event.stopPropagation();toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><span class="schedule-module-label" style="background:${moduleColor}22;color:${moduleColor};">${moduleShort}</span><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${stats}${moveActions}${editButton}</div></div></div>`;
+    return `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="event.stopPropagation();toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><span class="schedule-module-label" style="background:${moduleColor}22;color:${moduleColor};">${moduleShort}</span><div class="dv-info"><div class="dv-title-row"><div class="dv-name schedule-name-with-pill">${nameDisplay}</div>${stats}${moveActions}${editButton}</div></div></div>`;
 }
 function renderSchedulePlanningCard(item) {
     const moduleColor=MODULE_COLORS[item.module]||'#8aa9c8',moduleShort=MODULE_SHORT[item.module]||item.module;
-    return `<div class="schedule-planning-card"><span class="schedule-module-label" style="background:${moduleColor}22;color:${moduleColor};">${escapeHtml(moduleShort)}</span><span class="schedule-planning-name" title="${escapeHtml(getScheduleTaskDisplayName(item))}">${escapeHtml(getScheduleTaskDisplayName(item))}</span></div>`;
+    return `<div class="schedule-planning-card"><span class="schedule-module-label" style="background:${moduleColor}22;color:${moduleColor};">${escapeHtml(moduleShort)}</span><span class="schedule-planning-name" title="${escapeHtml(getScheduleTaskDisplayName(item))}">${renderScheduleTaskName(item)}</span></div>`;
 }
 
 function renderScheduleTimeline(c, subs) {
@@ -1978,7 +1967,7 @@ function renderDayView() {
             const dc = item.sub.done ? 'done' : '', cc = item.sub.done ? 'done' : '';
             const rate = item.sub.total > 0 ? Math.round(item.sub.correct/item.sub.total*100) : 0;
             const ts = item.sub.time > 0 ? `${item.sub.time}分钟` : '';
-            const nameDisplay = escapeHtml(getScheduleTaskDisplayName(item));
+            const nameDisplay = renderScheduleTaskName(item);
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
             let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
@@ -1986,7 +1975,7 @@ function renderDayView() {
             if(isEditing) sh=isNonQ?`<input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
             const editButton = isEditing ? `<button class="schedule-item-edit icon-edit-done" title="完成编辑" aria-label="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>` : `<button class="schedule-item-edit icon-edit-button" title="编辑" aria-label="编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('edit')}</button>`;
             const moveActions = isEditing ? `<div class="schedule-move-actions"><button title="拆分子任务" aria-label="拆分子任务" onclick="event.stopPropagation();openSplitSubtaskModal(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('split')}</button><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>` : '';
-            html += `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${sh}${moveActions}${editButton}</div></div></div>`;
+            html += `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-title-row"><div class="dv-name schedule-name-with-pill">${nameDisplay}</div>${sh}${moveActions}${editButton}</div></div></div>`;
         });
         html += `</div></div></div>`;
     });
@@ -2069,7 +2058,7 @@ function renderTodaySection() {
             const dc = item.sub.done ? 'done' : '', cc = item.sub.done ? 'done' : '';
             const rate = item.sub.total > 0 ? Math.round(item.sub.correct/item.sub.total*100) : 0;
             const ts = item.sub.time > 0 ? `${item.sub.time}分钟` : '';
-            const nameDisplay = escapeHtml(getScheduleTaskDisplayName(item));
+            const nameDisplay = renderScheduleTaskName(item);
             const isNonQ = item.taskKind === 'nonQuantified';
             const isEssay = item.module === '申论';
             let sh = isNonQ ? `<span class="dv-time">${ts||'未填'}</span>` : `<span class="correct-pill">${item.sub.correct}/${item.sub.total}</span><span class="dv-rate">${rate}%</span><span class="dv-time">${ts||'未填'}</span>`;
@@ -2077,7 +2066,7 @@ function renderTodaySection() {
             if(isEditing) sh=isNonQ?`<input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`:`<input type="number" min="0" value="${item.sub.correct||''}" placeholder="正确" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'correct',this.value)"><span>/</span><input type="number" min="0" value="${item.sub.total||''}" placeholder="总题" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'total',this.value)"><input type="number" min="0" value="${item.sub.time||''}" placeholder="实际分钟" onchange="updateSubtaskStat(${item.taskId},${item.subIdx},'time',this.value)">`;
             const editButton = isEditing ? `<button class="schedule-item-edit icon-edit-done" title="完成编辑" aria-label="完成编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('check')}</button>` : `<button class="schedule-item-edit icon-edit-button" title="编辑" aria-label="编辑" onclick="event.stopPropagation();toggleScheduleItemEdit(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('edit')}</button>`;
             const moveActions = isEditing ? `<div class="schedule-move-actions"><button title="拆分子任务" aria-label="拆分子任务" onclick="event.stopPropagation();openSplitSubtaskModal(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('split')}</button><button title="提前一天" onclick="event.stopPropagation();moveTaskForward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('left')}</button><button title="顺延一天" onclick="event.stopPropagation();moveTaskBackward(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('right')}</button><button title="本项及后续整体提前" onclick="event.stopPropagation();moveTaskForwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-left')}</button><button title="本项及后续整体顺延" onclick="event.stopPropagation();moveTaskBackwardAll(${item.taskId},${item.subIdx})">${scheduleOutlineIcon('all-right')}</button></div>` : '';
-            html += `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-title-row"><div class="dv-name">${nameDisplay}</div>${sh}${moveActions}${editButton}</div></div></div>`;
+            html += `<div class="day-view-item ${dc}"><div class="dv-check ${cc}" onclick="toggleSubtaskDone(${item.taskId},${item.subIdx})"></div><div class="dv-info"><div class="dv-title-row"><div class="dv-name schedule-name-with-pill">${nameDisplay}</div>${sh}${moveActions}${editButton}</div></div></div>`;
         });
         html += `</div></div></div>`;
     });
