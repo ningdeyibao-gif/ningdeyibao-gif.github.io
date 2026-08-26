@@ -825,6 +825,8 @@
         .schedule-timeline-slot-hit.first { top:0; }
         .schedule-timeline-slot-hit.second { bottom:0; }
         .schedule-timeline-slot-hit:hover { background:var(--accent-soft); }
+        .schedule-timeline-half-line { position:absolute; left:0; right:0; top:50%; border-top:1px dashed color-mix(in srgb,var(--line-strong) 72%,transparent); pointer-events:none; z-index:2; }
+        .schedule-timeline-half-line .schedule-timeline-label { top:-7px; }
         .schedule-timeline-label { position:absolute; left:-42px; top:-7px; width:38px; color:var(--text-3); font-size:10px; text-align:right; pointer-events:none; }
         .schedule-timeline-task { position:absolute; z-index:5; padding:1px 3px; min-height:0; overflow:hidden; pointer-events:auto; touch-action:auto; }
         .schedule-timeline-task.editing { touch-action:none; cursor:grab; }
@@ -835,8 +837,10 @@
         .schedule-task-base { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--accent-deep,var(--accent)); font-weight:700; }
         .schedule-subtask-pill { flex:0 0 auto; align-self:center; max-width:48%; min-height:22px; padding:2px 9px; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; border:1px solid color-mix(in srgb,var(--accent) 28%,var(--line)); border-radius:999px; background:var(--accent-soft); color:var(--accent); font-size:12px; font-weight:700; line-height:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
         .day-view-item .dv-name.schedule-name-with-pill { display:flex; align-items:center; gap:6px; }
-        .schedule-timeline-task.editing .schedule-planning-card { padding-right:31px; }
+        .schedule-timeline-task.editing .schedule-planning-card { padding-left:31px; padding-right:31px; }
         .schedule-timeline-task .timeline-remove { right:3px; top:50%; transform:translateY(-50%); width:27px; height:27px; font-size:24px; line-height:25px; font-weight:500; z-index:12; }
+        .timeline-drag-handle { position:absolute; left:3px; top:50%; transform:translateY(-50%); width:25px; height:27px; padding:0; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line)!important; border-radius:8px!important; background:var(--accent-soft)!important; color:var(--accent-deep,var(--accent))!important; cursor:grab!important; touch-action:none; z-index:13; font-size:15px; font-weight:800; letter-spacing:-2px; line-height:1; }
+        .timeline-drag-handle:active { cursor:grabbing!important; }
         .schedule-timeline-task .timeline-resize { display:none; }
         .schedule-timeline-task.editing .timeline-resize { display:block; }
         .schedule-timeline-task.dragging { opacity:.72; z-index:30; }
@@ -1161,7 +1165,7 @@
     <div class="modal-box">
         <h3 id="timelineModalTitle">安排任务</h3>
         <div id="timelineStartDisplay" style="color:var(--text-3);font-size:13px;">开始时间：<strong id="timelineModalStart" style="color:var(--text-2);"></strong></div>
-        <div class="form-group" id="timelineStartEditGroup"><label>计划开始时间（15 分钟为单位）</label><input type="time" id="timelineEditStartInput" min="07:00" max="22:45" step="900"></div>
+        <div class="form-group" id="timelineStartEditGroup"><label>计划开始时间（精确到分钟）</label><input type="time" id="timelineEditStartInput" min="07:00" max="22:59" step="60"></div>
         <div class="timeline-task-picker" id="timelineTaskPicker"></div>
         <div class="form-group"><label>计划持续时长</label><div class="timeline-duration-grid" id="timelineDurationPicker"></div></div>
         <div class="modal-actions"><button class="btn-cancel" onclick="closeTimelineModal()">取消</button><button class="btn-save" id="timelineConfirmButton" onclick="confirmTimelineAssignment()">确认安排</button></div>
@@ -1930,10 +1934,10 @@ function renderScheduleTimeline(c, subs) {
     segments.forEach(([segmentStart,segmentEnd])=>{
         const displaySlot=60,segmentItems=getTimelineLanes(planned.filter(item=>item.start<segmentEnd&&item.end>segmentStart).map(item=>({...item}))),visibleSlots=Array.from({length:(segmentEnd-segmentStart)/displaySlot},(_,i)=>segmentStart+i*displaySlot),axisHeight=(segmentEnd-segmentStart)/30*slotH;
         html+=`<div><div class="schedule-timeline-column-title">${minutesToClock(segmentStart)}–${minutesToClock(segmentEnd)}</div><div class="schedule-timeline-axis" style="height:${axisHeight}px">`;
-        visibleSlots.forEach(min=>{html+=`<div class="schedule-timeline-slot" style="top:${(min-segmentStart)/30*slotH}px;height:${slotH*2}px"><span class="schedule-timeline-label">${minutesToClock(min)}</span>${timelineEditMode?`<span class="schedule-timeline-slot-hit first" onclick="openTimelineModal(${min})"></span><span class="schedule-timeline-slot-hit second" onclick="openTimelineModal(${min+30})"></span>`:''}</div>`;});
+        visibleSlots.forEach(min=>{html+=`<div class="schedule-timeline-slot" style="top:${(min-segmentStart)/30*slotH}px;height:${slotH*2}px"><span class="schedule-timeline-label">${minutesToClock(min)}</span><span class="schedule-timeline-half-line"><span class="schedule-timeline-label">${minutesToClock(min+30)}</span></span>${timelineEditMode?`<span class="schedule-timeline-slot-hit first" onclick="openTimelineModal(${min})"></span><span class="schedule-timeline-slot-hit second" onclick="openTimelineModal(${min+30})"></span>`:''}</div>`;});
         html+=`<span class="schedule-timeline-label" style="top:${axisHeight-7}px">${minutesToClock(segmentEnd)}</span>`;
         if(selectedDate===getToday()&&nowMin>=segmentStart&&nowMin<segmentEnd)html+=`<div class="timeline-now" style="top:${(nowMin-segmentStart)/30*slotH}px"></div>`;
-        segmentItems.forEach(item=>{const visibleStart=Math.max(item.start,segmentStart),visibleEnd=Math.min(item.end,segmentEnd),top=(visibleStart-segmentStart)/30*slotH,height=Math.max(7,(visibleEnd-visibleStart)/30*slotH),laneWidth=100/item.laneCount,left=item.lane*laneWidth,editClick=timelineEditMode?`onclick="event.stopPropagation();openTimelineTaskEditor('${item.key}')"`:'';html+=`<div class="schedule-timeline-task ${timelineEditMode?'editing':''}" data-timeline-key="${item.key}" data-segment-start="${segmentStart}" style="top:${top}px;height:${height}px;left:calc(${left}% + 2px);width:calc(${laneWidth}% - 4px)" ${editClick}>${timelineEditMode?`<div class="timeline-resize top" data-resize="top"></div><div class="timeline-resize bottom" data-resize="bottom"></div><button class="timeline-remove" title="移出时间轴" aria-label="移出时间轴" onclick="event.stopPropagation();clearSubtaskPlan(${item.taskId},${item.subIdx})">×</button>`:''}${renderSchedulePlanningCard(item)}</div>`;});
+        segmentItems.forEach(item=>{const visibleStart=Math.max(item.start,segmentStart),visibleEnd=Math.min(item.end,segmentEnd),top=(visibleStart-segmentStart)/30*slotH,height=Math.max(7,(visibleEnd-visibleStart)/30*slotH),laneWidth=100/item.laneCount,left=item.lane*laneWidth,editClick=timelineEditMode?`onclick="event.stopPropagation();openTimelineTaskEditor('${item.key}')"`:'';html+=`<div class="schedule-timeline-task ${timelineEditMode?'editing':''}" data-timeline-key="${item.key}" data-segment-start="${segmentStart}" style="top:${top}px;height:${height}px;left:calc(${left}% + 2px);width:calc(${laneWidth}% - 4px)" ${editClick}>${timelineEditMode?`<div class="timeline-resize top" data-resize="top"></div><div class="timeline-resize bottom" data-resize="bottom"></div><button class="timeline-drag-handle" title="按住拖动任务" aria-label="按住拖动任务" onclick="event.stopPropagation()">⠿</button><button class="timeline-remove" title="移出时间轴" aria-label="移出时间轴" onclick="event.stopPropagation();clearSubtaskPlan(${item.taskId},${item.subIdx})">×</button>`:''}${renderSchedulePlanningCard(item)}</div>`;});
         html+=`</div></div>`;
     });
     html+=`</div></div>`;
@@ -1944,9 +1948,10 @@ function renderScheduleTimeline(c, subs) {
 function bindScheduleTimelineDrag(){
     if(!timelineEditMode)return;
     document.querySelectorAll('.schedule-timeline-task').forEach(card=>card.addEventListener('pointerdown',event=>{
-        if(event.target.closest('button,input,.dv-check'))return;
+        const resizeMode=event.target.dataset.resize,dragHandle=event.target.closest('.timeline-drag-handle');
+        if(!resizeMode&&!dragHandle)return;
         const found=findTimelineTask(card.dataset.timelineKey);if(!found)return;
-        const mode=event.target.dataset.resize||'move',start=clockToMinutes(found.sub.planStart),duration=found.sub.planDuration;
+        const mode=resizeMode||'move',start=clockToMinutes(found.sub.planStart),duration=found.sub.planDuration;
         timelineDragState={card,found,mode,start,duration,startY:event.clientY,lastDelta:0,schedule:true,slotHeight:45};card.classList.add('dragging');card.setPointerCapture(event.pointerId);event.preventDefault();
     }));
 }
@@ -2115,7 +2120,7 @@ function findTimelineTask(key) {
 }
 function setSubtaskPlan(task, sub, startMin, duration, propagate = true) {
     duration = Math.max(TIMELINE_SETTING_MIN, Math.round(duration/TIMELINE_SETTING_MIN)*TIMELINE_SETTING_MIN);
-    startMin = Math.max(TIMELINE_START_MIN, Math.min(TIMELINE_END_MIN-duration, Math.round(startMin/TIMELINE_SETTING_MIN)*TIMELINE_SETTING_MIN));
+    startMin = Math.max(TIMELINE_START_MIN, Math.min(TIMELINE_END_MIN-duration, Math.round(startMin)));
     const apply = target => { target.planStart=minutesToClock(startMin); target.planDuration=duration; target.planEnd=minutesToClock(startMin+duration); };
     apply(sub);
     if (propagate && task.type === 'periodic') {
@@ -2204,7 +2209,7 @@ function selectTimelineDuration(duration,el){timelineModalState.duration=duratio
 function closeTimelineModal(){document.getElementById('timelineModal').classList.remove('active');}
 function confirmTimelineAssignment(){
     if(!timelineModalState.taskKey){alert('请选择要安排的任务');return;} const found=findTimelineTask(timelineModalState.taskKey);if(!found)return;
-    const value=document.getElementById('timelineEditStartInput').value,start=clockToMinutes(value);if(start===null||start<TIMELINE_START_MIN||start>=TIMELINE_END_MIN||start%TIMELINE_SETTING_MIN!==0){alert('请选择 07:00 至 22:45 之间、以 15 分钟为单位的开始时间');return;}timelineModalState.startMin=start;
+    const value=document.getElementById('timelineEditStartInput').value,start=clockToMinutes(value);if(start===null||start<TIMELINE_START_MIN||start>=TIMELINE_END_MIN){alert('请选择 07:00 至 22:59 之间的开始时间');return;}if(start+timelineModalState.duration>TIMELINE_END_MIN){alert('计划结束时间不能超过 23:00');return;}timelineModalState.startMin=start;
     setSubtaskPlan(found.task,found.sub,timelineModalState.startMin,timelineModalState.duration,true);saveData();closeTimelineModal();renderAll();
 }
 function bindTimelineDrag(){
