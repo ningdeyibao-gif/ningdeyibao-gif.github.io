@@ -1892,12 +1892,12 @@ function compactScheduleGroups(container) {
 
 function getScheduleTaskDisplayName(item) {
     if(item.taskType==='single')return item.subName||item.taskName;
-    if(item.subName)return `${item.taskName} ${item.sub.idx}.${item.subName}`;
+    if(item.subName)return `${item.taskName} ${item.subName}`;
     return `${item.taskName} 第${item.sub.idx}${item.taskUnit||'项'}`;
 }
 function renderScheduleTaskName(item) {
     if(item.taskType==='single')return `<span class="schedule-task-base">${escapeHtml(item.subName||item.taskName)}</span>`;
-    const suffix=item.subName?`${item.sub.idx}.${item.subName}`:`第${item.sub.idx}${item.taskUnit||'项'}`;
+    const suffix=item.subName?item.subName:`第${item.sub.idx}${item.taskUnit||'项'}`;
     return `<span class="schedule-task-base">${escapeHtml(item.taskName)}</span><span class="schedule-subtask-pill" title="${escapeHtml(suffix)}">${escapeHtml(suffix)}</span>`;
 }
 
@@ -2124,7 +2124,13 @@ function setSubtaskPlan(task, sub, startMin, duration, propagate = true) {
     const apply = target => { target.planStart=minutesToClock(startMin); target.planDuration=duration; target.planEnd=minutesToClock(startMin+duration); };
     apply(sub);
     if (propagate && task.type === 'periodic') {
-        task.subtasks.forEach(next => { if (next !== sub && next.idx > sub.idx) apply(next); });
+        const sameDay=task.subtasks.filter(item=>item.date===sub.date).sort((a,b)=>(a.idx||0)-(b.idx||0));
+        const dayPosition=Math.max(0,sameDay.indexOf(sub));
+        const futureDates=[...new Set(task.subtasks.filter(item=>item.date>sub.date).map(item=>item.date))].sort();
+        futureDates.forEach(date=>{
+            const candidates=task.subtasks.filter(item=>item.date===date).sort((a,b)=>(a.idx||0)-(b.idx||0));
+            if(candidates[dayPosition])apply(candidates[dayPosition]);
+        });
     }
 }
 function clearSubtaskPlan(tid, idx) {
